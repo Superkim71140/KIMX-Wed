@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <title>รับทำเว็บไซต์ ออกแบบเว็บสวย การตลาดครบวงจร - KIMX Web</title>
+    <meta name="description" content="รับทำเว็บไซต์ สมุทรสาคร มหาชัย กระทุ่มแบน บ้านแพ้ว ออกแบบเว็บไซต์บริษัท ระบบ E-commerce ดูแลเว็บไซต์ครบวงจร โดยทีมงานมืออาชีพในพื้นที่สมุทรสาคร โทร 092-837-1926">
+    <meta name="keywords" content="รับทำเว็บไซต์ สมุทรสาคร, ออกแบบเว็บไซต์ สมุทรสาคร, ทำเว็บ มหาชัย, รับเขียนโปรแกรม สมุทรสาคร, KIMX Web">
+    <meta property="og:locale" content="th_TH">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --primary-glow: #00f260; /* สีเขียวหลัก */
+            --secondary-glow: #0575E6; /* สีฟ้ารอง */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --nav-glass: rgba(9, 9, 11, 0.85);
+        }
+        
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR STYLES (Thai & Clean) --- */
+        .navbar-custom {
+            background-color: var(--nav-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white !important;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-highlight {
+            color: var(--primary-glow);
+            text-shadow: 0 0 15px rgba(0, 242, 96, 0.6);
+            margin-left: 5px;
+            font-style: italic;
+        }
+
+        .nav-link {
+            color: #cbd5e1 !important;
+            font-weight: 500;
+            margin: 0 12px;
+            position: relative;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-glow) !important;
+            text-shadow: 0 0 10px rgba(0, 242, 96, 0.4);
+        }
+
+        /* เส้นขีดใต้เวลา Hover */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0%;
+            height: 2px;
+            background: var(--primary-glow);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-nav-cta {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-nav-cta:hover {
+            background: var(--primary-glow);
+            color: black;
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 20px rgba(0, 242, 96, 0.4);
+            transform: scale(1.05);
+        }
+
+        .navbar-toggler { border-color: rgba(255,255,255,0.3); }
+        .navbar-toggler-icon { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            padding: 180px 0 120px;
+            background-image: url('admin-apartment-exasperated-by-annoying-bugs-while-programming.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin-top: -86px;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(9, 9, 11, 0.98) 0%, rgba(9, 9, 11, 0.85) 60%, rgba(5, 117, 230, 0.2) 100%);
+            z-index: 0;
+            backdrop-filter: blur(3px);
+        }
+
+        /* --- LOADING SCREEN STYLES --- */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #09090b;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 2px;
+            z-index: 2;
+            animation: logo-pulse 2s infinite ease-in-out;
+        }
+
+        .loader-ring {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--primary-glow);
+            border-right-color: rgba(0, 242, 96, 0.3);
+            animation: ring-spin 1s linear infinite;
+            box-shadow: 0 0 15px rgba(0, 242, 96, 0.2);
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--secondary-glow);
+            animation: ring-spin 2s linear infinite reverse;
+            opacity: 0.7;
+        }
+
+        @keyframes ring-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes logo-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; text-shadow: 0 0 20px rgba(0, 242, 96, 0.5); }
+            50% { transform: scale(0.95); opacity: 0.8; text-shadow: 0 0 10px rgba(0, 242, 96, 0.2); }
+        }
+
+        /* --- NEW BADGE STYLE --- */
+        .badge-pill {
+            background: linear-gradient(90deg, rgba(6, 199, 85, 0.1), rgba(5, 117, 230, 0.1));
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 25px rgba(6, 199, 85, 0.15);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                120deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent
+            );
+            transform: skewX(-25deg);
+            animation: badge-shine 3s infinite;
+        }
+
+        @keyframes badge-shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .badge-pill i {
+            color: #00f260;
+            font-size: 1.1rem;
+            filter: drop-shadow(0 0 5px rgba(0, 242, 96, 0.5));
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            background: linear-gradient(to right, #ffffff, #e2e8f0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 45px;
+            line-height: 1.8;
+            border-left: 3px solid var(--secondary-glow);
+            padding-left: 20px;
+        }
+
+        .btn-line {
+            background: linear-gradient(90deg, #06C755 0%, #00d400 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(6, 199, 85, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .btn-line:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(6, 199, 85, 0.6);
+        }
+
+        .hero-img-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .hero-img {
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            height: auto;
+            max-width: 350px; 
+            object-fit: cover;
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg); 
+            box-shadow: -30px 30px 60px rgba(0,0,0,0.5);
+            transition: all 0.6s ease;
+        }
+        
+        .hero-img-wrapper:hover .hero-img {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+            box-shadow: 0 20px 50px rgba(5, 117, 230, 0.2);
+        }
+
+        /* --- SERVICES SECTION (UPGRADED) --- */
+        .services-section {
+            padding: 120px 0;
+            background-color: #0c0c0e;
+            position: relative;
+        }
+        
+        .services-section::before {
+             content: '';
+             position: absolute;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+             linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+             background-size: 40px 40px;
+             pointer-events: none;
+        }
+
+        .section-header h2 {
+            font-weight: 700;
+            color: white;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto 70px;
+            font-size: 1.1rem;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px 30px;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-glow);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+            box-shadow: 0 10px 40px rgba(0, 242, 96, 0.15);
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
+            opacity: 0;
+            transition: 0.3s;
+        }
+        
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: white;
+            transition: 0.3s;
+        }
+        
+        .service-card:hover .icon-circle {
+            background: var(--primary-glow);
+            color: black;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .service-card h4 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+            transition: 0.3s;
+        }
+        
+        .service-card:hover h4 {
+            color: var(--primary-glow);
+        }
+
+        .service-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            flex-grow: 1;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .btn-detail {
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            width: 100%;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .btn-detail:hover {
+            background: var(--primary-glow);
+            color: black;
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(0, 242, 96, 0.3);
+            font-weight: 600;
+        }
+
+        /* --- PRICING SECTION --- */
+        .pricing-section {
+            padding: 100px 0 140px;
+            background-color: #09090b;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            scroll-margin-top: 80px;
+        }
+
+        .pricing-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 96, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 96, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .pricing-section::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center, 
+                rgba(5, 117, 230, 0.08) 0%, 
+                rgba(0, 242, 96, 0.03) 40%, 
+                transparent 70%
+            );
+            filter: blur(60px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 50px 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: visible; 
+        }
+
+        .pricing-card.highlight {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid var(--primary-glow);
+            box-shadow: 0 0 40px rgba(0, 242, 96, 0.1);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .pricing-card.highlight:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .badge-popular {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-glow);
+            color: black;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 242, 96, 0.5);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .pricing-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+        
+        .currency { font-size: 1.5rem; vertical-align: top; margin-right: 5px; color: var(--text-muted); }
+        .period { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .feature-list li {
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-list li i {
+            color: var(--primary-glow);
+            margin-right: 12px;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .pricing-card.enterprise .feature-list li i {
+            color: var(--secondary-glow);
+        }
+        .pricing-card.enterprise:hover {
+            border-color: var(--secondary-glow);
+             box-shadow: 0 0 30px rgba(5, 117, 230, 0.2);
+        }
+
+        .btn-price {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: white;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: 0.3s;
+        }
+
+        .btn-price:hover {
+            background: white;
+            color: black;
+        }
+
+        .btn-price.primary {
+            background: var(--primary-glow);
+            color: black;
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 242, 96, 0.3);
+        }
+        
+        .btn-price.primary:hover {
+             box-shadow: 0 0 40px rgba(0, 242, 96, 0.6);
+             transform: translateY(-2px);
+        }
+
+        /* --- HERO VIDEO STYLES --- */
+        .hero-video {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 242, 96, 0.15);
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            object-fit: cover;
+            aspect-ratio: 1/1;
+            background: #000;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-img-wrapper:hover .hero-video {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.02);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.6),
+                0 0 50px rgba(0, 242, 96, 0.3);
+            border-color: rgba(0, 242, 96, 0.5);
+        }
+
+        .video-decoration-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            border-radius: 24px;
+            z-index: 1;
+            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+            opacity: 0.2;
+            filter: blur(20px);
+            transition: all 0.6s ease;
+        }
+
+        .hero-img-wrapper:hover .video-decoration-bg {
+            transform: translate(-50%, -50%) perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.05);
+            opacity: 0.4;
+            filter: blur(30px);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .services-section {
+            padding-bottom: 40px !important;
+            border-bottom: none;
+            scroll-margin-top: 80px;
+        }
+
+        .pricing-section {
+            padding-top: 40px !important;
+            scroll-margin-top: 100px;
+        }
+
+        .section-connector {
+            position: relative;
+            height: 2px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
+            opacity: 0.3;
+            z-index: 5;
+        }
+
+        .section-connector::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 4px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 
+                0 0 10px #fff,
+                0 0 20px var(--primary-glow),
+                0 0 40px var(--primary-glow);
+        }
+
+        /* --- CONTACT SECTION STYLES --- */
+        .contact-section {
+            padding: 100px 0 150px;
+            background-color: #09090b;
+            position: relative;
+        }
+
+        .contact-info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            height: 100%;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .contact-item:hover {
+            transform: translateX(10px);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(0, 242, 96, 0.1);
+            color: var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .contact-item .label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .contact-item .value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .contact-item .value:hover {
+            color: var(--primary-glow);
+        }
+
+        .contact-form-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .contact-form-card h3, .contact-info-card h3 {
+            color: white;
+            font-weight: 600;
+        }
+
+        .custom-input {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white !important;
+            border-radius: 10px;
+        }
+
+        .custom-input:focus {
+            background: rgba(0, 0, 0, 0.5) !important;
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(0, 242, 96, 0.2);
+        }
+
+        .form-floating label {
+            color: #94a3b8;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--primary-glow);
+            opacity: 1;
+        }
+
+        /* --- MODAL STYLES --- */
+        .custom-modal {
+            background: rgba(9, 9, 11, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 242, 96, 0.15);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-title {
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .form-floating > .form-control,
+        .form-floating > .form-select {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff !important;
+            border-radius: 12px;
+            height: 58px;
+        }
+
+        .form-floating > label {
+            color: #94a3b8 !important;
+            background-color: transparent !important;
+            padding: 1rem 0.75rem;
+            pointer-events: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-floating > .form-control:focus,
+        .form-floating > .form-select:focus {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(0, 242, 96, 0.15);
+        }
+
+        select.custom-input {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            cursor: pointer;
+        }
+
+        select.custom-input option:disabled {
+            color: #6c757d;
+        }
+
+        .form-label {
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+
+        .form-select option {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 10px;
+        }
+
+        /* --- COOKIE BANNER STYLE --- */
+        .cookie-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0f172a;
+            color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .cookie-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .cookie-text {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+        }
+
+        .cookie-icon {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .btn-accept {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-accept:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .cookie-content { justify-content: center; text-align: center; }
+            .cookie-text { flex-direction: column; gap: 10px; }
+            .btn-accept { width: 100%; }
+        }
+
+        @media (max-width: 991px) {
+            .hero-title { font-size: 2.8rem; }
+            .hero-section { text-align: center; padding: 100px 0; margin-top: 0; }
+            .hero-desc { border-left: none; padding-left: 0; }
+            .hero-img-wrapper { margin-top: 60px; }
+            .badge-pill { margin: 0 auto 20px; }
+            .hero-img { transform: none; }
+            .pricing-card.highlight { transform: none; margin: 20px 0; }
+            .pricing-card.highlight:hover { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                KIMX<span class="brand-highlight">Web</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">หน้าหลัก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">ราคาแพ็กเกจ</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">บริการของเรา</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="articles.html">บทความ</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">ติดต่อเรา</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <button class="btn btn-nav-cta" data-bs-toggle="modal" data-bs-target="#quoteModal">
+                            <i class="bi bi-file-earmark-text me-1"></i> ขอใบเสนอราคา
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+   <section class="hero-section">
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="pe-lg-5">
+                        <div class="badge-pill">
+                            <i class="bi bi-stars me-2"></i> นวัตกรรมเว็บไซต์แห่งอนาคต
+                        </div>
+                       <h1 class="hero-title">รับทำเว็บไซต์<br>พัฒนาระบบเว็บไซต์</h1>
+                        <p class="hero-desc">
+                            บริการรับทำเว็บไซต์สำหรับธุรกิจในจังหวัดสมุทรสาคร มหาชัย และพื้นที่ใกล้เคียง 
+                            เปลี่ยนไอเดียให้เป็นนวัตกรรมเว็บไซต์ที่ทรงพลัง ขับเคลื่อนธุรกิจคุณด้วยดีไซน์ล้ำสมัย
+                        </p>
+                        <a href="https://line.me/ti/p/~@supergetfood" target="_blank" class="text-decoration-none">
+                            <button class="btn btn-line">
+                                <i class="bi bi-line me-2"></i> ปรึกษาโปรเจกต์
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="hero-img-wrapper">
+                        <video class="hero-video" autoplay loop muted playsinline>
+                            <source src="8ce16a402c2f7d522902abb264f87d4e.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-decoration-bg"></div>
+                    </div>
+                </div>
+            </div> 
+        </div> 
+    </section>
+
+    <section class="services-section" id="services">
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="text-center section-header">
+                <h2>โซลูชันครบวงจรจาก KIMX Web</h2>
+                <p>
+                    มากกว่าแค่การทำเว็บไซต์ คือการสร้างเครื่องมือทางธุรกิจที่สมบูรณ์แบบ
+                    พร้อมทีมผู้เชี่ยวชาญที่ดูแลคุณตั้งแต่เริ่มต้นจนถึงความสำเร็จ
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <div class="icon-circle"><i class="bi bi-code-square"></i></div>
+                        <h4>Web Development</h4>
+                        <p>พัฒนาเว็บไซต์ด้วย Tech Stack ทันสมัย ออกแบบ UX/UI ระดับพรีเมียม ตอบโจทย์ทุกฟังก์ชันการใช้งาน เพื่อภาพลักษณ์ธุรกิจที่เหนือกว่าคู่แข่ง</p>
+                        <button class="btn btn-detail">ดูข้อมูลเพิ่มเติม</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <div class="icon-circle"><i class="bi bi-graph-up-arrow"></i></div>
+                        <h4>SEO Optimization</h4>
+                        <p>ดันอันดับเว็บไซต์สู่หน้าแรกด้วยกลยุทธ์ SEO เชิงลึก เพิ่ม Traffic คุณภาพแบบ Organic สร้างการเติบโตที่ยั่งยืนโดยไม่ต้องพึ่งพาโฆษณาตลอดไป</p>
+                        <button class="btn btn-detail">ดูข้อมูลเพิ่มเติม</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <div class="icon-circle"><i class="bi bi-shield-check"></i></div>
+                        <h4>System Maintenance</h4>
+                        <p>บริการดูแลและอัปเดตระบบให้ทันสมัย ปลอดภัย และรวดเร็วอยู่เสมอ พร้อมทีม Support ที่คอยช่วยเหลือคุณ เพื่อให้ธุรกิจไม่สะดุด</p>
+                        <button class="btn btn-detail">ดูข้อมูลเพิ่มเติม</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <div class="icon-circle"><i class="bi bi-bullseye"></i></div>
+                        <h4>Performance Ads</h4>
+                        <p>บริหารจัดการแคมเปญโฆษณา Google Ads อย่างแม่นยำ เจาะกลุ่มเป้าหมายที่ใช่ ลดต้นทุน เพิ่มยอดขาย วัดผลได้จริงทุกคลิก</p>
+                        <button class="btn btn-detail">ดูข้อมูลเพิ่มเติม</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-connector"></div>
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="text-center section-header mb-5">
+                <h2>เลือกแพ็กเกจที่ใช่สำหรับธุรกิจคุณ</h2>
+                <p style="max-width: 700px;">
+                    เราออกแบบแพ็กเกจมาเพื่อรองรับทุกสเกลของธุรกิจ ตั้งแต่เริ่มต้นไปจนถึงระดับองค์กร 
+                    ด้วยเทคโนโลยีที่ทันสมัยและการดูแลที่เหนือกว่า
+                </p>
+            </div>
+
+            <div class="row g-4 align-items-center">
+                
+                <div class="col-lg-4">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="pricing-title">Starter Kickoff</div>
+                            <div class="pricing-price">
+                                <span class="currency">฿</span>3,000
+                            </div>
+                            <div class="period">เหมาะสำหรับเริ่มต้นสร้างตัวตน</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-file-earmark-richtext"></i> เว็บไซต์ One Page (1 หน้า)</li>
+                            <li><i class="bi bi-palette2"></i> ดีไซน์ทันสมัย UX/UI Standard</li>
+                            <li><i class="bi bi-phone"></i> รองรับมือถือ 100% (Responsive)</li>
+                            <li><i class="bi bi-cloud-check"></i> พื้นที่ Hosting 10 GB (High Speed)</li>
+                            <li><i class="bi bi-globe"></i> ฟรี Domain Name 1 ปี</li>
+                            <li><i class="bi bi-lock-fill"></i> ติดตั้งระบบความปลอดภัย SSL</li>
+                            <li><i class="bi bi-share-fill"></i> เชื่อมต่อ Social Media พื้นฐาน</li>
+                        </ul>
+                        <button class="btn btn-price">ติดต่อประเมินราคา</button>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="pricing-card highlight">
+                        <div class="badge-popular">ยอดนิยม</div>
+                        <div class="pricing-header">
+                            <div class="pricing-title">Business Growth</div>
+                            <div class="pricing-price" style="color: var(--primary-glow);">
+                                <span class="currency">฿</span>5,500
+                            </div>
+                            <div class="period">สร้างความน่าเชื่อถือและการเติบโต</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-window-stack"></i> เว็บไซต์สูงสุด 10 หน้า</li>
+                            <li><i class="bi bi-pencil-square"></i> ระบบจัดการบทความ (CMS)</li>
+                            <li><i class="bi bi-search"></i> Advanced SEO โครงสร้างสมบูรณ์</li>
+                            <li><i class="bi bi-translate"></i> รองรับระบบหลายภาษา (Multi-lang)</li>
+                            <li><i class="bi bi-graph-up-arrow"></i> ติดตั้ง Google Analytics/Pixel</li>
+                            <li><i class="bi bi-hdd-fill"></i> พื้นที่ Hosting ไม่จำกัด (SSD)</li>
+                            <li><i class="bi bi-tools"></i> ดูแลระบบฟรี 1 ปีเต็ม</li>
+                        </ul>
+                        <button class="btn btn-price primary">ติดต่อประเมินราคา</button>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="pricing-card enterprise">
+                        <div class="pricing-header">
+                            <div class="pricing-title">Corporate & Custom</div>
+                            <div class="pricing-price">
+                                <span class="currency">฿</span>12,500<span style="font-size:1.5rem">+</span>
+                            </div>
+                            <div class="period">ระบบอัจฉริยะสำหรับองค์กรใหญ่</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-code-square"></i> ออกแบบระบบ Custom Function</li>
+                            <li><i class="bi bi-bag-check-fill"></i> ระบบสมาชิก / E-commerce เต็มรูปแบบ</li>
+                            <li><i class="bi bi-credit-card-2-front-fill"></i> เชื่อมต่อ API ภายนอก / Payment Gateway</li>
+                            <li><i class="bi bi-speedometer2"></i> Web Performance ระดับ A+</li>
+                            <li><i class="bi bi-shield-lock-fill"></i> ระบบความปลอดภัยขั้นสูง (High Security)</li>
+                            <li><i class="bi bi-hdd-network-fill"></i> Cloud Server ส่วนตัว (Private VPS)</li>
+                            <li><i class="bi bi-headset"></i> บริการ Priority Support 24/7</li>
+                        </ul>
+                        <button class="btn btn-price">ติดต่อประเมินราคา</button>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-5 text-muted" style="font-size: 0.9rem;">
+                *ราคาอาจมีการเปลี่ยนแปลงตามฟังก์ชันพิเศษเพิ่มเติมที่ลูกค้าต้องการ
+            </div>
+        </div>
+    </section>
+
+    <div class="cookie-bar" id="cookieBar">
+        <div class="container">
+            <div class="cookie-content">
+                <div class="cookie-text">
+                    <i class="fas fa-shield-alt cookie-icon"></i>
+                    <span>
+                        เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ ข้อมูลคุกกี้จะถูกใช้เพื่อพัฒนาประสบการณ์การใช้งานที่ดีที่สุด 
+                        <a href="#" style="color: #fff; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a>
+                    </span>
+                </div>
+                <button class="btn-accept" id="acceptCookieBtn">ยอมรับทั้งหมด</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-connector"></div>
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="text-center section-header mb-5">
+                <h2>ติดต่อเรา</h2>
+                <p>พร้อมให้คำปรึกษาและผลักดันธุรกิจของคุณสู่โลกดิจิทัล ติดต่อทีมงานได้ทุกช่องทาง</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                
+                <div class="col-lg-5">
+                    <div class="contact-info-card">
+                        <h3 class="mb-4">ช่องทางติดต่อหลัก</h3>
+                        
+                        <div class="contact-item">
+                            <div class="icon-box">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div>
+                                <div class="label">เบอร์โทรศัพท์</div>
+                                <a href="tel:0928371926" class="value">092-837-1926</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="icon-box" style="background: rgba(255, 255, 255, 0.1); color: #fff;">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <div class="label">พื้นที่ให้บริการ</div>
+                                <span class="value" style="font-size: 1rem;">สมุทรสาคร และ กทม. ปริมณฑล</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="icon-box" style="background: rgba(6, 199, 85, 0.2); color: #06C755;">
+                                <i class="bi bi-line"></i>
+                            </div>
+                            <div>
+                                <div class="label">LINE Official</div>
+                                <a href="https://line.me/ti/p/~@supergetfood" target="_blank" class="value">@supergetfood</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="icon-box" style="background: rgba(24, 119, 242, 0.2); color: #1877F2;">
+                                <i class="bi bi-facebook"></i>
+                            </div>
+                            <div>
+                                <div class="label">Facebook Page</div>
+                                <a href="https://www.facebook.com/chokhthwitantraklu?locale=th_TH" target="_blank" class="value">KIMX Web Agency</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="icon-box" style="background: rgba(234, 67, 53, 0.2); color: #ea4335;">
+                                <i class="bi bi-envelope-fill"></i>
+                            </div>
+                            <div>
+                                <div class="label">อีเมล</div>
+                                <a href="mailto:contact@supergetfood.com" class="value">supergetfood@gmail.com</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                   <div class="contact-form-card">
+                        <h3 class="mb-4">ส่งข้อความหาเรา</h3>
+                        <form id="contactForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control custom-input" id="name" name="Name" placeholder="ชื่อของคุณ" required>
+                                        <label for="name">ชื่อผู้ติดต่อ</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control custom-input" id="phone" name="Phone" placeholder="เบอร์โทรศัพท์" required>
+                                        <label for="phone">เบอร์โทรศัพท์</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control custom-input" id="subject" name="Service" placeholder="บริการที่สนใจ">
+                                        <label for="subject">บริการที่สนใจ</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control custom-input" id="message" name="Message" placeholder="ข้อความ" style="height: 120px"></textarea>
+                                        <label for="message">รายละเอียดเพิ่มเติม</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-line w-100" id="btnSubmit">
+                                        <i class="bi bi-send-fill me-2"></i> ส่งข้อความ
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal fade" id="quoteModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content custom-modal">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">
+                                        <i class="bi bi-file-earmark-text-fill me-2" style="color: var(--primary-glow);"></i>
+                                        ขอใบเสนอราคาโปรเจกต์
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control custom-input" id="q-name" placeholder="ชื่อ-นามสกุล">
+                                                    <label for="q-name">ชื่อของคุณ / บริษัท</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="tel" class="form-control custom-input" id="q-phone" placeholder="เบอร์โทร">
+                                                    <label for="q-phone">เบอร์โทรศัพท์ติดต่อ</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label for="q-type" class="form-label text-white-50 ms-2 mb-2" style="font-size: 0.9rem;">ประเภทโปรเจกต์</label>
+                                                <select class="form-select custom-input" id="q-type">
+                                                    <option selected disabled>เลือกประเภทเว็บไซต์...</option> 
+                                                    <option value="1">Corporate (บริษัท/องค์กร)</option>
+                                                    <option value="2">E-commerce (ร้านค้าออนไลน์)</option>
+                                                    <option value="3">Landing Page / Sale Page</option>
+                                                    <option value="4">Web Application / System</option>
+                                                    <option value="5">อื่นๆ</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label for="q-budget" class="form-label text-white-50 ms-2 mb-2" style="font-size: 0.9rem;">งบประมาณ (Budget)</label>
+                                                <select class="form-select custom-input" id="q-budget">
+                                                    <option selected disabled>เลือกช่วงงบประมาณ...</option>
+                                                    <option value="1">3,000 - 10,000 บาท (Starter)</option>
+                                                    <option value="2">10,000 - 20,000 บาท (Business)</option>
+                                                    <option value="3">20,000 - 30,000 บาท (Advanced)</option>
+                                                    <option value="4">30,000 บาท ขึ้นไป (Custom)</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="form-floating">
+                                                    <textarea class="form-control custom-input" placeholder="รายละเอียด" id="q-detail" style="height: 100px"></textarea>
+                                                    <label for="q-detail">ฟังก์ชันที่ต้องการ / เว็บตัวอย่างที่ชอบ (Ref.)</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 mt-4 text-center">
+                                                <button type="submit" class="btn btn-line w-100 py-3">
+                                                    <i class="bi bi-send me-2"></i> ส่งข้อมูลประเมินราคา (ฟรี)
+                                                </button>
+                                                <small class="text-muted d-block mt-2">*เราจะติดต่อกลับภายใน 24 ชั่วโมง</small>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </section>
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                KIMX<span class="brand-highlight">Web</span>
+            </div>
+            <div class="loader-ring"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // รอให้เว็บโหลดทุกอย่างเสร็จ (รูป, วิดีโอ, สคริปต์)
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
+            // หน่วงเวลาเล็กน้อยให้คนเห็นโลโก้เท่ๆ ก่อน (0.5 วินาที)
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 500);
+        });
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "KIMX Web Agency",
+      "image": "https://www.yourwebsite.com/logo.png",
+      "telephone": "092-837-1926",
+      "url": "https://www.yourwebsite.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "เมืองสมุทรสาคร",
+        "addressLocality": "Mueang Samut Sakhon",
+        "addressRegion": "Samut Sakhon",
+        "postalCode": "74000",
+        "addressCountry": "TH"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 13.5475,
+        "longitude": 100.2736
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "09:00",
+        "closes": "18:00"
+      },
+      "priceRange": "฿3,000 - ฿50,000"
+    }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const cookieBar = document.getElementById('cookieBar');
+            const acceptBtn = document.getElementById('acceptCookieBtn');
+
+            // 1. เช็คว่าเคยยอมรับไปหรือยัง? (ถ้ายัง ให้แสดงแถบ)
+            if (!localStorage.getItem('cookieAccepted')) {
+                cookieBar.style.display = 'block';
+            }
+
+            // 2. เมื่อกดปุ่ม "ยอมรับทั้งหมด"
+            acceptBtn.addEventListener('click', function() {
+                // ซ่อนแถบทันที
+                cookieBar.style.display = 'none';
+                
+                // บันทึกลงความจำเครื่องว่า "ยอมรับแล้ว" (ครั้งหน้าจะไม่เด้งอีก)
+                localStorage.setItem('cookieAccepted', 'true');
+            });
+        });
+    </script>
+
+    <script>
+        // --- โค้ดส่งข้อมูลลง Google Sheets ---
+        // ใส่ลิงก์ของคุณให้แล้วครับ ✅
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwOe8EJTdR9Dj9QV3lRwRtu-S4JnHV3OOMDH2WR7aOYDpK5n1Uy9Xl6PPu6y9R_XORA/exec';
+        const form = document.forms['contactForm'];
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        if (form) {
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                
+                // เปลี่ยนปุ่มเป็นสถานะกำลังส่ง
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> กำลังส่ง...';
+                btnSubmit.disabled = true;
+
+                fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                    .then(response => {
+                        // ส่งสำเร็จ
+                        alert('ขอบคุณครับ! เราได้รับข้อความของคุณแล้ว จะรีบติดต่อกลับโดยเร็วที่สุด');
+                        form.reset(); // ล้างฟอร์ม
+                        // คืนค่าปุ่ม
+                        btnSubmit.innerHTML = '<i class="bi bi-send-fill me-2"></i> ส่งข้อความ';
+                        btnSubmit.disabled = false;
+                    })
+                    .catch(error => {
+                        // ส่งไม่สำเร็จ
+                        console.error('Error!', error.message);
+                        alert('เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง หรือโทรหาเราโดยตรง');
+                        btnSubmit.innerHTML = '<i class="bi bi-send-fill me-2"></i> ส่งข้อความ';
+                        btnSubmit.disabled = false;
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

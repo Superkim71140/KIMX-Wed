@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกี่ยวกับเรา - KIMX Web Agency</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --primary-glow: #00f260;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar-custom {
+            background-color: rgba(9, 9, 11, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0;
+        }
+        .navbar-brand { font-size: 1.8rem; font-weight: 700; color: white !important; }
+        .brand-highlight { color: var(--primary-glow); font-style: italic; }
+        .nav-link { color: #cbd5e1 !important; transition: 0.3s; }
+        .nav-link:hover { color: var(--primary-glow) !important; }
+
+        /* --- HERO HEADER --- */
+        .about-header {
+            padding: 120px 0 80px;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(0, 242, 96, 0.1), transparent 70%);
+        }
+        
+        .about-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- CONTENT SECTIONS --- */
+        .content-section {
+            padding: 80px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-highlight {
+            color: var(--primary-glow);
+            font-weight: 600;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .stat-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 20px rgba(0, 242, 96, 0.1);
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+        .stat-label {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* --- CORE VALUES --- */
+        .value-card {
+            padding: 20px;
+        }
+        .value-icon {
+            font-size: 2.5rem;
+            color: var(--primary-glow);
+            margin-bottom: 15px;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* ปุ่มกลับ */
+        .btn-back {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .btn-back:hover { color: var(--primary-glow); transform: translateX(-5px); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                KIMX<span class="brand-highlight">Web</span>
+            </a>
+            <div class="ms-auto">
+                <a href="index.html#contact" class="btn btn-outline-light rounded-pill px-4">ติดต่อเรา</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="about-header">
+        <div class="container">
+            <h1 class="about-title">เบื้องหลังความสำเร็จของคุณ คือภารกิจของเรา</h1>
+           <p class="fs-5 mx-auto" style="color: #ffffff; max-width: 700px; line-height: 1.6; text-shadow: 0 2px 10px rgba(0,0,0,0.8); font-weight: 300;">
+                เราไม่ใช่แค่คนเขียนโค้ด แต่เราคือพาร์ทเนอร์ที่จะช่วยเปลี่ยนไอเดียทางธุรกิจ ให้กลายเป็นสินทรัพย์ดิจิทัลที่ทรงพลัง
+            </p>
+        </div>
+    </header>
+
+    <section class="content-section">
+        <div class="container">
+            <a href="articles.html" class="btn-back"><i class="bi bi-arrow-left me-2"></i> กลับหน้ารวมบทความ</a>
+            
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" class="img-fluid rounded-4 shadow-lg" alt="KIMX Team Work">
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="mb-4 text-white display-6 fw-bold">จุดเริ่มต้นของ <span class="brand-highlight">KIMX Web</span></h2>
+                    
+                    <p class="text-white fs-5" style="line-height: 1.8; opacity: 0.95;">
+                        ในยุคดิจิทัล 2025 การมีเว็บไซต์ไม่ใช่เรื่องยาก แต่การมีเว็บไซต์ที่ <span class="text-highlight">"ขายของได้จริง"</span> และ <span class="text-highlight">"เติบโตยั่งยืน"</span> กลับเป็นเรื่องท้าทาย
+                    </p>
+                    
+                    <p class="text-white" style="font-size: 1.1rem; line-height: 1.8; opacity: 0.9;">
+                        KIMX Web ก่อตั้งขึ้นด้วยความเชื่อที่ว่า เว็บไซต์ที่ดีต้องไม่ใช่แค่สวย แต่ต้อง <strong>"เร็ว (Fast)"</strong>, <strong>"ปลอดภัย (Secure)"</strong> และ <strong>"ค้นหาเจอง่าย (SEO Friendly)"</strong> เราจึงพัฒนาระบบการทำงานที่ผสานศาสตร์แห่งการออกแบบ (Design) เข้ากับวิศวกรรมซอฟต์แวร์ (Engineering) เพื่อส่งมอบผลงานที่เหนือกว่ามาตรฐานตลาดทั่วไป
+                    </p>
+                    
+                    <p class="text-white" style="font-size: 1.1rem; line-height: 1.8; opacity: 0.9;">
+                        เราเชี่ยวชาญในการดูแลธุรกิจตั้งแต่ระดับ SME ไปจนถึงองค์กรขนาดใหญ่ ในพื้นที่สมุทรสาครและทั่วประเทศ ด้วยความใส่ใจเหมือนธุรกิจของคุณ คือธุรกิจของเรา
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stat-box">
+                        <div class="stat-number brand-highlight">100+</div>
+                        <div class="stat-label">โปรเจกต์ที่ส่งมอบสำเร็จ</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-box">
+                        <div class="stat-number brand-highlight">99.9%</div>
+                        <div class="stat-label">Uptime Guarantee</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-box">
+                        <div class="stat-number brand-highlight">A+</div>
+                        <div class="stat-label">Performance Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="text-white fw-bold">สิ่งที่เราให้ความสำคัญ (Core Values)</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="value-card">
+                        <i class="bi bi-rocket-takeoff-fill value-icon"></i>
+                        <h4 class="text-white">Speed is King</h4>
+                        <p class="text-muted">ความเร็วคือหัวใจของเว็บยุคใหม่ เราปรับแต่งทุกบรรทัดโค้ดให้เว็บโหลดไวที่สุด เพื่อไม่ให้ลูกค้าของคุณรอนาน</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="value-card">
+                        <i class="bi bi-shield-check value-icon"></i>
+                        <h4 class="text-white">Security First</h4>
+                        <p class="text-muted">ความปลอดภัยของข้อมูลคือสิ่งที่เราไม่เคยละเลย ระบบของเรามาพร้อมมาตรฐานความปลอดภัยขั้นสูง</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="value-card">
+                        <i class="bi bi-heart-fill value-icon"></i>
+                        <h4 class="text-white">Service with Heart</h4>
+                        <p class="text-muted">เราไม่ได้แค่ส่งงานแล้วจบ แต่เราพร้อมดูแล ปรึกษา และแก้ไขปัญหาให้คุณตลอดเส้นทางธุรกิจ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 text-center">
+        <div class="container">
+            <h2 class="text-white mb-4">พร้อมเริ่มต้นโปรเจกต์ของคุณหรือยัง?</h2>
+            <a href="index.html#contact" class="btn btn-lg btn-success rounded-pill px-5 py-3 fw-bold" style="background-color: var(--primary-glow); color: black; border: none;">
+                ขอใบเสนอราคาฟรี
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 KIMX Web Agency. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทความและข่าวสาร - KIMX Web</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --primary-glow: #00f260;
+            --secondary-glow: #0575E6;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --nav-glass: rgba(9, 9, 11, 0.85);
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR (Copy from Index) --- */
+        .navbar-custom {
+            background-color: var(--nav-glass);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0;
+        }
+        .navbar-brand { font-size: 1.8rem; font-weight: 700; color: white !important; }
+        .brand-highlight { color: var(--primary-glow); font-style: italic; text-shadow: 0 0 15px rgba(0, 242, 96, 0.6); }
+        .nav-link { color: #cbd5e1 !important; transition: 0.3s; }
+        .nav-link:hover { color: var(--primary-glow) !important; }
+        .btn-nav-cta {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+        }
+
+        /* --- ARTICLE HEADER --- */
+        .article-header {
+            padding: 150px 0 80px;
+            background: radial-gradient(circle at top center, rgba(5, 117, 230, 0.15), transparent 70%);
+            text-align: center;
+        }
+        
+       .article-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            background-clip: text;         /* <--- เพิ่มบรรทัดนี้เข้าไปครับ */
+            -webkit-background-clip: text; /* ของเดิมที่มีอยู่แล้ว */
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- BLOG CARDS --- */
+        .blog-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-glow);
+            box-shadow: 0 10px 40px rgba(0, 242, 96, 0.1);
+        }
+
+        .blog-img-wrapper {
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .blog-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.6s;
+        }
+
+        .blog-card:hover .blog-img {
+            transform: scale(1.1);
+        }
+
+        .blog-content {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-category {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-glow);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .blog-heading {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+            line-height: 1.4;
+        }
+
+        .blog-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .read-more {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .read-more:hover {
+            color: var(--primary-glow);
+            transform: translateX(5px);
+        }
+
+        /* --- FEATURED CARD (ใบใหญ่สุด) --- */
+        .featured-card {
+            display: flex;
+            flex-direction: row;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 60px;
+        }
+
+        .featured-img-col {
+            flex: 1.2;
+            min-height: 400px;
+        }
+        
+        .featured-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-content {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-width: 991px) {
+            .featured-card { flex-direction: column; }
+            .featured-img-col { height: 300px; }
+            .featured-content { padding: 30px; }
+            .article-title { font-size: 2.5rem; }
+        }
+
+        .footer {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 40px 0;
+            margin-top: 100px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- เพิ่มเอฟเฟกต์ปาดแสง (Shine) และแก้สีตัวหนังสือ --- */
+
+/* 1. ปรับแต่งคำบรรยายให้อ่านง่าย */
+.header-desc-text {
+    color: #e2e8f0 !important; /* เปลี่ยนเป็นสีขาวควันบุหรี่ อ่านง่ายสบายตา */
+    font-size: 1.15rem;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* เพิ่มเงาให้ตัวหนังสือลอยเด่น */
+    opacity: 0.9;
+}
+
+/* 2. สร้างป้าย Badge แบบมีแสงวิ่ง (Cyber Shine) */
+.badge-shine {
+    position: relative;
+    overflow: hidden;
+    background: rgba(0, 242, 96, 0.1); /* สีพื้นหลังเขียวจางๆ */
+    border: 1px solid #00f260;        /* ขอบสีเขียว */
+    color: #00f260;                   /* ตัวหนังสือสีเขียว */
+    box-shadow: 0 0 20px rgba(0, 242, 96, 0.3); /* เงาเรืองแสง */
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 8px 20px !important;     /* ขยายขนาดป้ายหน่อย */
+    display: inline-block;
+}
+
+/* สร้างแสงสีขาววิ่งผ่าน */
+.badge-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.8), 
+        transparent
+    );
+    transform: skewX(-20deg); /* เอียงแสงนิดนึงให้ดูเร็ว */
+    animation: shine-swipe 4s infinite; /* แสงวิ่งวนทุก 4 วินาที */
+}
+
+/* อนิเมชั่นการวิ่งของแสง */
+@keyframes shine-swipe {
+    0% { left: -150%; }
+    20% { left: 150%; } /* วิ่งผ่านไปอย่างรวดเร็ว */
+    100% { left: 150%; } /* รอเวลานิดนึงก่อนวิ่งรอบใหม่ */
+}
+
+/* แก้สีคำว่า "อ่านบทความ" เป็นสีขาว */
+.read-more-link, .read-more {
+    color: #ffffff !important;  /* บังคับเป็นสีขาว */
+    text-decoration: none;      /* เอาเส้นขีดเส้นใต้ออก */
+    transition: 0.3s;
+}
+
+/* ตอนเอาเมาส์ไปชี้ ให้เปลี่ยนเป็นสีเขียว (Interactive) */
+.read-more-link:hover, .read-more:hover {
+    color: var(--primary-glow) !important;
+    transform: translateX(5px); /* ขยับนิดนึงให้ดูมีลูกเล่น */
+}
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                KIMX<span class="brand-highlight">Web</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-2">
+                    <li class="nav-item"><a class="nav-link" href="index.html">หน้าหลัก</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#" style="color: var(--primary-glow) !important;">บทความ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">ติดต่อเรา</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="article-header">
+        <div class="container">
+            <span class="badge rounded-pill badge-shine mb-4">KNOWLEDGE HUB</span>
+            <h1 class="article-title">คลังความรู้ & อัปเดตเทคโนโลยี</h1>
+            <p class="header-desc-text">
+                เจาะลึกเบื้องหลังการทำเว็บไซต์ เทคนิค SEO และกลยุทธ์ดิจิทัลที่จะช่วยให้ธุรกิจของคุณเติบโตอย่างก้าวกระโดด
+            </p>
+        </div>
+    </header>
+
+    <div class="container pb-5">
+        
+        <div class="featured-card">
+            <div class="featured-img-col">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" class="featured-img" alt="KIMX Web Team">
+            </div>
+            <div class="featured-content">
+                <div class="blog-category">ABOUT US</div>
+                <h2 class="mb-4 text-white" style="font-size: 2.2rem; font-weight: 700;">ทำไมต้อง KIMX Web? คำตอบของธุรกิจยุคดิจิทัล 2025</h2>
+                <p class="blog-desc" style="font-size: 1.05rem;">
+                    ในยุคที่ใครๆ ก็มีเว็บไซต์ได้ แต่ไม่ใช่ทุกเว็บที่จะ "ขายของได้" ที่ KIMX Web เราไม่ได้แค่เขียนโค้ด แต่เราสร้าง "สินทรัพย์ดิจิทัล" ที่ออกแบบมาเพื่อปิดการขาย รองรับ SEO ตั้งแต่โครงสร้าง และมีความเร็วระดับ A+ เพื่อประสบการณ์ที่ดีที่สุดของลูกค้าคุณ มารู้จักเบื้องหลังแนวคิดของเราที่ช่วยให้ลูกค้ากว่า 100 รายประสบความสำเร็จ
+                </p>
+                <a href="about.html" class="btn btn-outline-light rounded-pill px-4 py-2 mt-2 w-auto" style="width: fit-content;">
+    อ่านต่อ <i class="bi bi-arrow-right ms-2"></i>
+</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="blog-card">
+                    <div class="blog-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop" class="blog-img" alt="SEO Strategy">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-category">MARKETING & SEO</div>
+                        <h3 class="blog-heading">เทคนิคทำ SEO สายขาว ให้ติดหน้าแรก Google แบบยั่งยืน</h3>
+                        <p class="blog-desc">
+                            เลิกยิงแอดแพงๆ แล้วหันมาสร้าง Traffic ฟรีๆ ด้วยการทำ SEO ที่ถูกต้อง ปรับโครงสร้างเว็บยังไงให้ Google รัก?
+                        </p>
+                       <a href="article-seo.html" class="read-more-link">
+    อ่านบทความ <i class="bi bi-chevron-right"></i>
+</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="blog-card">
+                    <div class="blog-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=2070&auto=format&fit=crop" class="blog-img" alt="Web Performance">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-category">WEB TECHNOLOGY</div>
+                        <h3 class="blog-heading">เว็บโหลดช้า = ลูกค้าหนี! ความสำคัญของ Speed Performance</h3>
+                        <p class="blog-desc">
+                            รู้หรือไม่? ลูกค้าจะปิดเว็บทันทีถ้าโหลดนานเกิน 3 วินาที มาดูวิธีที่ KIMX Web ใช้รีดประสิทธิภาพเว็บให้โหลดไวเหมือนสายฟ้า
+                        </p>
+                        <a href="article-speed.html" class="read-more-link">
+                อ่านบทความ <i class="bi bi-chevron-right"></i>
+            </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="blog-card">
+                    <div class="blog-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1526498460520-4c246339dccb?q=80&w=2070&auto=format&fit=crop" class="blog-img" alt="UX/UI Design">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-category">DESIGN TRENDS</div>
+                        <h3 class="blog-heading">เจาะลึกเทรนด์ Web Design 2025: น้อยแต่มาก เรียบแต่โก้</h3>
+                        <p class="blog-desc">
+                            การออกแบบเว็บไซต์ยุคใหม่ไม่ใช่แค่ความสวย แต่ต้อง User Friendly ใช้งานง่าย บนมือถือต้องลื่นไหล
+                        </p>
+                       <a href="article-design.html" class="read-more-link">
+                อ่านบทความ <i class="bi bi-chevron-right"></i>
+            </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 KIMX Web Agency. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
