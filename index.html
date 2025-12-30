@@ -1121,9 +1121,12 @@
                         <div class="pricing-header">
                             <div class="pricing-title">Business Growth</div>
                             <div class="pricing-price" style="color: var(--primary-glow);">
-                                <span class="currency">฿</span>5,500
+                                <div style="font-size: 1.2rem; text-decoration: line-through; color: #94a3b8; margin-bottom: -10px;">฿5,500</div>
+                                <span class="currency">฿</span>3,500
                             </div>
-                            <div class="period">สร้างความน่าเชื่อถือและการเติบโต</div>
+                            <div style="color: #ffcc00; font-size: 0.9rem; font-weight: 600; margin-top: 5px;">
+                                <i class="bi bi-gift-fill me-1"></i> โปรโมชั่นปีใหม่
+                            </div>
                         </div>
                         <ul class="feature-list">
                             <li><i class="bi bi-window-stack"></i> เว็บไซต์สูงสุด 10 หน้า</li>
@@ -1477,5 +1480,61 @@
             });
         }
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // สร้าง CSS สำหรับหิมะ
+            const style = document.createElement('style');
+            style.textContent = `
+                .snowflake {
+                    position: fixed;
+                    top: -20px;
+                    color: #fff;
+                    font-size: 1.5em;
+                    font-family: Arial;
+                    text-shadow: 0 0 5px #000;
+                    user-select: none;
+                    pointer-events: none;
+                    z-index: 99999;
+                    animation-name: fall;
+                    animation-timing-function: linear;
+                    animation-iteration-count: infinite;
+                }
+                @keyframes fall {
+                    to {
+                        transform: translateY(105vh);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // ฟังก์ชันสร้างหิมะ
+            function createSnowflake() {
+                const snowflake = document.createElement('div');
+                snowflake.innerHTML = '❄';
+                snowflake.classList.add('snowflake');
+                
+                // สุ่มตำแหน่งเริ่มต้นและขนาด
+                snowflake.style.left = Math.random() * 100 + 'vw';
+                snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+                snowflake.style.opacity = Math.random();
+                
+                // สุ่มระยะเวลาตก (ความเร็ว)
+                const duration = Math.random() * 5 + 5 + 's';
+                snowflake.style.animationDuration = duration;
+                
+                document.body.appendChild(snowflake);
+                
+                // ลบหิมะเมื่อตกสุดจอ
+                setTimeout(() => {
+                    snowflake.remove();
+                }, parseFloat(duration) * 1000);
+            }
+
+            // สร้างหิมะทุกๆ 200ms
+            setInterval(createSnowflake, 200);
+        });
+    </script>
+
 </body>
 </html>
