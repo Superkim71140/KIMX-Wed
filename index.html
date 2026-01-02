@@ -27,6 +27,7 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
+            margin: 0; /* Reset margin */
         }
 
         /* --- NAVBAR STYLES (Thai & Clean) --- */
@@ -319,6 +320,107 @@
         .hero-img-wrapper:hover .hero-img {
             transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
             box-shadow: 0 20px 50px rgba(5, 117, 230, 0.2);
+        }
+
+        /* --- SECURITY PARTNER SLIDER (UPDATED DESIGN) --- */
+        .security-section {
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 30px 0;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .security-header-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 35px;
+            gap: 20px;
+        }
+
+        .security-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text; /* เพิ่มบรรทัดนี้ตามที่แจ้งเตือน */
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .security-icon {
+            font-size: 1.3rem;
+            color: var(--primary-glow);
+            filter: drop-shadow(0 0 8px rgba(0, 242, 96, 0.5));
+            animation: pulse-shield 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-shield {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .security-line {
+            height: 1px;
+            width: 60px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2));
+        }
+        .security-line.right {
+            background: linear-gradient(90deg, rgba(255,255,255,0.2), transparent);
+        }
+
+        .slider {
+            width: 100%;
+            display: flex;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            padding: 10px 0;
+        }
+
+        .slide-track {
+            display: flex;
+            width: calc(250px * 10); 
+            animation: scroll 20s linear infinite;
+        }
+
+        .slide {
+            width: 250px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide img {
+            max-width: 100%;
+            height: auto;
+            max-height: 45px;
+            
+            /* --- แก้ตรงนี้ครับ --- */
+            filter: none; /* ไม่ใช้ฟิลเตอร์ แสดงสีสดปกติ */
+            opacity: 1;   /* ไม่โปร่งแสง */
+            /* ------------------ */
+
+            transition: all 0.4s ease;
+        }
+
+        .slide img:hover {
+            /* เวลาเอาเมาส์ชี้ ให้กลับมาเป็นสีเดิมชัดๆ */
+            filter: grayscale(0%) brightness(100%) opacity(1);
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-250px * 5)); } 
         }
 
         /* --- SERVICES SECTION (UPGRADED) --- */
@@ -1033,6 +1135,33 @@
         </div> 
     </section>
 
+    <div class="security-section">
+        <div class="container">
+            <div class="security-header-wrapper">
+                <div class="security-line"></div>
+                <i class="bi bi-shield-fill-check security-icon"></i>
+                <div class="security-title">พันธมิตรและเทคโนโลยีความปลอดภัยระดับโลก</div>
+                <div class="security-line right"></div>
+            </div>
+            
+            <div class="slider">
+                <div class="slide-track">
+                    <div class="slide"><img src="logo Cloudflare.png" alt="Cloudflare"></div>
+                    <div class="slide"><img src="logo Sucuri.png" alt="Sucuri"></div>
+                    <div class="slide"><img src="logo akamai.png" alt="Akamai"></div>
+                    <div class="slide"><img src="logo ssl.png" alt="SSL Secure"></div>
+                    <div class="slide"><img src="Logo  Google Cloud.png" alt="Google Cloud"></div>
+                    
+                    <div class="slide"><img src="logo Cloudflare.png" alt="Cloudflare"></div>
+                    <div class="slide"><img src="logo Sucuri.png" alt="Sucuri"></div>
+                    <div class="slide"><img src="logo akamai.png" alt="Akamai"></div>
+                    <div class="slide"><img src="logo ssl.png" alt="SSL Secure"></div>
+                    <div class="slide"><img src="Logo  Google Cloud.png" alt="Google Cloud"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <section class="services-section" id="services">
         <div class="container position-relative" style="z-index: 2;">
             <div class="text-center section-header">
@@ -1482,57 +1611,91 @@
     </script>
 
     <script>
+        // --- High Performance Snow Script (Canvas) ---
+        // โค้ดหิมะแบบใหม่ ใช้ Canvas ทำให้ลื่นหัวแตก ไม่หน่วงเว็บ
         document.addEventListener("DOMContentLoaded", function() {
-            // สร้าง CSS สำหรับหิมะ
-            const style = document.createElement('style');
-            style.textContent = `
-                .snowflake {
-                    position: fixed;
-                    top: -20px;
-                    color: #fff;
-                    font-size: 1.5em;
-                    font-family: Arial;
-                    text-shadow: 0 0 5px #000;
-                    user-select: none;
-                    pointer-events: none;
-                    z-index: 99999;
-                    animation-name: fall;
-                    animation-timing-function: linear;
-                    animation-iteration-count: infinite;
+            // สร้าง Canvas ขึ้นมา
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // ตั้งค่า CSS ให้ Canvas อยู่บนสุดแบบคลิกทะลุได้
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none'; // คลิกทะลุได้
+            canvas.style.zIndex = '99999'; 
+            document.body.appendChild(canvas);
+
+            let width, height;
+            let snowflakes = [];
+
+            // ตั้งค่าขนาดจอ
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            // คลาสสำหรับสร้างเกล็ดหิมะแต่ละอัน
+            class Snowflake {
+                constructor() {
+                    this.init();
                 }
-                @keyframes fall {
-                    to {
-                        transform: translateY(105vh);
+
+                init() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height - height; // เริ่มต้นเหนือจอ
+                    this.size = Math.random() * 15 + 10; // ขนาด 10-25px
+                    this.speed = Math.random() * 1 + 0.5; // ความเร็วตก
+                    this.opacity = Math.random() * 0.5 + 0.3;
+                    this.swing = Math.random() * 3; // การแกว่ง
+                    this.swingStep = Math.random() * 0.1;
+                }
+
+                update() {
+                    this.y += this.speed;
+                    this.x += Math.sin(this.y * 0.01) * 0.5; // แกว่งซ้ายขวาเบาๆ
+
+                    // ถ้าตกเลยขอบล่าง ให้รีเซ็ตไปข้างบนใหม่ (Reuse Object)
+                    if (this.y > height) {
+                        this.init();
+                        this.y = -50;
                     }
                 }
-            `;
-            document.head.appendChild(style);
 
-            // ฟังก์ชันสร้างหิมะ
-            function createSnowflake() {
-                const snowflake = document.createElement('div');
-                snowflake.innerHTML = '❄';
-                snowflake.classList.add('snowflake');
-                
-                // สุ่มตำแหน่งเริ่มต้นและขนาด
-                snowflake.style.left = Math.random() * 100 + 'vw';
-                snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
-                snowflake.style.opacity = Math.random();
-                
-                // สุ่มระยะเวลาตก (ความเร็ว)
-                const duration = Math.random() * 5 + 5 + 's';
-                snowflake.style.animationDuration = duration;
-                
-                document.body.appendChild(snowflake);
-                
-                // ลบหิมะเมื่อตกสุดจอ
-                setTimeout(() => {
-                    snowflake.remove();
-                }, parseFloat(duration) * 1000);
+                draw() {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.font = `${this.size}px Arial`;
+                    ctx.fillText('❄', this.x, this.y);
+                }
             }
 
-            // สร้างหิมะทุกๆ 200ms
-            setInterval(createSnowflake, 200);
+            // สร้างหิมะจำนวนจำกัด (50 ตัวกำลังสวยและไม่หน่วง)
+            for (let i = 0; i < 50; i++) {
+                const flake = new Snowflake();
+                // กระจายตำแหน่งเริ่มต้นให้เต็มจอทันที ไม่ต้องรอตก
+                flake.y = Math.random() * height; 
+                snowflakes.push(flake);
+            }
+
+            // ลูปการทำงาน (Animation Loop)
+            function animate() {
+                ctx.clearRect(0, 0, width, height); // ล้างเฟรมเก่า
+                
+                snowflakes.forEach(flake => {
+                    flake.update();
+                    flake.draw();
+                });
+
+                requestAnimationFrame(animate); // เรียกเฟรมถัดไปอย่างนุ่มนวล
+            }
+
+            animate();
         });
     </script>
 
