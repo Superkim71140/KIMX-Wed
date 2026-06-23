@@ -1,0 +1,781 @@
+@import "tailwindcss";
+
+:root {
+  /* Harmonious Color Palette (WCAG 2.1 AA) */
+  --color-primary: #14B8A6;
+  
+  --bg-base: #F5F5F7;
+  --bg-elevated: #FFFFFF;
+  --bg-soft: #F5F5F7;
+  
+  --glass-border: #E2E8F0;
+  --glass-bg: rgba(255, 255, 255, 0.86);
+
+  --blue-glow: var(--color-primary); /* Redirecting legacy glow to new primary */
+  --sky-glow: #38bdf8;
+  --green-line: #06c755;
+  --amber-glow: #fbbf24;
+  --purple-glow: #8b5cf6;
+
+  /* Typography Colors */
+  --text-main: #2D3748;
+  --text-heading: #1A202C;
+  --text-muted: #718096;
+  --nav-glass: rgba(255, 255, 255, 0.9);
+
+  --bg-dark: var(--bg-base);
+  --card-bg: var(--glass-bg);
+  --primary-glow: var(--color-primary);
+  --secondary-glow: var(--amber-glow);
+  --border-surface: #E2E8F0;
+}
+
+@theme {
+  --color-bg-base: var(--bg-base);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-glass-border: var(--glass-border);
+  --color-glass-bg: var(--glass-bg);
+  
+  --color-blue-glow: var(--blue-glow);
+  --color-green-line: var(--green-line);
+  --color-amber-glow: var(--amber-glow);
+  --color-purple-glow: var(--purple-glow);
+
+  --color-bg-dark: var(--bg-dark);
+  --color-card-bg: var(--card-bg);
+  --color-primary-glow: var(--primary-glow);
+  --color-secondary-glow: var(--secondary-glow);
+  
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-nav-glass: var(--nav-glass);
+  
+  --font-sans: var(--font-prompt), var(--font-inter), ui-sans-serif, system-ui;
+}
+
+/* Base Body Styles & Typographic Scale */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+html, body {
+  color: #1D1D1F !important; /* Apple's deep text color */
+  font-family: var(--font-inter), var(--font-prompt), system-ui, sans-serif;
+  line-height: 1.75 !important; /* Enhanced relaxed reading line-height */
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #0F172A !important; /* High contrast headers */
+}
+
+h1 {
+  font-size: 3rem; /* 48px */
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 2.25rem; /* 36px */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+}
+
+h5 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+}
+
+p, li, .body-text {
+  font-size: 1rem; /* 16px */
+  font-weight: 400;
+}
+
+/* Section scroll margins to prevent floating navbar blocking headers */
+section {
+  scroll-margin-top: 100px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-glow);
+  box-shadow: 0 0 10px var(--blue-glow);
+}
+
+/* Hide scrollbar utility class */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Keyboard Accessible Focus States */
+*:focus-visible {
+  outline: 2px solid var(--blue-glow);
+  outline-offset: 4px;
+}
+
+/* --- Premium Background Grids & Decorative Orbs --- */
+.section-bg-grid {
+  background-image: none !important;
+}
+
+/* Modern Tech Premium Grid Pattern */
+.tech-grid-bg {
+  background-color: #F5F5F7 !important;
+  background-image: none !important;
+}
+
+.section-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle Film Grain Noise Overlay */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Styled glass panel wrapper - Minimalist */
+.glass-panel {
+  background: var(--bg-elevated);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Loader Scanline & Spinner Keyframes --- */
+@keyframes scanline {
+  0% { top: -10%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
+}
+
+@keyframes cyber-logo-reveal {
+  0% { color: rgba(255, 255, 255, 0.1); text-shadow: none; }
+  50% { color: rgba(255, 255, 255, 0.5); text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+  100% { color: #ffffff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); -webkit-text-stroke: 0; }
+}
+
+@keyframes highlight-reveal {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cyber-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Loader Styles */
+.cyber-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--blue-glow);
+  box-shadow: 0 0 15px var(--blue-glow), 0 0 30px var(--amber-glow);
+  opacity: 0.8;
+  animation: scanline 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  z-index: 3;
+}
+
+.cyber-loader-ring {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0%, transparent 70%, var(--blue-glow) 100%);
+  mask-image: radial-gradient(transparent 68%, black 70%);
+  -webkit-mask-image: radial-gradient(transparent 68%, black 70%);
+  animation: cyber-spin 1.5s linear infinite;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+}
+
+.cyber-loader-ring.inner {
+  width: 140px;
+  height: 140px;
+  background: conic-gradient(from 180deg, transparent 0%, transparent 60%, var(--amber-glow) 100%);
+  animation: cyber-spin 2s linear infinite reverse;
+  box-shadow: 0 0 20px rgba(5, 117, 230, 0.2);
+}
+
+/* --- Brand Logo Beam Animation --- */
+@keyframes badge-beam-spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.badge-beam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250%;
+  height: 250%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 70%,
+    var(--blue-glow) 80%,
+    var(--amber-glow) 100%
+  );
+  transform-origin: center center;
+  animation: badge-beam-spin 3s linear infinite;
+  z-index: 1;
+}
+
+.glass-badge {
+  animation: badge-float 4s ease-in-out infinite;
+}
+
+/* --- Security Partners Infinite Scroll Marquee --- */
+@keyframes security-partners-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.security-partners__viewport {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.security-partners__track {
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+  align-items: center;
+  animation: security-partners-marquee 35s linear infinite;
+}
+
+.security-partners__track:hover {
+  animation-play-state: paused;
+}
+
+.security-partners__track:focus-within {
+  animation-play-state: paused;
+}
+
+.security-partners__item {
+  flex-shrink: 0;
+}
+
+.security-partners__logo-card {
+  width: 8rem; /* 128px */
+  height: 3rem; /* 48px */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: grayscale(100%);
+  opacity: 0.5;
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.security-partners__logo-card:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+/* --- Shield Pulse Animation --- */
+@keyframes pulse-shield {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.9)); }
+}
+
+.security-icon-pulse {
+  animation: pulse-shield 2.5s infinite cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Business Package Animated Border Pan --- */
+@keyframes borderPan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.premium-border-pan::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 24px;
+  background: linear-gradient(45deg, var(--blue-glow), var(--amber-glow), transparent 60%);
+  background-size: 200% 200%;
+  animation: borderPan 4s ease infinite;
+  z-index: -1;
+}
+
+/* --- Button Shine animation --- */
+@keyframes buttonShine {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+.shine-hover-btn::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-25deg);
+  transition: all 0.5s ease;
+}
+
+.shine-hover-btn:hover::before {
+  animation: buttonShine 1.5s ease;
+}
+
+/* --- Form Floating Label & Custom Focus States --- */
+.custom-input:focus {
+  border-color: var(--blue-glow) !important;
+  box-shadow: 0 0 12px rgba(20, 125, 255, 0.15) !important;
+  outline: none;
+}
+
+.custom-input {
+  background: #ffffff !important;
+  border: 1px solid #c2e0ff !important;
+  color: #0b1b33 !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease;
+}
+
+/* Style for option elements */
+select.custom-input option {
+  background-color: #ffffff !important;
+  color: #0b1b33;
+}
+
+.custom-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.form-floating > label {
+  color: var(--text-muted) !important;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: var(--blue-glow) !important;
+}
+
+/* --- Navigation Link Line Glow --- */
+.nav-link-glow::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background: var(--blue-glow);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px var(--blue-glow);
+}
+
+.nav-link-glow:hover::after {
+  width: 100%;
+}
+
+/* Smooth opacity and transform transitions */
+.transition-all-500 {
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .badge-beam,
+  .cyber-scanline,
+  .cyber-loader-ring,
+  .security-icon-pulse,
+  .premium-border-pan::before,
+  .shine-hover-btn::before,
+  .animate-in.fade-in.slide-in-from-bottom-4 {
+    animation: none !important;
+    transition: none !important;
+  }
+  .security-partners__track {
+    animation: none !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 2rem !important;
+    width: 100% !important;
+  }
+  .security-partners__item[data-duplicate="true"] {
+    display: none !important;
+  }
+}
+/* --- KIMXWEB Light Blue Readability Upgrade --- */
+.kimx-light-bg {
+  position: relative;
+  background-color: #F8FAFC; /* Luxury Tech Off-White baseline */
+}
+
+.kimx-light-bg::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    /* Layer 1: Subtle noise texture with 1.5% opacity */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' opacity='0.015' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+    /* Layer 2: Feather-light branding tint radial glow anchored behind hero */
+    radial-gradient(circle at 65% 45%, rgba(20, 184, 166, 0.02) 0%, transparent 70%);
+  background-size: auto, 100% 100%;
+  background-repeat: repeat, no-repeat;
+  
+  /* Hardware acceleration properties to detach background paint cycle from layout scrolls */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.kimx-soft-grid {
+  background-image: none !important;
+}
+
+.kimx-scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.kimx-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.kimx-white-card {
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.kimx-white-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+.kimx-text-main {
+  color: #0b1b33;
+}
+
+.kimx-text-muted {
+  color: #64748b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kimx-white-card,
+  .kimx-white-card * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Apple-Tier Fade-In-Up Animation Utility */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in.fade-in.slide-in-from-bottom-4 {
+  animation: fadeInUp 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- KIMX Section Utilities --- */
+
+/* Override global h* color inside dark navy sections */
+.kimx-dark-section h1,
+.kimx-dark-section h2,
+.kimx-dark-section h3,
+.kimx-dark-section h4,
+.kimx-dark-section h5,
+.kimx-dark-section h6 {
+  color: #ffffff !important;
+}
+
+/* Gradient text helper — use with bg-clip-text inline styles or as class */
+.kimx-gradient-text {
+  background: linear-gradient(90deg, #14B8A6, #0EA5E9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Premium card base */
+.kimx-premium-card {
+  background: #ffffff;
+  border: 1px solid #DCE8F2;
+  border-radius: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  /*
+   * IMPORTANT: Do NOT include `transform` here.
+   * When this element carries data-aos, AOS owns the `transform` and `opacity`
+   * properties for the duration of the scroll-reveal. A broad `transition: all`
+   * or `transition: transform` on the same element causes AOS to fight itself.
+   * Shadow transitions are safe because AOS never animates box-shadow.
+   */
+  transition: box-shadow 0.35s ease;
+  will-change: transform, opacity;
+}
+.kimx-premium-card:hover {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+
+/* Dark dashboard card */
+.kimx-dashboard-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+}
+
+/* Audit section outer wrapper */
+.kimx-audit-card {
+  background: linear-gradient(135deg, #07111F 0%, #0B1220 45%, #062C35 100%);
+  border: 1px solid rgba(14, 165, 233, 0.18);
+  border-radius: 36px;
+  overflow: hidden;
+}
+
+/* Location / feature chip */
+.kimx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: #F4F8FB;
+  border: 1px solid #DCE8F2;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.kimx-chip:hover {
+  background: rgba(20, 184, 166, 0.07);
+  border-color: rgba(20, 184, 166, 0.35);
+  color: #14B8A6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kimx-premium-card,
+  .kimx-premium-card:hover {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/*
+ * AOS Isolation utility — use `will-change: transform, opacity` on elements
+ * that carry data-aos to promote them to their own GPU compositing layer.
+ * This prevents AOS animations from causing repaints on sibling elements.
+ * Applied automatically by AOS via [data-aos] selector below.
+ */
+[data-aos] {
+  will-change: transform, opacity;
+}
+
+/* Custom Swiper Pagination Styling */
+.custom-swiper-pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #cbd5e1;
+  opacity: 0.6;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+}
+.custom-swiper-pagination .swiper-pagination-bullet-active {
+  width: 24px;
+  background: var(--blue-glow) !important;
+  opacity: 1;
+}
+
+/*
+ * Testimonial Card GPU Isolation — prevents Swiper/AOS layout repaint feedback loops
+ * that cause the card container to vibrate or jitter during mouse hover.
+ */
+.testimonial-card-gpu {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease !important;
+}
+.testimonial-card-gpu:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* --- Testimonial Sibling Focus Dimming (Optimized Descendant Hover) --- */
+.testimonial-carousel-wrapper:hover .testimonial-outer-wrapper:not(:hover) {
+  opacity: 0.4;
+  filter: blur(2px);
+}
+
+.testimonial-outer-wrapper {
+  transition: opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), filter 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, filter;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+
+
+/* Highly optimized slow-and-smooth transition utilities */
+.hover-slow-smooth {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1), border-color 600ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.hover-slow-smooth:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 30px 60px -15px rgba(20, 184, 166, 0.08) !important;
+}
+
+.btn-slow-smooth {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), background-color 600ms cubic-bezier(0.16, 1, 0.3, 1), border-color 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.btn-slow-smooth:hover {
+  transform: scale(1.03) translateY(-1px) !important;
+}
+.btn-slow-smooth:active {
+  transform: scale(0.97) translateY(0) !important;
+}
+
+/* Swiper Translation Isolation — prevents broad CSS transitions from interfering with Swiper wrapper */
+.swiper-wrapper {
+  transition-property: transform !important;
+  transition-timing-function: linear !important;
+}
+
+/* Fix swiper-slide height so Swiper does not trigger layout recalculation per tick */
+.swiper-slide {
+  height: auto;
+  backface-visibility: hidden;
+}
+
+/*
+ * Portfolio Card GPU Isolation — detaches sub-pixel rounding cycles from layout scrolls
+ * and prevents Swiper autoplay layout repaint feedback loops.
+ * NOTE: will-change is intentionally absent on the outer article — Swiper composites the
+ * wrapper itself. Adding will-change here would create a competing stacking context.
+ */
+.portfolio-card-gpu {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1), border-color 600ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.portfolio-card-gpu:hover {
+  box-shadow: 0 20px 40px rgba(20, 184, 166, 0.06) !important;
+  border-color: rgba(20, 184, 166, 0.2) !important;
+}
+
+/*
+ * Service Card GPU Isolation — detaches entry animations and hover shifts
+ * from browser repaint cycles to guarantee stable scrolling threads.
+ */
+.service-card-gpu {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/*
+ * Portfolio Swiper Height Lock — sets minimum dimensions of the slider wrapper
+ * to prevent layout shifts and scroll snaps during continuous loops, but allows
+ * expansion for dynamic content like feature checklists.
+ */
+.portfolio-swiper-lock {
+  min-height: 620px !important;
+}
+@media (min-width: 640px) {
+  .portfolio-swiper-lock {
+    min-height: 650px !important;
+  }
+}
+@media (min-width: 1024px) {
+  .portfolio-swiper-lock {
+    min-height: 685px !important;
+  }
+}
+
+.portfolio-swiper-lock .swiper,
+.portfolio-swiper-lock .swiper-wrapper {
+  min-height: 100% !important;
+}
+
+/* Premium Slow Float Animations */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-slower {
+  animation: float-slower 16s ease-in-out infinite;
+  animation-delay: -8s;
+  will-change: transform;
+}

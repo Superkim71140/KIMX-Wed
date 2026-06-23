@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40" fill="none">
+  <rect width="120" height="40" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+  <path d="M22 13L29 17V25L22 29L15 25V17L22 13Z" fill="#4285F4" opacity="0.8"/>
+  <path d="M22 13L29 17L22 21L15 17L22 13Z" fill="#EA4335"/>
+  <path d="M15 17V25L22 21L15 17Z" fill="#FBBC05"/>
+  <path d="M22 21L29 25V17L22 21Z" fill="#34A853"/>
+  <text x="44" y="24" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1E293B">Google Cloud</text>
+</svg>
