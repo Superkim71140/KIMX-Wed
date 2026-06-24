@@ -1,9 +1,9 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Clock, Calendar, ChevronRight } from "lucide-react";
-import { newsArticles } from "@/data/news";
+import { getArticleRegistry } from "@/lib/articles/registry";
+import { getFeaturedArticle, getLatestArticles } from "@/lib/articles/featured";
 import { buildMetadata, siteUrl } from "@/lib/seo";
 import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
@@ -15,81 +15,17 @@ export const metadata: Metadata = buildMetadata({
   path: "/news",
 });
 
-// Category Styles Helper
-export const getCategoryColorStyles = (categorySlug: string) => {
-  switch (categorySlug) {
-    case "ai":
-      return "text-purple-750 bg-purple-50 border-purple-200/80 hover:border-purple-300";
-    case "phone":
-      return "text-sky-750 bg-sky-50 border-sky-200/80 hover:border-sky-300";
-    case "game":
-      return "text-teal-600 bg-teal-50 border-teal-200/80 hover:border-teal-300";
-    case "tech":
-      return "text-blue-700 bg-blue-50 border-blue-200/80 hover:border-blue-300";
-    case "automotive":
-      return "text-emerald-700 bg-emerald-50 border-emerald-200/80 hover:border-emerald-300";
-    case "cyber-security":
-      return "text-rose-700 bg-rose-50 border-rose-200/80 hover:border-rose-300";
-    case "digital-business":
-      return "text-amber-700 bg-amber-50 border-amber-200/80 hover:border-amber-300";
-    case "how-to":
-      return "text-indigo-750 bg-indigo-50 border-indigo-200/80 hover:border-indigo-300";
-    default:
-      return "text-slate-700 bg-slate-50 border-slate-200/80 hover:border-slate-300";
-  }
-};
-
-// Custom Cover Image or Gradient Placeholder Renderer
-export const renderArticleCover = (coverImage: string, title: string, category: string, coverFit?: "cover" | "contain") => {
-  if (coverImage.startsWith("linear-gradient") || coverImage.includes("gradient")) {
-    return (
-      <div
-        className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden group-hover:scale-105 transition-transform duration-700 ease-out"
-        style={{ background: coverImage }}
-      >
-        {/* Decorative grids removed */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
-        
-        {/* Sleek dynamic hub graphic */}
-        <div className="z-10 bg-white/90 border border-sky-100/60 backdrop-blur-md px-5 py-3 rounded-2xl text-center shadow-lg">
-          <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-sky-600 font-sans block mb-1">
-            {category}
-          </span>
-          <span className="text-[11px] text-slate-500 font-light font-sans tracking-wide block uppercase">
-            KIMX TECH HUB
-          </span>
-        </div>
-        
-        {/* Ambient bottom glowing orb */}
-        <div className="absolute -bottom-8 -right-8 w-20 h-20 bg-sky-500/15 rounded-full blur-xl" />
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <Image
-        src={coverImage}
-        alt={title}
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        loading="lazy"
-        className={`${coverFit === 'contain' ? 'object-contain scale-95 p-4' : 'object-cover'} transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-0.5`}
-      />
-      {coverFit !== 'contain' && <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent pointer-events-none" />}
-    </>
-  );
-};
+import { getCategoryColorStyles, renderArticleCover } from "@/lib/news-presentation";
+export { getCategoryColorStyles, renderArticleCover };
 
 export default function NewsHubPage() {
-  // Sort articles by publication date
-  const sortedArticles = [...newsArticles].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
+  const articles = getArticleRegistry();
+  const featuredArticle = getFeaturedArticle(articles);
+  const regularArticles = getLatestArticles(articles, {
+    excludeSlug: featuredArticle?.slug
+  });
 
-  // Separate featured article and regular articles
-  const featuredArticle = sortedArticles.find((art) => art.featured) || sortedArticles[0];
-  const regularArticles = sortedArticles.filter((art) => art.slug !== featuredArticle?.slug);
+  const sortedArticles = featuredArticle ? [featuredArticle, ...regularArticles] : regularArticles;
 
   // Injected JSON-LD Schema
   const schemaList = {
@@ -168,9 +104,9 @@ export default function NewsHubPage() {
                   บทความแนะนำ
                 </h2>
                 <Link href={`/news/${featuredArticle.categorySlug}/${featuredArticle.slug}`} className="group block">
-                  <GlassCard className="flex flex-col lg:flex-row gap-8 lg:gap-12 !p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
+                  <GlassCard className="flex flex-col lg:flex-row gap-8 lg:gap-12 p-0! bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
                     {/* Cover Image Wrapper */}
-                    <div className={`relative w-full lg:w-3/5 aspect-[16/10] lg:aspect-auto min-h-[260px] lg:min-h-[380px] overflow-hidden ${featuredArticle.coverFit === 'contain' ? 'bg-slate-100/50 border-r border-sky-100/50' : 'bg-slate-50'}`}>
+                    <div className={`relative w-full lg:w-3/5 aspect-16/10 lg:aspect-auto min-h-[260px] lg:min-h-[380px] overflow-hidden ${featuredArticle.coverFit === 'contain' ? 'bg-slate-100/50 border-r border-sky-100/50' : 'bg-slate-50'}`}>
                       {renderArticleCover(featuredArticle.coverImage, featuredArticle.title, featuredArticle.category, featuredArticle.coverFit)}
                       {/* Floating Category Tag */}
                       <div className="absolute top-4 left-4 z-20">
@@ -208,7 +144,7 @@ export default function NewsHubPage() {
 
                       {/* Excerpt */}
                       <p className="text-slate-600 text-sm font-normal leading-relaxed mb-6 font-sans">
-                        {featuredArticle.excerpt}
+                        {featuredArticle.description}
                       </p>
 
                       {/* Author */}
@@ -238,12 +174,12 @@ export default function NewsHubPage() {
                     className="group block h-full"
                   >
                     <GlassCard
-                      className="flex flex-col h-full !p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
+                      className="flex flex-col h-full p-0! bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
                       hoverScale={false}
                       hoverGlow={false}
                     >
                       {/* Image Container */}
-                      <div className={`relative w-full aspect-[16/10] overflow-hidden ${article.coverFit === 'contain' ? 'bg-slate-100/50 border-b border-sky-100/50' : 'bg-slate-50'}`}>
+                      <div className={`relative w-full aspect-16/10 overflow-hidden ${article.coverFit === 'contain' ? 'bg-slate-100/50 border-b border-sky-100/50' : 'bg-slate-50'}`}>
                         {renderArticleCover(article.coverImage, article.title, article.category, article.coverFit)}
                         {/* Floating tag */}
                         <div className="absolute top-3.5 left-3.5 z-20">
@@ -275,7 +211,7 @@ export default function NewsHubPage() {
 
                         {/* Excerpt */}
                         <p className="text-xs sm:text-sm font-normal text-slate-600 leading-relaxed line-clamp-3 mb-6 font-sans">
-                          {article.excerpt}
+                          {article.description}
                         </p>
 
                         {/* CTA / Author strip */}

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Lightbulb, Sun, Moon, Sparkles } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { Lightbulb, Sun, Moon } from "lucide-react";
 import { Article } from "@/data/articles";
 import Container from "../ui/Container";
 import GlassCard from "../ui/GlassCard";
-import { motion, useScroll, useSpring, useInView } from "framer-motion";
+import { motion, useScroll, useSpring, useInView, useReducedMotion } from "framer-motion";
 import BenchmarkBar from "./BenchmarkBar";
 
 const TECH_KEYWORDS = [
@@ -33,27 +33,62 @@ interface ArticleContentProps {
   article: Article;
 }
 
+// Helper to get heading IDs
+const getHeadingId = (text: string, index: number) => {
+  if (!text) return `heading-${index}`;
+  return text.trim().replace(/\s+/g, '-').toLowerCase();
+};
+
 // Counter component for soft numerical count-up
-function Counter({ from, to, prefix = "", suffix = "" }: { from: number; to: number; prefix?: string; suffix?: string }) {
+function Counter({
+  from,
+  to,
+  prefix = "",
+  suffix = "",
+  shouldReduceMotion = false
+}: {
+  from: number;
+  to: number;
+  prefix?: string;
+  suffix?: string;
+  shouldReduceMotion?: boolean;
+}) {
   const nodeRef = useRef<HTMLSpanElement>(null);
-  const springValue = useSpring(from, { damping: 20, stiffness: 40, mass: 1.5 });
+  const springValue = useSpring(shouldReduceMotion ? to : from, { damping: 20, stiffness: 40, mass: 1.5 });
   
   useEffect(() => {
+    if (shouldReduceMotion) return;
     springValue.set(to);
-  }, [springValue, to]);
+  }, [springValue, to, shouldReduceMotion]);
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      if (nodeRef.current) {
+        nodeRef.current.textContent = `${prefix}${to}${suffix}`;
+      }
+      return;
+    }
     return springValue.on("change", (latest) => {
       if (nodeRef.current) {
         nodeRef.current.textContent = `${prefix}${Math.round(latest)}${suffix}`;
       }
     });
-  }, [springValue, prefix, suffix]);
+  }, [springValue, prefix, suffix, to, shouldReduceMotion]);
 
-  return <span ref={nodeRef}>{prefix}{from}{suffix}</span>;
+  return <span ref={nodeRef}>{prefix}{shouldReduceMotion ? to : from}{suffix}</span>;
 }
 
-const AnimatedStat = ({ value, label, accentColor }: { value: string; label: string; accentColor: string }) => {
+const AnimatedStat = ({
+  value,
+  label,
+  accentColor,
+  shouldReduceMotion
+}: {
+  value: string;
+  label: string;
+  accentColor: string;
+  shouldReduceMotion: boolean;
+}) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
@@ -66,9 +101,9 @@ const AnimatedStat = ({ value, label, accentColor }: { value: string; label: str
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : (shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 })}
+      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: "easeOut" }}
       className="rounded-2xl p-6 bg-white border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] text-center flex flex-col justify-center items-center relative overflow-hidden group transition-shadow duration-500"
     >
       <div
@@ -76,7 +111,7 @@ const AnimatedStat = ({ value, label, accentColor }: { value: string; label: str
         style={{ color: accentColor }}
       >
         {isInView ? (
-          <Counter from={0} to={displayNum} prefix={prefix} suffix={suffix} />
+          <Counter from={0} to={displayNum} prefix={prefix} suffix={suffix} shouldReduceMotion={shouldReduceMotion} />
         ) : (
           "0" + suffix
         )}
@@ -89,7 +124,7 @@ const AnimatedStat = ({ value, label, accentColor }: { value: string; label: str
 };
 
 export default function ArticleContent({ article }: ArticleContentProps) {
-  const headings = article.content.filter((b) => b.type === "heading");
+  const shouldReduceMotion = useReducedMotion() ?? false;
   const [activeId, setActiveId] = useState("");
   const [isEyeShieldOn, setIsEyeShieldOn] = useState(false);
 
@@ -100,37 +135,70 @@ export default function ArticleContent({ article }: ArticleContentProps) {
     restDelta: 0.001
   });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const headingElements = headings.map(h => {
-        const id = h.text!.replace(/\s+/g, '-').toLowerCase();
-        return document.getElementById(id);
-      });
-      
-      let currentActive = "";
-      for (const el of headingElements) {
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 150) {
-          currentActive = el.id;
-        }
-      }
-      
-      if (currentActive) {
-        setActiveId(currentActive);
-      }
-    };
+  // Memoize derived headings array and inject stable IDs
+  const headingsWithIds = useMemo(() => {
+    const rawHeadings = article.content.filter((b) => b.type === "heading");
+    return rawHeadings.map((h, i) => ({
+      ...h,
+      id: getHeadingId(h.text || "", i)
+    }));
+  }, [article.content]);
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [headings]);
+  // IntersectionObserver to determine active heading
+  useEffect(() => {
+    if (headingsWithIds.length === 0) return;
+
+    const headingElements = headingsWithIds
+      .map((h) => document.getElementById(h.id))
+      .filter(Boolean) as HTMLElement[];
+
+    const visibleHeadings = new Map<string, boolean>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          visibleHeadings.set(entry.target.id, entry.isIntersecting);
+        });
+
+        // Find the first heading currently intersecting
+        const active = headingsWithIds.find((h) => visibleHeadings.get(h.id));
+        if (active) {
+          setActiveId(active.id);
+        } else {
+          // Fallback: choose the nearest heading from the top
+          let bestHeadingId = "";
+          let minTop = Infinity;
+          headingElements.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top > 0 && rect.top < minTop) {
+              minTop = rect.top;
+              bestHeadingId = el.id;
+            }
+          });
+          if (bestHeadingId) {
+            setActiveId(bestHeadingId);
+          }
+        }
+      },
+      {
+        rootMargin: "-100px 0px -70% 0px",
+        threshold: 0
+      }
+    );
+
+    headingElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      headingElements.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
+    };
+  }, [headingsWithIds]);
 
   const scrollToId = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
       const y = el.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: shouldReduceMotion ? 'auto' : 'smooth' });
     }
   };
 
@@ -138,9 +206,11 @@ export default function ArticleContent({ article }: ArticleContentProps) {
     let result: React.ReactNode[] = [text];
     
     TECH_KEYWORDS.forEach(({ term, desc }) => {
+      // Escape regex special characters to be safe
+      const escapedTerm = term.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
       result = result.flatMap((part, idx) => {
         if (typeof part !== "string") return [part] as React.ReactNode[];
-        const parts = part.split(new RegExp(`(${term})`, 'gi'));
+        const parts = part.split(new RegExp(`(${escapedTerm})`, 'gi'));
         return parts.map((sub, i) => {
           if (sub.toLowerCase() === term.toLowerCase()) {
             return <KeywordTooltip key={`${idx}-${i}`} term={term} desc={desc}>{sub}</KeywordTooltip>;
@@ -156,13 +226,17 @@ export default function ArticleContent({ article }: ArticleContentProps) {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.15 }
+      transition: { staggerChildren: shouldReduceMotion ? 0 : 0.15 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 50, damping: 20 } }
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: shouldReduceMotion ? { duration: 0 } : { type: "spring" as const, stiffness: 50, damping: 20 } 
+    }
   };
 
   return (
@@ -172,7 +246,7 @@ export default function ArticleContent({ article }: ArticleContentProps) {
         style={{ scaleX, backgroundColor: article.accentColor, boxShadow: `0 0 10px ${article.accentColor}` }}
       />
       <section 
-        className={`py-12 relative transition-colors duration-[1500ms] ease-in-out font-sans ${isEyeShieldOn ? 'bg-[#FDFBF7]' : 'bg-transparent'}`}
+        className={`py-12 relative transition-colors duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] font-sans ${isEyeShieldOn ? 'bg-[#FDFBF7]' : 'bg-transparent'}`}
       >
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-10 gap-12 relative items-start">
@@ -198,19 +272,18 @@ export default function ArticleContent({ article }: ArticleContentProps) {
 
               {/* Takeaways / AI Summary Component */}
               <motion.div variants={itemVariants} className="mb-10 font-sans">
-                <div className="bg-white/80 border border-slate-200/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.02)] rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-b from-sky-400 to-indigo-500" />
-                  <h4 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Sparkles size={14} className="text-sky-500" />
+                <div className="bg-white border border-slate-200/60 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-teal-500" />
+                  <h4 className="text-sm font-bold text-slate-900 mb-4">
                     สรุปประเด็นสำคัญ (Takeaways)
                   </h4>
                   <ul className="space-y-4">
-                    <li className="flex gap-3 text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
-                      <span className="text-sky-500 font-bold shrink-0">•</span>
+                    <li className="flex gap-3 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
+                      <span className="text-teal-500 font-bold shrink-0">•</span>
                       เนื้อหานี้อธิบายวิธีการใช้กลยุทธ์และการตั้งค่าต่างๆ ให้เกิดประโยชน์สูงสุดกับธุรกิจ
                     </li>
-                    <li className="flex gap-3 text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
-                      <span className="text-sky-500 font-bold shrink-0">•</span>
+                    <li className="flex gap-3 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
+                      <span className="text-teal-500 font-bold shrink-0">•</span>
                       รวมไปถึงทิปส์ลับที่นักพัฒนามักใช้เพื่อเร่งประสิทธิภาพและการเติบโตอย่างยั่งยืน
                     </li>
                   </ul>
@@ -218,15 +291,14 @@ export default function ArticleContent({ article }: ArticleContentProps) {
               </motion.div>
 
               {/* Main Content Nodes */}
-              <div className={`space-y-8 font-normal text-base sm:text-lg leading-relaxed relative z-10 transition-colors duration-1000 ${isEyeShieldOn ? 'text-slate-700' : 'text-slate-600'}`}>
+              <div className={`space-y-8 font-normal text-base sm:text-lg leading-relaxed relative z-10 transition-colors duration-700 ${isEyeShieldOn ? 'text-slate-800' : 'text-slate-900'}`} style={{ wordBreak: 'normal', overflowWrap: 'anywhere' }}>
                 {article.content.map((block, index) => {
                   switch (block.type) {
                     case "paragraph":
                       return (
-                        <motion.p
-                          variants={itemVariants}
+                        <p
                           key={index}
-                          className="text-base md:text-[1.05rem] text-slate-600/90 font-normal leading-relaxed mb-6 antialiased max-w-3xl mx-auto px-4 md:px-0"
+                          className="text-base md:text-[1.05rem] font-normal leading-relaxed mb-6 antialiased max-w-3xl mx-auto px-4 md:px-0"
                         >
                           {block.text.split(/<strong>(.*?)<\/strong>/g).map((part, i) => {
                             const isBold = i % 2 === 1;
@@ -241,27 +313,26 @@ export default function ArticleContent({ article }: ArticleContentProps) {
                               return renderTextWithTooltips(subpart);
                             });
                           })}
-                        </motion.p>
+                        </p>
                       );
 
                     case "heading":
-                      const id = block.text!.replace(/\s+/g, '-').toLowerCase();
+                      const id = getHeadingId(block.text || "", index);
                       return (
-                        <motion.h2
-                          variants={itemVariants}
+                        <h2
                           key={index}
                           id={id}
-                          className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-10 mb-4 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans"
+                          className="text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-10 mb-4 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans"
                         >
                           {block.text}
-                        </motion.h2>
+                        </h2>
                       );
 
                     case "highlight":
                       return (
                         <motion.div variants={itemVariants} key={index}>
                           <GlassCard
-                            className={`bg-white/80! backdrop-blur-md p-6! sm:p-8! my-8 border-y-transparent! border-r-transparent! border-l-4! rounded-2xl! shadow-[0_8px_30px_rgba(0,0,0,0.04)]`}
+                            className="bg-white/80! backdrop-blur-md p-6! sm:p-8! my-8 border-y-transparent! border-r-transparent! border-l-4! rounded-2xl! shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
                             style={{ borderLeftColor: article.accentColor }}
                             hoverScale={false}
                           >
@@ -271,11 +342,11 @@ export default function ArticleContent({ article }: ArticleContentProps) {
                               </div>
                               <div>
                                 {block.title && (
-                                  <h4 className="text-slate-900 font-bold text-base sm:text-lg mb-2">
+                                  <h4 className="text-slate-950 font-bold text-base sm:text-lg mb-2">
                                     {block.title}
                                   </h4>
                                 )}
-                                <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                                <p className="text-sm font-medium text-slate-900 leading-relaxed">
                                   {block.text}
                                 </p>
                               </div>
@@ -304,7 +375,13 @@ export default function ArticleContent({ article }: ArticleContentProps) {
                       return (
                         <motion.div variants={itemVariants} key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-10">
                           {block.items.map((stat, sIdx) => (
-                            <AnimatedStat key={sIdx} value={stat.value} label={stat.label} accentColor={article.accentColor} />
+                            <AnimatedStat 
+                              key={sIdx} 
+                              value={stat.value} 
+                              label={stat.label} 
+                              accentColor={article.accentColor} 
+                              shouldReduceMotion={shouldReduceMotion} 
+                            />
                           ))}
                         </motion.div>
                       );
@@ -346,12 +423,12 @@ export default function ArticleContent({ article }: ArticleContentProps) {
             </motion.div>
 
             {/* RIGHT COLUMN - SIDEBAR (3 cols) */}
-            {headings.length > 0 && (
+            {headingsWithIds.length > 0 && (
               <motion.div 
                 className="hidden lg:block lg:col-span-3"
-                initial={{ opacity: 0, x: 20 }}
+                initial={shouldReduceMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, delay: 0.4 }}
               >
                 <div className="sticky top-32 bg-white/80 border border-slate-200/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.02)] rounded-2xl p-6 sm:p-8 font-sans">
                   <h3 className="text-sm font-bold tracking-wider text-slate-900 uppercase mb-6 flex items-center gap-2">
@@ -359,13 +436,12 @@ export default function ArticleContent({ article }: ArticleContentProps) {
                     สารบัญเนื้อหา
                   </h3>
                   <ul className="space-y-3">
-                    {headings.map((h, i) => {
-                      const id = h.text!.replace(/\s+/g, '-').toLowerCase();
-                      const isActive = activeId === id;
+                    {headingsWithIds.map((h, i) => {
+                      const isActive = activeId === h.id;
                       return (
                         <li key={i}>
                           <button
-                            onClick={() => scrollToId(id)}
+                            onClick={() => scrollToId(h.id)}
                             className={`text-sm text-left transition-all duration-300 hover:text-slate-900 ${isActive ? 'font-bold' : 'font-medium text-slate-500'}`}
                             style={{ color: isActive ? article.accentColor : undefined }}
                           >

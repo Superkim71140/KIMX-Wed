@@ -23,12 +23,10 @@ export default function NewsCategoryBar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      const isScrolled = window.scrollY > 20;
+      setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
     };
+    handleScroll(); // Initialize scroll status on mount
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -45,9 +43,10 @@ export default function NewsCategoryBar() {
       const scrollLeft = 
         activeRect.left - containerRect.left - (containerRect.width / 2) + (activeRect.width / 2);
       
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       container.scrollBy({
         left: scrollLeft,
-        behavior: "smooth"
+        behavior: prefersReduced ? "auto" : "smooth"
       });
     }
   }, [pathname]);
@@ -58,7 +57,7 @@ export default function NewsCategoryBar() {
 
   return (
     <div
-      className={`fixed left-0 w-full z-40 transition-all duration-300 border-b border-transparent ${
+      className={`fixed left-0 w-full z-40 transition-[top,background-color,box-shadow] duration-300 border-b border-transparent ${
         scrolled
           ? "top-[72px] sm:top-[88px] bg-white/80 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
           : "top-[72px] sm:top-[88px] bg-[#F5F5F7]/40 backdrop-blur-md"
@@ -85,10 +84,11 @@ export default function NewsCategoryBar() {
               <Link
                 key={cat.href}
                 href={cat.href}
+                aria-current={isActive ? "page" : undefined}
                 className={`whitespace-nowrap ${
                   isActive
-                    ? "active-news-tab bg-slate-900 text-white shadow-sm font-semibold pointer-events-none px-4 py-1.5 rounded-full text-xs sm:text-sm"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 px-4 py-1.5 rounded-full font-medium text-xs sm:text-sm transition-all duration-700 ease-in-out"
+                    ? "active-news-tab bg-slate-900 text-white shadow-sm font-semibold px-4 py-1.5 rounded-full text-xs sm:text-sm"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 px-4 py-1.5 rounded-full font-medium text-xs sm:text-sm transition-colors duration-300 ease-in-out"
                 }`}
               >
                 {cat.label}

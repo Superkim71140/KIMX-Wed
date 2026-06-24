@@ -2,13 +2,13 @@ import React from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { articles } from "@/data/articles";
-import { buildArticleMetadata } from "@/lib/seo";
-import { getArticleSchema } from "@/lib/schema";
+import { siteConfig } from "@/data/site";
 import ArticleHero from "@/components/articles/ArticleHero";
 import ArticleContent from "@/components/articles/ArticleContent";
 import ArticleCTA from "@/components/articles/ArticleCTA";
 import ArticleCard from "@/components/articles/ArticleCard";
 import Container from "@/components/ui/Container";
+import ArticleFooterActions from "@/components/articles/ArticleFooterActions";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -32,7 +32,39 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  return buildArticleMetadata(article);
+  const imagePath = article.image || "/images/og-fallback-brand.png";
+  const absoluteImageUrl = imagePath.startsWith("http")
+    ? imagePath
+    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+
+  const imageType = absoluteImageUrl.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+
+  return {
+    title: article.title,
+    description: article.description,
+    openGraph: {
+      type: "article",
+      locale: "th_TH",
+      siteName: "KIMX Web",
+      title: article.title,
+      description: article.description,
+      images: [
+        {
+          url: absoluteImageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+          type: imageType,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.description,
+      images: [absoluteImageUrl],
+    },
+  };
 }
 
 export default async function ArticleDetailPage({ params }: PageProps) {
@@ -48,14 +80,30 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     .filter((art) => art.slug !== slug)
     .slice(0, 3);
 
-  const articleSchema = getArticleSchema(article);
+  // Absolute Image URL for schema
+  const imagePath = article.image || "/images/og-fallback-brand.png";
+  const absoluteImageUrl = imagePath.startsWith("http")
+    ? imagePath
+    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
 
   return (
     <>
       {/* Schema Injection */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            "headline": article.title,
+            "image": [absoluteImageUrl],
+            "datePublished": article.publishedAt,
+            "author": {
+              "@type": "Person",
+              "name": "KIMX Tech Editor"
+            }
+          })
+        }}
       />
 
       <article className="bg-transparent">
@@ -67,6 +115,14 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
         {/* Related Action Box */}
         <ArticleCTA slug={article.slug} accentColor={article.accentColor} />
+
+        <Container>
+          <ArticleFooterActions 
+            returnUrl="/articles"
+            title={article.title}
+            canonicalUrl={`${siteConfig.siteUrl}/articles/${article.slug}`}
+          />
+        </Container>
 
         {/* Related Articles Section */}
         {relatedArticles.length > 0 && (

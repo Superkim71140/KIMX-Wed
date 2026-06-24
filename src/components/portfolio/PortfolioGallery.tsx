@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Check, X, Briefcase, Calendar, Code2, Wrench, Layers } from "lucide-react";
 import { portfolioItems, portfolioCategories, PortfolioItem, PortfolioCategory } from "@/data/portfolio";
@@ -15,9 +15,11 @@ export default function PortfolioGallery() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
 
-  const filteredItems = selectedCategory === "all"
-    ? portfolioItems
-    : portfolioItems.filter((item) => item.category.includes(selectedCategory as PortfolioCategory));
+  const filteredItems = useMemo<PortfolioItem[]>(() => {
+    return selectedCategory === "all"
+      ? portfolioItems
+      : portfolioItems.filter((item) => item.category.includes(selectedCategory as PortfolioCategory));
+  }, [selectedCategory]);
 
   // Close modals on ESC key
   useEffect(() => {
@@ -30,15 +32,17 @@ export default function PortfolioGallery() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const slides = filteredItems.map((item) => (
-    <div key={item.slug} className="h-full px-1">
-      <PortfolioCard
-        item={item}
-        onDetailClick={() => setActiveProject(item)}
-        onQuoteClick={openModal}
-      />
-    </div>
-  ));
+  const slides = useMemo(() => {
+    return filteredItems.map((item: PortfolioItem) => (
+      <div key={item.slug} className="h-full px-1">
+        <PortfolioCard
+          item={item}
+          onDetailClick={() => setActiveProject(item)}
+          onQuoteClick={openModal}
+        />
+      </div>
+    ));
+  }, [filteredItems, openModal]);
 
   return (
     <div className="space-y-12">
@@ -70,6 +74,7 @@ export default function PortfolioGallery() {
       <div className="max-w-6xl mx-auto">
         {slides.length > 0 ? (
           <CarouselSlider
+            key={selectedCategory}
             slides={slides}
             autoplay={true}
             slidesPerViewMobile={1}
@@ -178,8 +183,8 @@ export default function PortfolioGallery() {
                   ขอบเขตการพัฒนาระบบ
                 </h4>
                 <ul className="space-y-2.5">
-                  {activeProject.features.map((feature, fIdx) => (
-                    <li key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm font-bold text-slate-700">
+                  {activeProject.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2.5 text-xs sm:text-sm font-bold text-slate-700">
                       <div className="w-4 h-4 rounded-full bg-[#14b8a6]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check size={10} className="text-[#14b8a6] stroke-[3]" />
                       </div>

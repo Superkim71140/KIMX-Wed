@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={`${prompt.variable} ${inter.variable} min-h-screen scroll-smooth antialiased`}
+      className={`${prompt.variable} ${inter.variable} min-h-screen antialiased`}
     >
       <body className="flex flex-col min-h-screen kimx-light-bg text-[#1D1D1F] antialiased selection:bg-sky-200 selection:text-sky-900">
         <AOSProvider>

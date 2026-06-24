@@ -83,15 +83,15 @@ export default function ServicesSection() {
               className="h-full"
             >
               <div
-                className="service-card-gpu flex flex-col items-center text-center p-10 bg-white/95 backdrop-blur-xs border border-slate-100/50 rounded-[2rem] h-full transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-[0_32px_64px_-16px_rgba(15,23,42,0.03)]"
+                className="service-card-gpu flex flex-col items-center text-center p-10 bg-white/95 backdrop-blur-xs border border-slate-100/50 rounded-4xl h-full transition-[transform,box-shadow] duration-700 ease-out hover:-translate-y-1 hover:shadow-[0_32px_64px_-16px_rgba(15,23,42,0.03)]"
               >
                 {/* Visual Mockup Illustration Image */}
-                <div className="relative aspect-[16/10] w-full max-w-xs mx-auto overflow-hidden rounded-2xl mb-8 group/illust shrink-0">
+                <div className="relative aspect-16/10 w-full max-w-xs mx-auto overflow-hidden rounded-2xl mb-8 group/illust shrink-0">
                   <Image
                     src={card.imagePath}
                     alt={card.title}
                     fill={true}
-                    priority={true}
+                    loading="lazy"
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover object-center transition-transform duration-700 ease-out group-hover/illust:scale-105"
                   />
@@ -114,23 +114,25 @@ export default function ServicesSection() {
         {/* Bottom CTA Capsule Bar */}
         <div data-aos="fade-up" data-aos-delay="200" className="w-full max-w-5xl mx-auto mt-12 px-4 relative z-10">
           <div
-            onClick={openModal}
-            className="w-full rounded-full bg-linear-to-r from-teal-500/5 to-cyan-500/5 border border-slate-200/60 px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs hover:shadow-sm btn-slow-smooth cursor-pointer"
+            className="w-full rounded-full bg-linear-to-r from-teal-500/5 to-cyan-500/5 border border-slate-200/60 px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs hover:shadow-sm hover:border-slate-300 transition-colors duration-300"
           >
             <div className="text-slate-700 font-bold text-xs sm:text-sm text-center md:text-left flex items-center gap-2">
               <span>ยังไม่แน่ใจว่าต้องใช้บริการไหน? ให้เราช่วยวิเคราะห์ความต้องการและโครงสร้างเว็บฟรี</span>
             </div>
             <div className="flex items-center gap-4 shrink-0 justify-center w-full md:w-auto">
-              <span className="text-[#14b8a6] font-extrabold text-xs sm:text-sm whitespace-nowrap hover:underline">
+              <button
+                type="button"
+                onClick={openModal}
+                className="text-[#14b8a6] font-extrabold text-xs sm:text-sm whitespace-nowrap hover:underline cursor-pointer focus-visible:outline-2"
+              >
                 ขอใบเสนอราคาด่วนที่นี่ →
-              </span>
+              </button>
               <div className="h-4 w-px bg-slate-200 hidden md:block" />
               <a
                 href={siteConfig.lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-full bg-[#06c755] hover:bg-[#05b34c] text-white text-xs font-bold shadow-xs hover:shadow-md transition-all whitespace-nowrap cursor-pointer shrink-0"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-full bg-[#06c755] hover:bg-[#05b34c] text-white text-xs font-bold shadow-xs hover:shadow-md transition-transform duration-300 hover:scale-105 active:scale-95 whitespace-nowrap cursor-pointer shrink-0"
               >
                 <Image src="/line-ar21.svg" alt="LINE" width={16} height={16} className="w-4 h-4 object-contain inline shrink-0" />
                 <span>คุยไลน์ด่วน</span>

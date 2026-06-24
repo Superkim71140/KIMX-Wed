@@ -1,126 +1,99 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, User, Calendar } from "lucide-react";
 import { Article } from "@/data/articles";
-import { formatThaiDate } from "@/lib/utils";
+import ArticleTrustBar from "./ArticleTrustBar";
 import Container from "../ui/Container";
-import { motion } from "framer-motion";
 
 interface ArticleHeroProps {
   article: Article;
 }
 
 export default function ArticleHero({ article }: ArticleHeroProps) {
-  const getCategoryTheme = (category: string) => {
-    switch (category) {
-      case "MARKETING & SEO":
-        return { text: "text-cyan-400", glow: "from-cyan-400/0 via-cyan-500/80 to-cyan-400/0" };
-      case "WEB TECHNOLOGY & PERFORMANCE":
-        return { text: "text-amber-400", glow: "from-amber-400/0 via-amber-500/80 to-amber-400/0" };
-      case "DESIGN TRENDS 2025":
-        return { text: "text-rose-400", glow: "from-rose-400/0 via-rose-500/80 to-rose-400/0" };
-      default:
-        return { text: "text-slate-400", glow: "from-slate-400/0 via-slate-500/80 to-slate-400/0" };
-    }
-  };
-
   return (
-    <div className="relative pt-32 pb-12 overflow-hidden bg-transparent">
-      <style>{`
-        ::selection {
-          background-color: ${article.accentColor}4D;
-          color: #ffffff;
-        }
-      `}</style>
-      
-      {/* Visual dynamic gradient background based on accentColor (Breathing Bloom) */}
-      <motion.div 
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] rounded-full blur-[120px] pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, ${article.accentColor} 0%, transparent 70%)`
-        }}
-        animate={{ opacity: [0.1, 0.25, 0.1], scale: [1, 1.05, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
+    <div className="relative pt-32 pb-0 overflow-hidden bg-transparent">
+      {/* Subtle ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-slate-50 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <Container className="relative z-10">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-4 font-sans">
+        {/* 1. Breadcrumbs */}
+        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-5 font-sans">
           <Link href="/" className="hover:text-sky-600 transition-colors duration-200">
             หน้าหลัก
           </Link>
           <span>&gt;</span>
-          <Link href="/articles" className="hover:text-sky-600 transition-colors duration-200">
-            บทความ
+          <Link href="/news" className="hover:text-sky-600 transition-colors duration-200">
+            ข่าวสาร
           </Link>
           <span>&gt;</span>
           <span className="text-slate-500 font-medium">{article.category}</span>
         </div>
 
-        {/* Category Badge */}
+        {/* 2. Category Badge */}
         <div className="mb-4">
-          <span className="inline-block px-3 py-1 text-xs font-bold text-teal-600 bg-teal-500/10 rounded-full">
+          <span className="inline-block px-3 py-1 text-xs font-bold text-teal-700 bg-teal-500/10 border border-teal-200/60 rounded-full">
             {article.category}
           </span>
         </div>
 
-        {/* Article Title */}
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight mb-6 mt-2 max-w-4xl font-sans">
+        {/* 3. Main Headline */}
+        <h1
+          className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6 max-w-4xl font-sans"
+          style={{ wordBreak: "normal", overflowWrap: "anywhere" }}
+        >
           {article.title}
         </h1>
 
-        {/* Metadata Details Row */}
-        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-400 mb-6 pb-6 border-b border-slate-100 font-sans">
-          <div className="flex items-center gap-1.5">
-            <User size={14} className="text-slate-300" />
-            <span>KIMX Team</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Calendar size={14} className="text-slate-300" />
-            <span>{formatThaiDate(article.publishedAt)}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Clock size={14} className="text-slate-300" />
-            <span>{article.readingTime}</span>
-          </div>
-        </div>
+        {/* 4. ArticleTrustBar — light theme */}
+        <ArticleTrustBar
+          author={article.author || "KIMX Team"}
+          publishedAt={article.publishedAt}
+          updatedAt={article.updatedAt}
+          readingTime={article.readingTime}
+          category={article.category}
+          editorialStatus={article.slug === "excise-ev-finance-support-2026" ? "อยู่ระหว่างพิจารณา" : undefined}
+          theme="light"
+        />
 
-        {/* Social CTA Button Row */}
-        <div className="mb-8">
-          <Link
+        {/* 5. Facebook CTA */}
+        <div className="mb-10">
+          <a
             href="https://www.facebook.com/profile.php?id=61588114826420"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#0674E8] text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-700 hover:bg-[#045cb8] hover:shadow-md"
+            className="inline-flex items-center gap-2 bg-[#0674E8] text-white px-5 py-2.5 rounded-full text-sm font-bold transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(6,116,232,0.3)] cursor-pointer font-sans"
+            aria-label="ติดตาม KIMX บน Facebook"
           >
-            <svg
-              className="w-4 h-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
             </svg>
-            <span>FOLLOW KIMX ON FACEBOOK</span>
-          </Link>
-        </div>
-
-        {/* Featured Image */}
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 group">
-          <Image
-            src={article.image}
-            alt={article.imageAlt}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-          />
-          {/* Subtle vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent pointer-events-none" />
+            <span>ติดตาม KIMX บน Facebook</span>
+          </a>
         </div>
       </Container>
+
+      {/* 6. Pristine flat-edge cover image — centered, bounded editorial canvas layout */}
+      <figure className="w-full max-w-3xl mx-auto px-4 md:px-0 mb-0">
+        {article.image && (article.image.startsWith("linear-gradient") || article.image.includes("gradient")) ? (
+          <div
+            className="w-full aspect-video md:max-h-[420px] bg-slate-50 border border-slate-200/60 rounded-none overflow-hidden relative shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{ background: article.image }}
+          />
+        ) : (
+          <div
+            className="w-full aspect-video md:max-h-[420px] bg-slate-50 border border-slate-200/60 rounded-none overflow-hidden relative shadow-[0_4px_20px_rgba(0,0,0,0.02)] group"
+          >
+            <Image
+              src={article.image}
+              alt={article.imageAlt || article.title}
+              fill
+              priority
+              className="object-contain w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-102"
+              sizes="(max-width: 768px) 100vw, 768px"
+            />
+          </div>
+        )}
+      </figure>
     </div>
   );
 }

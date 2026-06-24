@@ -36,7 +36,7 @@ export default function PortfolioCard({
           </div>
 
           {/* Image Area */}
-          <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-100">
+          <div className="relative w-full aspect-4/3 overflow-hidden bg-slate-100">
             {/* Scale wrapper isolated here — only the image layer scales, layout boundary is stable */}
             <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]" style={{ willChange: "transform", transform: "translateZ(0)" }}>
               <Image
@@ -69,10 +69,9 @@ export default function PortfolioCard({
               {item.description}
             </p>
 
-            {/* Features Checklist (Single Column Layout) */}
             <ul className="flex flex-col gap-3 py-5 border-t border-b border-slate-100/80 my-4">
-              {item.features.map((feature, fIdx) => (
-                <li key={fIdx} className="flex items-start gap-3 text-sm text-slate-800 font-bold leading-normal">
+              {item.features.map((feature) => (
+                <li key={feature} className="flex items-start gap-3 text-sm text-slate-800 font-bold leading-normal">
                   <div className="w-5 h-5 rounded-full bg-[#14b8a6]/10 flex items-center justify-center shrink-0 mt-0.5">
                     <Check size={12} className="text-[#14b8a6] stroke-[3]" />
                   </div>
@@ -89,11 +88,9 @@ export default function PortfolioCard({
                 href={item.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full"
+                className="w-full inline-block text-center py-3 rounded-xl bg-white text-slate-700 font-bold text-sm border border-slate-200 hover:bg-slate-50 btn-slow-smooth cursor-pointer"
               >
-                <button className="w-full py-3 rounded-xl bg-white text-slate-700 font-bold text-sm border border-slate-200 hover:bg-slate-50 btn-slow-smooth cursor-pointer">
-                  เข้าชมเว็บไซต์จริง
-                </button>
+                เข้าชมเว็บไซต์จริง
               </a>
             ) : (
               <button

@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { portfolioItems, portfolioCategories, PortfolioCategory } from "@/data/portfolio";
 import { useQuoteModal } from "@/context/QuoteModalContext";
-import Container from "../ui/Container";
 import CarouselSlider from "../ui/CarouselSlider";
 import PortfolioCard from "../portfolio/PortfolioCard";
 import CTAButton from "../ui/CTAButton";
@@ -14,18 +13,22 @@ export default function WebsiteShowcase() {
   const { openModal } = useQuoteModal();
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
-  const filteredItems = activeFilter === "all" 
-    ? portfolioItems 
-    : portfolioItems.filter(item => item.category.includes(activeFilter as PortfolioCategory));
+  const filteredItems = useMemo(() => {
+    return activeFilter === "all" 
+      ? portfolioItems 
+      : portfolioItems.filter(item => item.category.includes(activeFilter as PortfolioCategory));
+  }, [activeFilter]);
 
-  const slides = filteredItems.map((item) => (
-    <div key={item.slug} className="h-full flex flex-col justify-between px-1">
-      <PortfolioCard
-        item={item}
-        onQuoteClick={openModal}
-      />
-    </div>
-  ));
+  const slides = useMemo(() => {
+    return filteredItems.map((item) => (
+      <div key={item.slug} className="h-full flex flex-col justify-between px-1">
+        <PortfolioCard
+          item={item}
+          onQuoteClick={openModal}
+        />
+      </div>
+    ));
+  }, [filteredItems, openModal]);
 
   return (
     <section id="showcase" className="relative overflow-hidden py-20 sm:py-24 bg-transparent scroll-mt-20">
@@ -38,7 +41,7 @@ export default function WebsiteShowcase() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-14" data-aos="fade-up">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
-            ผลงานออกแบบและ<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#14b8a6] to-[#0ea5e9]">พัฒนาเว็บไซต์จริง</span>
+            ผลงานออกแบบและ<span className="text-transparent bg-clip-text bg-linear-to-r from-[#14b8a6] to-[#0ea5e9]">พัฒนาเว็บไซต์จริง</span>
           </h2>
           
           <p className="text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
@@ -71,12 +74,13 @@ export default function WebsiteShowcase() {
         <div className="max-w-6xl mx-auto" data-aos="fade-up" data-aos-delay="200">
           {slides.length > 0 ? (
             <CarouselSlider
+              key={activeFilter}
               slides={slides}
               autoplay={true}
               slidesPerViewMobile={1}
               slidesPerViewTablet={2}
               slidesPerViewDesktop={3}
-              className="px-4 md:px-0 pb-16 portfolio-swiper-lock"
+              className="px-4 md:px-0 portfolio-swiper-lock"
             />
           ) : (
             <div className="text-center py-12 text-slate-500 font-medium">

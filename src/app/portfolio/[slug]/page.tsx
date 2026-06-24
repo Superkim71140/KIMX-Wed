@@ -52,7 +52,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
   return (
     <>
       {/* Detail Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-16 bg-bg-base border-b border-white/[0.03]">
+      <section className="relative overflow-hidden pt-32 pb-16 bg-bg-base border-b border-white/3">
         {/* Background grids and glows */}
         <div className="absolute inset-0 section-bg-grid opacity-75 z-0" />
         <div className="noise-overlay" />
@@ -88,7 +88,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             </p>
 
             {/* Grid of stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-white/[0.01] border border-white/5 text-xs sm:text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-white/1 border border-white/5 text-xs sm:text-sm">
               <div className="space-y-1">
                 <div className="text-slate-500 flex items-center gap-1"><Layers size={14} /><span>ผู้ว่าจ้าง</span></div>
                 <div className="font-semibold text-white">{item.clientName || "SME Client"}</div>
@@ -113,7 +113,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
       {/* Main Showcase Image Display */}
       <section className="relative py-12 bg-slate-950/40">
         <Container className="max-w-4xl mx-auto">
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950 shadow-2xl flex items-center justify-center p-2 group">
+          <div className="relative aspect-16/10 w-full overflow-hidden rounded-4xl border border-white/10 bg-slate-950 shadow-2xl flex items-center justify-center p-2 group">
             <Image
               src={item.image}
               alt={item.alt}
@@ -160,7 +160,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             </div>
 
             {/* Right: Technical specifications and features */}
-            <div className="md:col-span-5 bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-6">
+            <div className="md:col-span-5 bg-white/1 border border-white/5 rounded-2xl p-6 space-y-6">
               <h3 className="text-base font-bold text-white border-b border-white/5 pb-3">
                 ฟังก์ชันหลักของระบบ
               </h3>
@@ -197,7 +197,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
       </section>
 
       {/* Detail Case study CTA */}
-      <section className="relative py-20 bg-slate-950 overflow-hidden border-t border-white/[0.02]">
+      <section className="relative py-20 bg-slate-950 overflow-hidden border-t border-white/2">
         <Container className="max-w-4xl mx-auto">
           <GlassCard
             className="premium-border-pan p-8! sm:p-10! text-center bg-slate-900/60"

@@ -1,3 +1,5 @@
+import { articles } from "./articles";
+
 export type NewsArticleContentBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }
@@ -25,10 +27,33 @@ export interface NewsArticle {
   readingTime: string;
   tags: string[];
   featured: boolean;
+  isPinned?: boolean; // Optional flag to pin articles to the top of selectors
   content: NewsArticleContentBlock[];
 }
 
+const exciseEvFinanceSupport2026 = articles.find(a => a.id === "excise-ev-finance-support-2026")!;
+
+const mappedEvFinanceArticle = {
+  title: exciseEvFinanceSupport2026.title,
+  slug: exciseEvFinanceSupport2026.slug,
+  excerpt: exciseEvFinanceSupport2026.description,
+  category: exciseEvFinanceSupport2026.category,
+  categorySlug: exciseEvFinanceSupport2026.categorySlug || "automotive",
+  coverImage: exciseEvFinanceSupport2026.coverImage || exciseEvFinanceSupport2026.image,
+  coverFit: exciseEvFinanceSupport2026.coverFit,
+  publishedAt: exciseEvFinanceSupport2026.publishedAt,
+  updatedAt: exciseEvFinanceSupport2026.updatedAt,
+  author: exciseEvFinanceSupport2026.author || "KIMX Team",
+  readingTime: exciseEvFinanceSupport2026.readingTime,
+  tags: exciseEvFinanceSupport2026.tags || [],
+  featured: exciseEvFinanceSupport2026.featured || false,
+  isPinned: exciseEvFinanceSupport2026.isPinned || false,
+  // Since ArticleContentBlock is a subset of NewsArticleContentBlock, we can safely cast or map it.
+  content: exciseEvFinanceSupport2026.content as unknown as NewsArticleContentBlock[],
+} as NewsArticle;
+
 export const newsArticles: NewsArticle[] = [
+  mappedEvFinanceArticle,
   {
     title: "อัปเดตล่าสุด Samsung Galaxy S25 กับฟีเจอร์ One UI 8.5: มีอะไรใหม่และเปิดตัวเมื่อไหร่?",
     slug: "samsung-galaxy-s25-one-ui-8-5-update",

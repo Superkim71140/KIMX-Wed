@@ -55,7 +55,6 @@
 
 /* Base Body Styles & Typographic Scale */
 html {
-  scroll-behavior: smooth;
   font-size: 16px;
 }
 
@@ -475,10 +474,6 @@ select.custom-input option {
   background-size: auto, 100% 100%;
   background-repeat: repeat, no-repeat;
   
-  /* Hardware acceleration properties to detach background paint cycle from layout scrolls */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  will-change: transform;
 }
 
 .kimx-soft-grid {
@@ -625,9 +620,7 @@ select.custom-input option {
  * This prevents AOS animations from causing repaints on sibling elements.
  * Applied automatically by AOS via [data-aos] selector below.
  */
-[data-aos] {
-  will-change: transform, opacity;
-}
+/* AOS GPU Compositing Layer promotion removed to prevent excessive GPU memory pressure */
 
 /* Custom Swiper Pagination Styling */
 .custom-swiper-pagination .swiper-pagination-bullet {
@@ -694,8 +687,8 @@ select.custom-input option {
   transform: scale(0.97) translateY(0) !important;
 }
 
-/* Swiper Translation Isolation — prevents broad CSS transitions from interfering with Swiper wrapper */
-.swiper-wrapper {
+/* Swiper Translation Isolation — prevents broad CSS transitions from interfering with Swiper wrapper. Scoped to marquee. */
+.swiper-marquee .swiper-wrapper {
   transition-property: transform !important;
   transition-timing-function: linear !important;
 }
@@ -778,4 +771,26 @@ select.custom-input option {
   animation: float-slower 16s ease-in-out infinite;
   animation-delay: -8s;
   will-change: transform;
+}
+
+/* --- Editorial Motion System --- */
+.motion-editorial {
+  transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1), opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 800ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-editorial:hover {
+    transform: translateY(-4px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-editorial {
+    transition: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
 }

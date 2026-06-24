@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "KIMX",
+    "Bento",
+    "Glassmorphic",
+    "Glassmorphism",
+    "CTAButton",
+    "AOSProvider",
+    "Lenis",
+    "Swiper",
+    "Tailwind",
+    "Nextjs",
+    "Next",
+    "TSX",
+    "JSX",
+    "kimxwed",
+    "serv",
+    "scanline",
+    "Sucuri",
+    "uiux",
+    "UIUX",
+    "nextgen",
+    "endtoend",
+    "commemt"
+  ],
+  "ignoreRegExpList": [
+    "[\\u0E00-\\u0E7F]+"
+  ]
+}

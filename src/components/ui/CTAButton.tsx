@@ -1,6 +1,9 @@
-import React from "react";
+"use client";
 
-interface CTAButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+import React from "react";
+import Link from "next/link";
+
+interface CTAButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "line" | "outline" | "danger";
   size?: "sm" | "md" | "lg";
@@ -16,6 +19,8 @@ export default function CTAButton({
   className = "",
   href,
   external = false,
+  onClick,
+  disabled,
   ...props
 }: CTAButtonProps) {
   const baseClasses = `
@@ -59,34 +64,55 @@ export default function CTAButton({
     lg: "px-8 py-4 text-lg"
   };
 
-  const buttonElement = (
-    <button
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
+  const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
   if (href) {
+    const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (disabled) {
+        e.preventDefault();
+        return;
+      }
+      if (onClick) {
+        (onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>)(e);
+      }
+    };
+
+    const extraProps = disabled ? { "aria-disabled": true, tabIndex: -1 } : {};
+
     if (external) {
       return (
         <a
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-decoration-none"
+          className={`${combinedClasses} ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}`}
+          onClick={handleAnchorClick}
+          {...extraProps}
         >
-          {buttonElement}
+          {children}
         </a>
       );
     }
     return (
-      <a href={href} className="text-decoration-none">
-        {buttonElement}
-      </a>
+      <Link
+        href={href}
+        className={`${combinedClasses} ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}`}
+        onClick={handleAnchorClick}
+        {...extraProps}
+      >
+        {children}
+      </Link>
     );
   }
 
-  return buttonElement;
+  return (
+    <button
+      className={combinedClasses}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
 }

@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, Clock, ChevronRight } from "lucide-react";
-import { newsArticles } from "@/data/news";
+import { getArticleRegistry } from "@/lib/articles/registry";
+import { getLatestArticles } from "@/lib/articles/featured";
 import { buildMetadata, siteUrl } from "@/lib/seo";
 import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
-import { getCategoryColorStyles, renderArticleCover } from "../page";
+import { getCategoryColorStyles, renderArticleCover } from "@/lib/news-presentation";
 
 // Category Details Mapping
 const categoryMap: Record<string, { label: string; description: string }> = {
@@ -82,12 +83,9 @@ export default async function CategoryPage({ params }: PageProps) {
     notFound();
   }
 
-  // Filter articles belonging to this category
-  const filteredArticles = newsArticles.filter(
-    (art) => art.categorySlug === category
-  ).sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
+  // Filter articles belonging to this category using registry and selector
+  const articles = getArticleRegistry();
+  const filteredArticles = getLatestArticles(articles, { categorySlug: category });
 
   // Injected JSON-LD breadcrumbs and list
   const breadcrumbsSchema = {
@@ -187,7 +185,7 @@ export default async function CategoryPage({ params }: PageProps) {
           <Container>
             {filteredArticles.length === 0 ? (
               <div className="text-center py-16">
-                <p className="text-slate-550 font-light font-sans">ยังไม่มีบทความในหมวดหมู่นี้</p>
+                <p className="text-slate-500 font-light font-sans">ยังไม่มีบทความในหมวดหมู่นี้</p>
                 <Link href="/news" className="inline-block mt-4 text-sky-600 text-sm hover:underline font-sans">
                   กลับสู่หน้าข่าวสารทั้งหมด
                 </Link>
@@ -201,12 +199,12 @@ export default async function CategoryPage({ params }: PageProps) {
                     className="group block h-full"
                   >
                     <GlassCard
-                      className="flex flex-col h-full !p-0 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out"
+                      className="flex flex-col h-full p-0! bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out"
                       hoverScale={false}
                       hoverGlow={false}
                     >
                       {/* Cover image */}
-                      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-50">
+                      <div className="relative w-full aspect-16/10 overflow-hidden bg-slate-50">
                         {renderArticleCover(article.coverImage, article.title, article.category)}
                         <div className="absolute top-3.5 left-3.5 z-20">
                           <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-md border backdrop-blur-md ${getCategoryColorStyles(article.categorySlug)}`}>
@@ -235,13 +233,13 @@ export default async function CategoryPage({ params }: PageProps) {
                           {article.title}
                         </h3>
 
-                        <p className="text-xs sm:text-sm font-light text-slate-650 leading-relaxed line-clamp-3 mb-6 font-sans">
-                          {article.excerpt}
+                        <p className="text-xs sm:text-sm font-light text-slate-600 leading-relaxed line-clamp-3 mb-6 font-sans">
+                          {article.description}
                         </p>
 
-                        <div className="mt-auto pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-slate-550 font-sans">
+                        <div className="mt-auto pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-slate-500 font-sans">
                           <span>โดย {article.author}</span>
-                          <span className="inline-flex items-center gap-1 font-semibold text-slate-850 group-hover:text-sky-600 transition-colors duration-300">
+                          <span className="inline-flex items-center gap-1 font-semibold text-slate-800 group-hover:text-sky-600 transition-colors duration-300">
                             อ่านต่อ <ChevronRight size={14} />
                           </span>
                         </div>

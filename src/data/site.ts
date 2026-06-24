@@ -1,4 +1,5 @@
 export const siteConfig = {
+  siteUrl: "https://kimx-wed.vercel.app",
   brandName: "KIMX Web",
   brandNameFull: "KIMX Web Agency",
   telephone: "092-837-1926",

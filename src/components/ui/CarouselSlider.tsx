@@ -109,7 +109,7 @@ export default function CarouselSlider({
         autoplay={
           isAutoplayEnabled
             ? {
-                delay: 0,
+                delay: autoplayDelay,
                 disableOnInteraction: false,
                 pauseOnMouseEnter: true,
               }

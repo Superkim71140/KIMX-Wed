@@ -1,11 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
-import { Sparkles, MessageSquare, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { articles } from "@/data/articles";
 import { buildMetadata } from "@/lib/seo";
 import { siteConfig } from "@/data/site";
 import Container from "@/components/ui/Container";
-import Badge from "@/components/ui/Badge";
 import FeaturedArticle from "@/components/articles/FeaturedArticle";
 import ArticleCard from "@/components/articles/ArticleCard";
 import GlassCard from "@/components/ui/GlassCard";

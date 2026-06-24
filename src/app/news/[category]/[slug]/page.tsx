@@ -3,15 +3,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Calendar, Clock, ChevronRight, BookOpen, ArrowLeft, User, Sparkles } from "lucide-react";
-import { newsArticles } from "@/data/news";
-import { buildMetadata, siteUrl } from "@/lib/seo";
+import { getArticleRegistry } from "@/lib/articles/registry";
+import { getSemanticRelatedArticles } from "@/lib/articles/semantic-related";
+import { getExecutiveSummary } from "@/lib/articles/ai-summary";
+import ExecutiveSummaryWidget from "@/components/articles/ExecutiveSummaryWidget";
+import RelatedArticles from "@/components/articles/RelatedArticles";
+import { siteUrl } from "@/lib/seo";
+import { siteConfig } from "@/data/site";
 import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
 import CTAButton from "@/components/ui/CTAButton";
 import ShareButtons from "@/components/news/ShareButtons";
 import BenchmarkBar from "@/components/articles/BenchmarkBar";
-import { getCategoryColorStyles, renderArticleCover } from "../../page";
+import ArticleFooterActions from "@/components/articles/ArticleFooterActions";
+import ArticleTrustBar from "@/components/articles/ArticleTrustBar";
+import ReadingProgress from "@/components/articles/ReadingProgress";
+import TableOfContents from "@/components/articles/TableOfContents";
+import { getCategoryColorStyles } from "@/lib/news-presentation";
 
 interface PageProps {
   params: Promise<{ category: string; slug: string }>;
@@ -19,7 +27,8 @@ interface PageProps {
 
 // Generate static params for all articles
 export async function generateStaticParams() {
-  return newsArticles.map((article) => ({
+  const articles = getArticleRegistry();
+  return articles.map((article) => ({
     category: article.categorySlug,
     slug: article.slug,
   }));
@@ -28,7 +37,8 @@ export async function generateStaticParams() {
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { category, slug } = await params;
-  const article = newsArticles.find(
+  const articles = getArticleRegistry();
+  const article = articles.find(
     (art) => art.slug === slug && art.categorySlug === category
   );
 
@@ -38,16 +48,45 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  return buildMetadata({
+  const imagePath = article.coverImage || "/images/og-fallback-brand.png";
+  const absoluteImageUrl = imagePath.startsWith("http")
+    ? imagePath
+    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+
+  const imageType = absoluteImageUrl.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+
+  return {
     title: `${article.title} | KIMX Web`,
-    description: article.excerpt,
-    path: `/news/${article.categorySlug}/${article.slug}`,
-  });
+    description: article.description,
+    openGraph: {
+      type: "article",
+      locale: "th_TH",
+      siteName: "KIMX Web",
+      title: `${article.title} | KIMX Web`,
+      description: article.description,
+      images: [
+        {
+          url: absoluteImageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+          type: imageType,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${article.title} | KIMX Web`,
+      description: article.description,
+      images: [absoluteImageUrl],
+    },
+  };
 }
 
 export default async function ArticleDetailPage({ params }: PageProps) {
   const { category, slug } = await params;
-  const article = newsArticles.find(
+  const articles = getArticleRegistry();
+  const article = articles.find(
     (art) => art.slug === slug && art.categorySlug === category
   );
 
@@ -55,20 +94,29 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Related articles in the same category (or fallback to other articles) to fill exactly 3 cards
-  let relatedArticles = newsArticles.filter(
-    (art) => art.categorySlug === category && art.slug !== slug
-  );
-  if (relatedArticles.length < 3) {
-    const fallbacks = newsArticles.filter(
-      (art) => art.slug !== slug && !relatedArticles.some((r) => r.slug === art.slug)
-    );
-    relatedArticles = [...relatedArticles, ...fallbacks].slice(0, 3);
+  // Related articles using the semantic related engine
+  const relatedArticles = getSemanticRelatedArticles(article, articles, 3);
+
+  // Find Takeaways block
+  const takeawaysBlock = article.content.find(block => block.type === "highlight" && block.title === "สรุปประเด็นสำคัญ") as { type: "highlight"; title?: string; text: string } | undefined;
+
+  // Extract content text for AI/Mock Summary
+  const contentText = article.content
+    .filter(block => block.type === "paragraph" || block.type === "heading")
+    .map(block => block.text)
+    .join("\n");
+
+  // Server-side summary generation with no hydration mismatch
+  let initialSummary: string[] = [];
+  if (takeawaysBlock) {
+    initialSummary = takeawaysBlock.text.split("\n").filter(Boolean).map(line => line.replace(/^•\s*/, ''));
+  } else {
+    const summaryRes = await getExecutiveSummary(article.id, article.title, contentText, 4);
+    initialSummary = summaryRes.summary;
   }
 
   // Generate Table of Contents
   const headingBlocks = article.content.filter((block) => block.type === "heading");
-  const firstParagraphIndex = article.content.findIndex((block) => block.type === "paragraph");
 
   // JSON-LD Schemas
   const breadcrumbsSchema = {
@@ -102,6 +150,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     ]
   };
 
+  // Calculate absolute image URL
+  const imagePath = article.coverImage || "/images/og-fallback-brand.png";
+  const absoluteImageUrl = imagePath.startsWith("http")
+    ? imagePath
+    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+
   const newsArticleSchema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -110,15 +164,13 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       "@id": `${siteUrl}/news/${article.categorySlug}/${article.slug}`
     },
     "headline": article.title,
-    "description": article.excerpt,
-    "image": article.coverImage.startsWith("http")
-      ? article.coverImage
-      : `${siteUrl}/assets/images/logo%20kimxwed.png`,
+    "description": article.description,
+    "image": [absoluteImageUrl],
     "datePublished": article.publishedAt,
     "dateModified": article.updatedAt,
     "author": {
       "@type": "Person",
-      "name": article.author
+      "name": article.author || "KIMX Tech Editor"
     },
     "publisher": {
       "@type": "Organization",
@@ -141,14 +193,15 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       />
 
       {/* Adjust paddingTop to 40 (approx 160px) to clear both navbar & sub-navbar */}
-      <div className="relative pt-48 pb-24 overflow-hidden bg-transparent font-sans">
+      <ReadingProgress />
+      <div className="relative pt-48 pb-24 bg-transparent font-sans">
         {/* Glow - Ultra Minimalist */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-200/5 rounded-full blur-[140px] pointer-events-none -z-10" />
 
         <Container className="relative z-10">
           
           {/* ===== BREADCRUMBS ===== */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-4 font-sans">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-5 font-sans">
             <Link href="/" className="hover:text-sky-600 transition-colors duration-200">
               หน้าหลัก
             </Link>
@@ -162,89 +215,71 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           {/* ===== CATEGORY BADGE ===== */}
           <div className="mb-4">
-            <span className="inline-block px-3 py-1 text-xs font-bold text-teal-600 bg-teal-500/10 rounded-full">
+            <span className="inline-block px-3 py-1 text-xs font-bold text-teal-700 bg-teal-500/10 border border-teal-200/60 rounded-full">
               {article.category}
             </span>
           </div>
 
-          {/* ===== ARTICLE HEADER HERO ===== */}
-          <header className="mb-6">
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight mb-6 mt-2 max-w-4xl">
-              {article.title}
-            </h1>
+          {/* ===== MAIN HEADLINE ===== */}
+          <h1
+            className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6 max-w-4xl font-sans"
+            style={{ wordBreak: "normal", overflowWrap: "anywhere" }}
+          >
+            {article.title}
+          </h1>
 
-            {/* Consolidated Metadata Strip */}
-            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-400 mb-6 pb-6 border-b border-slate-100 font-sans">
-              <div className="flex items-center gap-1.5">
-                <User size={14} className="text-slate-300" />
-                <span>{article.author}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Calendar size={14} className="text-slate-300" />
-                <span>{new Date(article.publishedAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Clock size={14} className="text-slate-300" />
-                <span>{article.readingTime}</span>
-              </div>
-              {article.updatedAt !== article.publishedAt && (
-                <span className="text-slate-300 font-light font-sans">(อัปเดตล่าสุด: {new Date(article.updatedAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })})</span>
-              )}
-            </div>
-              
-            <div className="mb-8">
-              <Link
-                href="https://www.facebook.com/profile.php?id=61588114826420"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#0674E8] text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-700 hover:bg-[#045cb8] hover:shadow-md"
-              >
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                </svg>
-                <span>FOLLOW KIMX ON FACEBOOK</span>
-              </Link>
-            </div>
-          </header>
+          {/* ===== TRUST BAR — light theme ===== */}
+          <ArticleTrustBar
+            author={article.author || "KIMX Team"}
+            publishedAt={article.publishedAt}
+            updatedAt={article.updatedAt}
+            readingTime={article.readingTime}
+            category={article.category}
+            editorialStatus={article.slug === "excise-ev-finance-support-2026" ? "อยู่ระหว่างพิจารณา" : undefined}
+            theme="light"
+          />
 
-          {/* ===== ARTICLE COVER IMAGE ===== */}
-          <div className={`relative w-full overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 ${article.coverFit === 'contain' ? 'aspect-video p-4 sm:p-8' : 'aspect-[16/9]'}`}>
-            {article.coverImage.startsWith("linear-gradient") || article.coverImage.includes("gradient") ? (
-              <div
-                className="w-full h-full flex items-center justify-center p-8 relative rounded-2xl overflow-hidden"
-                style={{ background: article.coverImage }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none" />
-                <div className="z-10 bg-white/95 border border-sky-100/60 backdrop-blur-md px-6 py-4 rounded-2xl text-center shadow-md">
-                  <span className="text-xs tracking-[0.25em] uppercase font-bold text-sky-600 font-sans block mb-1">
-                    {article.category}
-                  </span>
-                  <span className="text-xs text-slate-500 font-light tracking-wider uppercase">
-                    KIMX TECH HUB
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="relative w-full h-full rounded-2xl overflow-hidden group">
-                  <Image
-                    src={article.coverImage}
-                    alt={article.title}
-                    fill
-                    priority
-                    className={`${article.coverFit === 'contain' ? 'object-contain scale-95 drop-shadow-2xl' : 'object-cover object-center'} transition-transform duration-700 group-hover:scale-105`}
-                  />
-                  {article.coverFit !== 'contain' && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
-                  )}
-                </div>
-              </>
-            )}
+          {/* ===== FACEBOOK CTA ===== */}
+          <div className="mb-10">
+            <a
+              href="https://www.facebook.com/profile.php?id=61588114826420"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#0674E8] text-white px-5 py-2.5 rounded-full text-sm font-bold transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(6,116,232,0.3)] cursor-pointer font-sans"
+              aria-label="ติดตาม KIMX บน Facebook"
+            >
+              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+              </svg>
+              <span>ติดตาม KIMX บน Facebook</span>
+            </a>
           </div>
+        </Container>
+
+        {/* ===== PRISTINE COVER IMAGE — centered, bounded editorial canvas layout ===== */}
+        <figure className="w-full max-w-3xl mx-auto px-4 md:px-0 mb-12">
+          {article.coverImage.startsWith("linear-gradient") || article.coverImage.includes("gradient") ? (
+            <div
+              className="w-full aspect-video md:max-h-[420px] bg-slate-50 border border-slate-200/60 rounded-none overflow-hidden relative shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              style={{ background: article.coverImage }}
+            />
+          ) : (
+            <div
+              className="w-full aspect-video md:max-h-[420px] bg-slate-50 border border-slate-200/60 rounded-none overflow-hidden relative shadow-[0_4px_20px_rgba(0,0,0,0.02)] group"
+            >
+              <Image
+                src={article.coverImage}
+                alt={article.title}
+                fill
+                priority
+                className="object-contain w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-102"
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
+            </div>
+          )}
+        </figure>
+
+        <Container className="relative z-10">
 
           {/* ===== 2-COLUMN STRUCTURAL GRID ===== */}
           <div className="grid grid-cols-1 lg:grid-cols-10 gap-12 relative items-start">
@@ -253,35 +288,22 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             <div className="lg:col-span-7 w-full max-w-3xl mx-auto lg:mx-0">
               
               {/* Takeaways / AI Summary Component */}
-              <div className="mb-10 font-sans">
-                <div className="bg-white/80 border border-slate-200/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.02)] rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-sky-400 to-indigo-500" />
-                  <h4 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Sparkles size={14} className="text-sky-500" />
-                    สรุปประเด็นสำคัญ (Takeaways)
-                  </h4>
-                  <ul className="space-y-4">
-                    <li className="flex gap-3 text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
-                      <span className="text-sky-500 font-bold shrink-0">•</span>
-                      เนื้อหานี้ถูกประมวลผลเพื่อดึงแก่นสำคัญมาช่วยย่นเวลาการอ่านของคุณ
-                    </li>
-                    <li className="flex gap-3 text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
-                      <span className="text-sky-500 font-bold shrink-0">•</span>
-                      คุณสามารถทำความเข้าใจสาระสำคัญของข่าวสารได้ภายในไม่กี่นาที
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              <ExecutiveSummaryWidget
+                articleId={article.id}
+                title={article.title}
+                contentText={contentText}
+                initialSummary={initialSummary}
+              />
 
               {/* ===== MAIN RICH CONTENT ===== */}
-              <main className="w-full text-slate-600 font-normal text-base sm:text-lg leading-relaxed">
+              <main className="w-full text-slate-900 font-normal text-base sm:text-lg leading-relaxed" style={{ wordBreak: 'normal', overflowWrap: 'anywhere' }}>
             {article.content.map((block, idx) => {
               switch (block.type) {
                 case "paragraph":
                   return (
                     <p
                       key={idx}
-                      className="font-sans whitespace-pre-line text-base md:text-[1.05rem] text-slate-600/90 font-normal leading-relaxed mb-6 antialiased max-w-3xl mx-auto px-4 md:px-0"
+                      className="font-sans whitespace-pre-line text-base md:text-[1.05rem] font-normal leading-relaxed mb-6 antialiased max-w-3xl mx-auto px-4 md:px-0"
                     >
                       {block.text}
                     </p>
@@ -291,16 +313,17 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                     <h2
                       key={idx}
                       id={encodeURIComponent(block.text)}
-                      className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-10 mb-4 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36"
+                      className="text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-10 mb-4 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36"
                     >
                       {block.text}
                     </h2>
                   );
                 case "highlight":
+                  if (block === takeawaysBlock) return null;
                   return (
                     <GlassCard
                       key={idx}
-                      className={`my-10 !p-6 sm:!p-8 rounded-3xl relative overflow-hidden ${getCategoryColorStyles(article.categorySlug)}`}
+                      className={`my-10 p-6! sm:p-8! rounded-3xl relative overflow-hidden ${getCategoryColorStyles(article.categorySlug)}`}
                       hoverScale={false}
                     >
                       {block.title && (
@@ -340,7 +363,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                           <span className="text-2xl sm:text-3xl font-extrabold text-sky-600 font-sans">
                             {item.value}
                           </span>
-                          <span className="text-xs text-slate-550 font-light font-sans mt-1">
+                          <span className="text-xs text-slate-500 font-light font-sans mt-1">
                             {item.label}
                           </span>
                         </div>
@@ -382,7 +405,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                             <span className="text-xs font-bold font-sans">✓</span>
                           </div>
                           <h4 className="text-sm sm:text-base font-bold text-slate-900">{item.title}</h4>
-                          <p className="text-xs sm:text-sm font-light text-slate-650 leading-relaxed">{item.description}</p>
+                          <p className="text-xs sm:text-sm font-light text-slate-600 leading-relaxed">{item.description}</p>
                         </div>
                       ))}
                     </div>
@@ -398,7 +421,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                         <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
                         <span>{block.title}</span>
                       </h4>
-                      <p className="text-xs sm:text-sm font-light text-emerald-850 leading-relaxed font-sans whitespace-pre-line">
+                      <p className="text-xs sm:text-sm font-light text-emerald-800 leading-relaxed font-sans whitespace-pre-line">
                         {block.text}
                       </p>
                     </div>
@@ -475,30 +498,24 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               ))}
             </div>
           )}
+
+          {/* ===== GLOBAL SHARE AND FOOTER ACTIONS ===== */}
+          <ArticleFooterActions 
+            returnUrl="/news"
+            title={article.title}
+            canonicalUrl={`${siteConfig.siteUrl}/news/${article.categorySlug}/${article.slug}`}
+          />
         </div>
 
         {/* RIGHT COLUMN - SIDEBAR (3 cols) */}
         {headingBlocks.length > 0 && (
           <div className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-32 bg-white/80 border border-slate-200/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.02)] rounded-2xl p-6 sm:p-8 font-sans">
-              <h3 className="text-sm font-bold tracking-wider text-slate-900 uppercase mb-6 flex items-center gap-2">
-                <BookOpen size={16} className="text-sky-600" />
-                <span>สารบัญเนื้อหา</span>
-              </h3>
-              <ul className="space-y-3">
-                {headingBlocks.map((block, i) => (
-                  <li key={i}>
-                    <a
-                      href={`#${encodeURIComponent(block.text)}`}
-                      className="text-sm text-slate-500 hover:text-slate-900 transition-colors duration-200 flex items-start gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500/50 mt-1.5 flex-shrink-0" />
-                      <span className="font-medium line-clamp-2">{block.text}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <TableOfContents 
+              headings={headingBlocks.map(block => ({
+                id: encodeURIComponent(block.text),
+                text: block.text
+              }))} 
+            />
           </div>
         )}
       </div>
@@ -506,7 +523,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           {/* ===== BOTTOM CTA ACTION PANEL ===== */}
           <section className="my-24">
             <GlassCard
-              className="!border-none bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] !p-10 sm:!p-16 text-center relative overflow-hidden rounded-3xl"
+              className="border-none! bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-10! sm:p-16! text-center relative overflow-hidden rounded-3xl"
               hoverScale={false}
               hoverGlow={true}
             >
@@ -546,71 +563,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         </Container>
 
         {/* ===== RELATED ARTICLES SECTION ===== */}
-        {relatedArticles.length > 0 && (
-          <section className="py-20 pb-24 border-t border-slate-100 bg-transparent">
-            <Container className="max-w-6xl">
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-10 border-b border-slate-200 pb-4 font-sans">
-                บทความอื่น ๆ ที่น่าสนใจ
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-                {relatedArticles.map((relatedArt) => (
-                  <Link
-                    key={relatedArt.slug}
-                    href={`/news/${relatedArt.categorySlug}/${relatedArt.slug}`}
-                    className="group block h-full"
-                  >
-                    <GlassCard
-                      className="flex flex-col h-full !p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
-                      hoverScale={false}
-                      hoverGlow={true}
-                    >
-                      {/* Image container */}
-                      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-50">
-                        {renderArticleCover(relatedArt.coverImage, relatedArt.title, relatedArt.category)}
-                        <div className="absolute top-3.5 left-3.5 z-20">
-                          <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-md border backdrop-blur-md ${getCategoryColorStyles(relatedArt.categorySlug)}`}>
-                            {relatedArt.category}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="p-5 flex flex-col flex-grow">
-                        <div className="flex items-center gap-3 text-[10px] sm:text-xs font-light text-slate-500 font-sans mb-3">
-                          <span>
-                            {new Date(relatedArt.publishedAt).toLocaleDateString("th-TH", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                          <span>•</span>
-                          <span>{relatedArt.readingTime}</span>
-                        </div>
-
-                        <h4 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-snug group-hover:text-sky-600 transition-colors duration-300 line-clamp-2 mb-2 font-sans">
-                          {relatedArt.title}
-                        </h4>
-
-                        <p className="text-xs font-light text-slate-600 leading-relaxed line-clamp-2 mb-4 font-sans">
-                          {relatedArt.excerpt}
-                        </p>
-
-                        <div className="mt-auto pt-3 border-t border-sky-50 flex items-center justify-between text-xs text-slate-550 font-sans">
-                          <span>โดย {relatedArt.author}</span>
-                          <span className="inline-flex items-center gap-1 font-semibold text-slate-850 group-hover:text-sky-600 transition-colors duration-300">
-                            อ่านต่อ <ChevronRight size={12} />
-                          </span>
-                        </div>
-                      </div>
-                    </GlassCard>
-                  </Link>
-                ))}
-              </div>
-            </Container>
-          </section>
-        )}
+        <RelatedArticles relatedArticles={relatedArticles} />
       </div>
     </>
   );
