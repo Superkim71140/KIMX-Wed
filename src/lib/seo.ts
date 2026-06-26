@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kimxweb.com";
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kimx-wed.vercel.app";
 export const defaultTitle = "รับทำเว็บไซต์ สมุทรสาคร | ออกแบบเว็บไซต์ SEO พร้อมระบบธุรกิจ - KIMX Web";
 export const titleTemplate = "%s | KIMX Web";
 export const defaultDescription = "KIMX Web รับทำเว็บไซต์สมุทรสาคร มหาชัย กระทุ่มแบน บ้านแพ้ว และกรุงเทพฯ ออกแบบเว็บไซต์บริษัท เว็บไซต์ธุรกิจ ระบบ E-commerce SEO และดูแลเว็บครบวงจร โทร 092-837-1926";

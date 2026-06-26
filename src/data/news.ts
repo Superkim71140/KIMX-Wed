@@ -355,7 +355,7 @@ export const newsArticles: NewsArticle[] = [
       },
       {
         type: "share-buttons",
-        shareUrl: "https://www.kimxweb.com/news/phone/samsung-galaxy-s25-one-ui-8-5-update",
+        shareUrl: "https://kimx-wed.vercel.app/news/phone/samsung-galaxy-s25-one-ui-8-5-update",
         reviewUrl: "https://www.samsung.com/th/"
       }
     ]
