@@ -401,7 +401,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                           key={index}
                           className="p-6 sm:p-8 rounded-3xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-transparent flex flex-col gap-3 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0">
                             <span className="text-xs font-bold font-sans">✓</span>
                           </div>
                           <h4 className="text-sm sm:text-base font-bold text-slate-900">{item.title}</h4>
@@ -429,7 +429,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 case "image":
                   return (
                     <figure key={idx} className="my-12 relative max-w-3xl mx-auto px-4 md:px-0">
-                      <div className="relative w-full aspect-[16/10] sm:aspect-video overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 group">
+                      <div className="relative w-full aspect-16/10 sm:aspect-video overflow-hidden rounded-4xl bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 group">
                         <Image
                           src={block.src}
                           alt={block.alt}
@@ -456,7 +456,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                   return (
                     <GlassCard
                       key={idx}
-                      className="my-12 !p-6 sm:!p-8 rounded-3xl bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-200/60"
+                      className="my-12 p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-200/60"
                       hoverScale={false}
                     >
                       <div className="mb-6 flex items-center gap-2">

@@ -199,7 +199,7 @@ export default async function CategoryPage({ params }: PageProps) {
                     className="group block h-full"
                   >
                     <GlassCard
-                      className="flex flex-col h-full p-0! bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out"
+                      className="flex flex-col h-full p-0 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out"
                       hoverScale={false}
                       hoverGlow={false}
                     >
@@ -214,7 +214,7 @@ export default async function CategoryPage({ params }: PageProps) {
                       </div>
 
                       {/* Content */}
-                      <div className="p-5 sm:p-6 flex flex-col flex-grow">
+                      <div className="p-5 sm:p-6 flex flex-col grow">
                         <div className="flex items-center gap-3 text-[10px] sm:text-xs font-light text-slate-500 font-sans mb-3">
                           <Calendar size={12} className="text-slate-400" />
                           <span>

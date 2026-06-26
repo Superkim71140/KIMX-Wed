@@ -8,10 +8,11 @@ import { getSemanticRelatedArticles } from "@/lib/articles/semantic-related";
 import { getExecutiveSummary } from "@/lib/articles/ai-summary";
 import ExecutiveSummaryWidget from "@/components/articles/ExecutiveSummaryWidget";
 import RelatedArticles from "@/components/articles/RelatedArticles";
-import { siteUrl } from "@/lib/seo";
+import { buildMetadata, siteUrl } from "@/lib/seo";
 import { siteConfig } from "@/data/site";
 import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
+import { getArticleSchema, getBreadcrumbsSchema, safeJsonLd } from "@/lib/schema";
 import CTAButton from "@/components/ui/CTAButton";
 import ShareButtons from "@/components/news/ShareButtons";
 import BenchmarkBar from "@/components/articles/BenchmarkBar";
@@ -20,6 +21,9 @@ import ArticleTrustBar from "@/components/articles/ArticleTrustBar";
 import ReadingProgress from "@/components/articles/ReadingProgress";
 import TableOfContents from "@/components/articles/TableOfContents";
 import { getCategoryColorStyles } from "@/lib/news-presentation";
+import ContextualInternalLinks from "@/components/articles/ContextualInternalLinks";
+
+export const revalidate = 86400;
 
 const renderWithHighlights = (text: string) => {
   if (!text) return null;
@@ -45,7 +49,7 @@ const enhanceHeadingText = (text: string) => {
   return parts.map((part, i) => {
     if (part.match(/(3 รูปแบบ|ตัวอย่างวงเงิน|\d+(?:\.\d+)?\s?[a-zA-Zก-๙]+|[A-Za-z]+\s\d+(?:\.\d+)?)/)) {
       return (
-        <span key={i} className="bg-gradient-to-r from-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent drop-shadow-sm">
+        <span key={i} className="bg-linear-to-r from-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent drop-shadow-sm">
           {part}
         </span>
       );
@@ -104,50 +108,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   );
 
   if (!article) {
-    return {
-      title: "บทความไม่พบ - KIMX Web",
-    };
+    return buildMetadata({
+      title: "ไม่พบข่าวสาร",
+      path: `/news/${category}/${slug}`,
+    });
   }
 
-  const imagePath = article.coverImage || "/images/og-fallback-brand.png";
-  const absoluteImageUrl = imagePath.startsWith("http")
-    ? imagePath
-    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
-
-  const imageType = absoluteImageUrl.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
-
-  const canonicalUrl = `${siteConfig.siteUrl}/news/${article.categorySlug}/${article.slug}`;
-
-  return {
-    title: `${article.title} | KIMX Web`,
+  return buildMetadata({
+    title: article.title,
     description: article.description,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      type: "article",
-      locale: "th_TH",
-      siteName: "KIMX Web",
-      url: canonicalUrl,
-      title: `${article.title} | KIMX Web`,
-      description: article.description,
-      images: [
-        {
-          url: absoluteImageUrl,
-          width: 1200,
-          height: 630,
-          alt: article.title,
-          type: imageType,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${article.title} | KIMX Web`,
-      description: article.description,
-      images: [absoluteImageUrl],
-    },
-  };
+    path: `/news/${article.categorySlug}/${article.slug}`,
+    image: article.coverImage,
+    type: "article",
+    publishedTime: article.publishedAt,
+    modifiedTime: article.updatedAt,
+    author: article.author || "KIMX Team",
+  });
 }
 
 export default async function ArticleDetailPage({ params }: PageProps) {
@@ -186,78 +162,14 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const headingBlocks = article.content.filter((block) => block.type === "heading");
 
   // JSON-LD Schemas
-  const canonicalUrl = `${siteUrl}/news/${article.categorySlug}/${article.slug}`;
-  
-  const breadcrumbsSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "@id": `${canonicalUrl}#breadcrumb`,
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "หน้าหลัก",
-        "item": siteUrl
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "ข่าวสารและบทความ",
-        "item": `${siteUrl}/news`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": article.category,
-        "item": `${siteUrl}/news/${article.categorySlug}`
-      },
-      {
-        "@type": "ListItem",
-        "position": 4,
-        "name": article.title,
-        "item": canonicalUrl
-      }
-    ]
-  };
-
-  // Calculate absolute image URL
-  const imagePath = article.coverImage || "/images/og-fallback-brand.png";
-  const absoluteImageUrl = imagePath.startsWith("http")
-    ? imagePath
-    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
-
-  const newsArticleSchema = {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "@id": `${canonicalUrl}#article`,
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": canonicalUrl
-    },
-    "headline": article.title,
-    "description": article.description,
-    "url": canonicalUrl,
-    "image": [absoluteImageUrl],
-    "datePublished": article.publishedAt,
-    "dateModified": article.updatedAt || article.publishedAt,
-    "author": {
-      "@type": "Person",
-      "name": article.author || "KIMX Tech Editor",
-      "url": `${siteUrl}/about`,
-      "jobTitle": "Tech Editor"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      "name": "KIMX Web Agency",
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${siteUrl}/assets/images/logo%20kimxwed.png`,
-        "width": 800,
-        "height": 800
-      }
-    }
-  };
+  // JSON-LD Schemas from central helpers
+  const articleSchema = getArticleSchema(article);
+  const breadcrumbSchema = getBreadcrumbsSchema([
+    { name: "หน้าหลัก", url: "/" },
+    { name: "ข่าวสาร", url: "/news" },
+    { name: article.category, url: `/news/${article.categorySlug}` },
+    { name: article.title, url: `/news/${article.categorySlug}/${article.slug}` },
+  ]);
 
   return (
     <>
@@ -265,21 +177,22 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([breadcrumbsSchema, newsArticleSchema]),
+          __html: safeJsonLd([breadcrumbSchema, articleSchema]),
         }}
       />
 
       {/* Adjust paddingTop to 40 (approx 160px) to clear both navbar & sub-navbar */}
       <ReadingProgress />
-      <div className="relative pt-48 pb-24 bg-transparent font-sans">
-        {/* Glow - Ultra Minimalist */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-200/5 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <article className="relative pt-48 pb-24 bg-transparent font-sans">
+        <header className="relative z-10">
+          {/* Glow - Ultra Minimalist */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-200/5 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-        {/* Large, highly blurred fluid orbs */}
-        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-[#14B8A6]/25 rounded-full blur-[140px] opacity-25 pointer-events-none -z-10" />
-        <div className="absolute top-[60%] right-[-10%] w-[600px] h-[600px] bg-[#0EA5E9]/20 rounded-full blur-[140px] opacity-25 pointer-events-none -z-10" />
+          {/* Large, highly blurred fluid orbs */}
+          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-[#14B8A6]/25 rounded-full blur-[140px] opacity-25 pointer-events-none -z-10" />
+          <div className="absolute top-[60%] right-[-10%] w-[600px] h-[600px] bg-[#0EA5E9]/20 rounded-full blur-[140px] opacity-25 pointer-events-none -z-10" />
 
-        <Container className="relative z-10">
+          <Container className="relative z-10">
           
           {/* ===== BREADCRUMBS ===== */}
           <nav aria-label="Breadcrumb" className="mb-5">
@@ -367,6 +280,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             </div>
           )}
         </figure>
+      </header>
 
         <Container className="relative z-10">
 
@@ -385,7 +299,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               />
 
               {/* ===== MAIN RICH CONTENT ===== */}
-              <main className="w-full text-slate-900 font-normal text-base sm:text-lg leading-relaxed" style={{ wordBreak: 'normal', overflowWrap: 'anywhere' }}>
+              <section className="w-full text-slate-900 font-normal text-base sm:text-lg leading-relaxed" style={{ wordBreak: 'normal', overflowWrap: 'anywhere' }}>
             {article.content.map((block, idx) => {
               switch (block.type) {
                 case "paragraph": {
@@ -417,7 +331,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                     <h2
                       key={idx}
                       id={encodeURIComponent(block.text)}
-                      className={`text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-14 mb-6 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36 relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[4px] before:rounded-full before:bg-gradient-to-b before:from-[#14B8A6] before:to-[#0EA5E9] before:shadow-[0_0_12px_rgba(20,184,166,0.6)]`}
+                      className={`text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-14 mb-6 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36 relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[4px] before:rounded-full before:bg-linear-to-b before:from-[#14B8A6] before:to-[#0EA5E9] before:shadow-[0_0_12px_rgba(20,184,166,0.6)]`}
                     >
                       {enhanceHeadingText(block.text)}
                     </h2>
@@ -460,7 +374,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                   return (
                     <blockquote
                       key={idx}
-                      className="my-10 p-8 sm:p-10 relative overflow-hidden rounded-[2rem] bg-slate-50/70 border border-slate-200/50 italic text-slate-800 font-sans max-w-4xl mx-auto shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
+                      className="my-10 p-8 sm:p-10 relative overflow-hidden rounded-4xl bg-slate-50/70 border border-slate-200/50 italic text-slate-800 font-sans max-w-4xl mx-auto shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
                     >
                       {/* Oversized Background Quote */}
                       <div className="absolute -top-6 -left-2 text-[12rem] leading-none font-serif text-slate-200/40 select-none pointer-events-none" aria-hidden="true">
@@ -486,7 +400,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                           key={index}
                           className="p-6 rounded-3xl backdrop-blur-xl bg-white/60 border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-center hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(20,184,166,0.15)] transition-all duration-500"
                         >
-                          <span className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent font-sans drop-shadow-sm">
+                          <span className="text-3xl sm:text-4xl font-extrabold bg-linear-to-r from-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent font-sans drop-shadow-sm">
                             {item.value}
                           </span>
                           <span className="text-xs text-slate-500 font-medium font-sans mt-2 tracking-wide uppercase">
@@ -527,7 +441,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                           key={index}
                           className="p-6 sm:p-8 rounded-3xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-transparent flex flex-col gap-3 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0">
                             <span className="text-xs font-bold font-sans">✓</span>
                           </div>
                           <h3 className="text-sm sm:text-base font-bold text-slate-900">{item.title}</h3>
@@ -555,7 +469,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 case "image":
                   return (
                     <figure key={idx} className="my-12 relative max-w-3xl mx-auto px-4 md:px-0">
-                      <div className="relative w-full aspect-[16/10] sm:aspect-video overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 group">
+                      <div className="relative w-full aspect-16/10 sm:aspect-video overflow-hidden rounded-4xl bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 group">
                         <Image
                           src={block.src}
                           alt={block.alt}
@@ -582,7 +496,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                   return (
                     <GlassCard
                       key={idx}
-                      className="my-12 !p-6 sm:!p-8 rounded-3xl bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-200/60"
+                      className="my-12 p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-200/60"
                       hoverScale={false}
                     >
                       <div className="mb-6 flex items-center gap-2">
@@ -609,7 +523,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                   return null;
               }
             })}
-          </main>
+          </section>
 
           {/* ===== TAGS ===== */}
           {article.tags && article.tags.length > 0 && (
@@ -688,9 +602,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           </section>
         </Container>
 
+        {/* ===== CONTEXTUAL INTERNAL LINKS ===== */}
+        <ContextualInternalLinks
+          articleSlug={article.slug}
+          categorySlug={article.categorySlug}
+          tags={article.tags}
+        />
+
         {/* ===== RELATED ARTICLES SECTION ===== */}
         <RelatedArticles relatedArticles={relatedArticles} />
-      </div>
+      </article>
     </>
   );
 }

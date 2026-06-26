@@ -8,9 +8,10 @@ import Navbar from "@/components/layout/Navbar";
 import NewsCategoryBar from "@/components/layout/NewsCategoryBar";
 import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/home/CookieConsent";
-import QuoteModal from "@/components/home/QuoteModal";
+import DeferredClientOverlays from "@/components/providers/DeferredClientOverlays";
 import AOSProvider from "@/context/AOSProvider";
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import WebVitalsReporter from "./WebVitalsReporter";
 
 
 // Load Prompt for Thai text
@@ -19,6 +20,7 @@ const prompt = Prompt({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["thai", "latin"],
   display: "swap",
+  fallback: ["Tahoma", "Microsoft Sans Serif", "sans-serif"],
 });
 
 // Load Inter for English/numbers
@@ -42,6 +44,7 @@ export default function RootLayout({
     >
       <body className="flex flex-col min-h-screen kimx-light-bg text-[#1D1D1F] antialiased selection:bg-sky-200 selection:text-sky-900">
         <AOSProvider>
+          <WebVitalsReporter />
           <QuoteModalProvider>
             <SmoothScroll>
               {/* Main header navbar */}
@@ -59,8 +62,8 @@ export default function RootLayout({
               {/* Cookie consent bar */}
               <CookieConsent />
 
-              {/* Request quote modal dialog */}
-              <QuoteModal />
+              {/* Deferred Request quote modal dialog */}
+              <DeferredClientOverlays />
             </SmoothScroll>
           </QuoteModalProvider>
         </AOSProvider>

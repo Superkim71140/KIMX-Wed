@@ -64,7 +64,7 @@ export default function CategoryArticleGrid({ articles, category }: CategoryArti
       )}
 
       {/* Main Grid with Smooth Framer Motion transitions to prevent CLS */}
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 min-h-[400px]">
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[400px]">
         <AnimatePresence mode="popLayout">
           {displayArticles.map((article) => (
             <motion.div
@@ -81,7 +81,7 @@ export default function CategoryArticleGrid({ articles, category }: CategoryArti
                 className="group block h-full"
               >
                 <GlassCard
-                  className="flex flex-col h-full p-0! bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
+                  className="flex flex-col h-full p-0 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
                   hoverScale={false}
                   hoverGlow={false}
                 >
@@ -96,7 +96,7 @@ export default function CategoryArticleGrid({ articles, category }: CategoryArti
                     </div>
                   </div>
 
-                  <div className="p-5 sm:p-6 flex flex-col flex-grow">
+                  <div className="p-5 sm:p-6 flex flex-col grow">
                     <div className="flex items-center gap-3 text-[10px] sm:text-xs font-light text-slate-500 font-sans mb-3">
                       <Calendar size={12} className="text-slate-400" />
                       <span>

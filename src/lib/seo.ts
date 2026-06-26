@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kimx-wed.vercel.app";
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://kimx-wed.vercel.app").replace(/\/$/, "");
 export const defaultTitle = "รับทำเว็บไซต์ สมุทรสาคร | ออกแบบเว็บไซต์ SEO พร้อมระบบธุรกิจ - KIMX Web";
-export const titleTemplate = "%s | KIMX Web";
 export const defaultDescription = "KIMX Web รับทำเว็บไซต์สมุทรสาคร มหาชัย กระทุ่มแบน บ้านแพ้ว และกรุงเทพฯ ออกแบบเว็บไซต์บริษัท เว็บไซต์ธุรกิจ ระบบ E-commerce SEO และดูแลเว็บครบวงจร โทร 092-837-1926";
 
 interface MetadataInput {
@@ -10,50 +9,93 @@ interface MetadataInput {
   description?: string;
   path?: string;
   noIndex?: boolean;
+  image?: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
 }
 
+/**
+ * formatTitle — Formats page titles by appending the brand suffix exactly once,
+ * avoiding duplicate brand names like "KIMX Web | KIMX Web".
+ */
+export function formatTitle(title?: string): string {
+  if (!title) return defaultTitle;
+  
+  if (title.includes("KIMX Web")) {
+    return title;
+  }
+  
+  return `${title} | KIMX Web`;
+}
+
+/**
+ * buildMetadata — Central metadata factory. Constructs canonical absolute URLs
+ * using the safe URL constructor and sets up uniform SEO configurations.
+ */
 export function buildMetadata({
   title,
   description,
   path = "",
   noIndex = false,
+  image,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  author,
 }: MetadataInput = {}): Metadata {
-  const canonicalUrl = `${siteUrl}${path}`;
-  const displayTitle = title ? title : defaultTitle;
+  // Enforce leading slash on paths for clean URL construction
+  const sanitizedPath = path.startsWith("/") ? path : `/${path}`;
+  const canonicalUrl = new URL(sanitizedPath, siteUrl).toString();
+  
+  const displayTitle = formatTitle(title);
   const displayDescription = description || defaultDescription;
 
+  // Resolve absolute preview image URL
+  let imageUrl = new URL("/assets/images/logo kimxwed.png", siteUrl).toString();
+  if (image) {
+    imageUrl = image.startsWith("http")
+      ? image
+      : new URL(image.startsWith("/") ? image : `/${image}`, siteUrl).toString();
+  }
+
+  const openGraph: Record<string, any> = {
+    type,
+    locale: "th_TH",
+    siteName: "KIMX Web",
+    url: canonicalUrl,
+    title: displayTitle,
+    description: displayDescription,
+    images: [
+      {
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: title || "KIMX Web",
+      },
+    ],
+  };
+
+  // Add Article-specific parameters if rendering an editorial canvas
+  if (type === "article") {
+    if (publishedTime) openGraph.publishedTime = publishedTime;
+    if (modifiedTime) openGraph.modifiedTime = modifiedTime;
+    if (author) openGraph.authors = [author];
+  }
+
   return {
-    title: title ? {
-      absolute: displayTitle,
-    } : {
-      default: defaultTitle,
-      template: titleTemplate,
-    },
+    title: displayTitle,
     description: displayDescription,
     alternates: {
       canonical: canonicalUrl,
     },
-    openGraph: {
-      title: displayTitle,
-      description: displayDescription,
-      url: canonicalUrl,
-      siteName: "KIMX Web Agency",
-      locale: "th_TH",
-      type: "website",
-      images: [
-        {
-          url: `${siteUrl}/assets/images/logo kimxwed.png`,
-          width: 800,
-          height: 800,
-          alt: "KIMX Web Agency Logo",
-        },
-      ],
-    },
+    openGraph,
     twitter: {
       card: "summary_large_image",
       title: displayTitle,
       description: displayDescription,
-      images: [`${siteUrl}/assets/images/logo kimxwed.png`],
+      images: [imageUrl],
     },
     robots: {
       index: !noIndex,
@@ -61,12 +103,21 @@ export function buildMetadata({
       googleBot: {
         index: !noIndex,
         follow: !noIndex,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
+    applicationName: "KIMX Web",
+    creator: "KIMX Web Agency",
     metadataBase: new URL(siteUrl),
   };
 }
 
+/**
+ * buildArticleMetadata — Legacy wrapper kept for backwards compatibility.
+ * Delegates to buildMetadata under the hood.
+ */
 export function buildArticleMetadata(
   article: {
     title: string;
@@ -75,40 +126,20 @@ export function buildArticleMetadata(
     image: string;
     updatedAt: string;
     publishedAt: string;
+    categorySlug?: string;
   }
 ): Metadata {
-  const path = `/articles/${article.slug}`;
-  const canonicalUrl = `${siteUrl}${path}`;
-
-  return {
+  return buildMetadata({
     title: article.title,
     description: article.description,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      title: article.title,
-      description: article.description,
-      url: canonicalUrl,
-      siteName: "KIMX Web Agency",
-      locale: "th_TH",
-      type: "article",
-      publishedTime: article.publishedAt,
-      modifiedTime: article.updatedAt,
-      authors: ["KIMX Team"],
-      images: [
-        {
-          url: article.image.startsWith("http") ? article.image : `${siteUrl}${article.image}`,
-          alt: article.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: article.title,
-      description: article.description,
-      images: [article.image.startsWith("http") ? article.image : `${siteUrl}${article.image}`],
-    },
-    metadataBase: new URL(siteUrl),
-  };
+    path: article.categorySlug 
+      ? `/news/${article.categorySlug}/${article.slug}`
+      : `/articles/${article.slug}`,
+    image: article.image,
+    type: "article",
+    publishedTime: article.publishedAt,
+    modifiedTime: article.updatedAt,
+    author: "KIMX Team",
+  });
 }
+

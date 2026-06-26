@@ -78,6 +78,7 @@ export default function HeroSection() {
                     src="/images/portfolio/kimxwed.webp"
                     alt="KIMX Web Agency Portfolio"
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 680px"
                     className="object-cover cursor-default"
                     priority
                   />

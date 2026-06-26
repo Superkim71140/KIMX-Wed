@@ -10,6 +10,7 @@ import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
 import { getCategoryColorStyles, renderArticleCover } from "@/lib/news-presentation";
 import CategoryArticleGrid from "@/components/news/CategoryArticleGrid";
+import { safeJsonLd } from "@/lib/schema";
 
 // Category Details Mapping
 const categoryMap: Record<string, { label: string; description: string }> = {
@@ -64,17 +65,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const catInfo = categoryMap[category];
 
   if (!catInfo) {
-    return {
-      title: "ไม่พบหมวดหมู่ - KIMX Web",
-    };
+    return buildMetadata({
+      title: "ไม่พบหมวดหมู่",
+      noIndex: true,
+      path: `/news/${category}`,
+    });
   }
 
   return buildMetadata({
-    title: `${catInfo.label} | ข่าวสารและบทความ - KIMX Web`,
+    title: `${catInfo.label} | ข่าวสารและบทความ`,
     description: catInfo.description,
     path: `/news/${category}`,
   });
 }
+
+export const revalidate = 86400;
 
 export default async function CategoryPage({ params }: PageProps) {
   const { category } = await params;
@@ -146,7 +151,7 @@ export default async function CategoryPage({ params }: PageProps) {
       {/* Schema Injection */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([breadcrumbsSchema, collectionSchema]) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd([breadcrumbsSchema, collectionSchema]) }}
       />
 
       {/* Adjust paddingTop for Apple-tier spacing to clear navbar cleanly */}

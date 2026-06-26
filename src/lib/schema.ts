@@ -1,11 +1,79 @@
 import { siteConfig } from "@/data/site";
 import { siteUrl } from "./seo";
+import { Article } from "@/data/articles";
+import { NewsArticle } from "@/data/news";
+import { NormalizedArticle } from "@/lib/articles/types";
 
+/**
+ * safeJsonLd — Serializes structured data objects to a JSON string and replaces
+ * '<' characters with Unicode escape sequences to prevent script injection.
+ */
+export function safeJsonLd(data: any): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+/**
+ * getHomepageSchema — Constructs a single connected @graph containing metadata
+ * for Organization, WebSite, WebPage, ProfessionalService, and FAQPage.
+ */
 export function getHomepageSchema() {
+  const orgId = `${siteUrl}/#organization`;
+  const webSiteId = `${siteUrl}/#website`;
+  const webPageId = `${siteUrl}/#webpage`;
+  const serviceId = `${siteUrl}/#service`;
+
+  const organization = {
+    "@type": "Organization",
+    "@id": orgId,
+    "name": "KIMX Web Agency",
+    "url": siteUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "@id": `${siteUrl}/#logo`,
+      "url": `${siteUrl}/assets/images/logo%20kimxwed.png`,
+      "caption": "KIMX Web Agency"
+    },
+    "sameAs": [
+      siteConfig.facebookUrl,
+      siteConfig.lineUrl
+    ]
+  };
+
+  const website = {
+    "@type": "WebSite",
+    "@id": webSiteId,
+    "name": "KIMX Web",
+    "url": siteUrl,
+    "publisher": {
+      "@id": orgId
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  const webpage = {
+    "@type": "WebPage",
+    "@id": webPageId,
+    "url": siteUrl,
+    "name": "รับทำเว็บไซต์ สมุทรสาคร | ออกแบบเว็บไซต์ SEO พร้อมระบบธุรกิจ - KIMX Web",
+    "isPartOf": {
+      "@id": webSiteId
+    },
+    "about": {
+      "@id": orgId
+    },
+    "description": "KIMX Web รับทำเว็บไซต์สมุทรสาคร มหาชัย กระทุ่มแบน บ้านแพ้ว และกรุงเทพฯ ออกแบบเว็บไซต์บริษัท เว็บไซต์ธุรกิจ ระบบ E-commerce SEO และดูแลเว็บครบวงจร"
+  };
+
   const localBusiness = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `${siteUrl}/#local-business`,
+    "@type": "ProfessionalService",
+    "@id": serviceId,
     "name": "KIMX Web Agency",
     "image": `${siteUrl}/assets/images/logo%20kimxwed.png`,
     "telephone": siteConfig.telephone,
@@ -28,113 +96,27 @@ export function getHomepageSchema() {
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
       ],
       "opens": "09:00",
       "closes": "18:00"
     },
-    "sameAs": [
-      siteConfig.facebookUrl,
-      siteConfig.lineUrl
-    ],
     "areaServed": [
-      {
-        "@type": "AdministrativeArea",
-        "name": "Samut Sakhon"
-      },
-      {
-        "@type": "AdministrativeArea",
-        "name": "Bangkok"
-      }
+      { "@type": "AdministrativeArea", "name": "Samut Sakhon" },
+      { "@type": "AdministrativeArea", "name": "Bangkok" }
     ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Web Services",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Web Development"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "SEO Optimization"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "System Maintenance"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Website Design"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "E-commerce Website"
-          }
-        }
-      ]
-    }
-  };
-
-  const organization = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": `${siteUrl}/#organization`,
-    "name": "KIMX Web Agency",
-    "url": siteUrl,
-    "logo": `${siteUrl}/assets/images/logo%20kimxwed.png`,
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": siteConfig.telephone,
-      "contactType": "customer service",
-      "areaServed": "TH",
-      "availableLanguage": "Thai"
-    },
     "sameAs": [
       siteConfig.facebookUrl,
       siteConfig.lineUrl
     ]
   };
 
-  const website = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${siteUrl}/#website`,
-    "name": "KIMX Web",
-    "url": siteUrl,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${siteUrl}/search?q={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    }
-  };
-
   const faqPage = {
-    "@context": "https://schema.org",
     "@type": "FAQPage",
+    "@id": `${siteUrl}/#faq`,
+    "isPartOf": {
+      "@id": webPageId
+    },
     "mainEntity": [
       {
         "@type": "Question",
@@ -187,34 +169,51 @@ export function getHomepageSchema() {
     ]
   };
 
-  return [localBusiness, organization, website, faqPage];
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      organization,
+      website,
+      webpage,
+      localBusiness,
+      faqPage
+    ]
+  };
 }
 
-export function getArticleSchema(article: {
-  slug: string;
-  title: string;
-  description: string;
-  image: string;
-  publishedAt: string;
-  updatedAt: string;
-}) {
-  const articleUrl = `${siteUrl}/articles/${article.slug}`;
+export function getArticleSchema(article: Article | NewsArticle | NormalizedArticle) {
+  const isNews = "categorySlug" in article && !!article.categorySlug;
+  const canonicalUrl = isNews
+    ? `${siteUrl}/news/${article.categorySlug}/${article.slug}`
+    : `${siteUrl}/articles/${article.slug}`;
+
+  const rawImage = "coverImage" in article && article.coverImage
+    ? article.coverImage
+    : ("image" in article && article.image ? article.image : "/images/og-fallback-brand.png");
+
+  const absoluteImageUrl = rawImage.startsWith("http")
+    ? rawImage
+    : `${siteUrl}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+
+  const schemaType = isNews ? "NewsArticle" : "Article";
+  const desc = "excerpt" in article ? article.excerpt : article.description;
 
   const articleSchema = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    "@type": schemaType,
+    "@id": `${canonicalUrl}#article`,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": articleUrl
+      "@id": canonicalUrl
     },
     "headline": article.title,
-    "description": article.description,
-    "image": article.image.startsWith("http") ? article.image : `${siteUrl}${article.image}`,
+    "description": desc,
+    "image": [absoluteImageUrl],
     "datePublished": article.publishedAt,
     "dateModified": article.updatedAt,
     "author": {
       "@type": "Person",
-      "name": "KIMX Team"
+      "name": article.author || "KIMX Team"
     },
     "publisher": {
       "@type": "Organization",
@@ -239,14 +238,14 @@ export function getArticleSchema(article: {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "บทความ",
-        "item": `${siteUrl}/articles`
+        "name": isNews ? "ข่าวสาร" : "บทความ",
+        "item": isNews ? `${siteUrl}/news` : `${siteUrl}/articles`
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": article.title,
-        "item": articleUrl
+        "item": canonicalUrl
       }
     ]
   };

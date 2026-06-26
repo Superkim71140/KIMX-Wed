@@ -30,7 +30,7 @@ export default function RelatedArticles({ relatedArticles }: RelatedArticlesProp
               className="group block h-full"
             >
               <GlassCard
-                className="flex flex-col h-full p-0! bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
+                className="flex flex-col h-full p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
                 hoverScale={false}
                 hoverGlow={true}
               >
@@ -47,7 +47,7 @@ export default function RelatedArticles({ relatedArticles }: RelatedArticlesProp
                 </div>
 
                 {/* Content */}
-                <div className="p-5 flex flex-col flex-grow">
+                <div className="p-5 flex flex-col grow">
                   <div className="flex items-center gap-3 text-[10px] sm:text-xs font-light text-slate-500 font-sans mb-3">
                     <span>
                       {new Date(relatedArt.publishedAt).toLocaleDateString("th-TH", {

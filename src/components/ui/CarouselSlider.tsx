@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useRef, useCallback, useState, useEffect, useId } from "react";
+import React, { useRef, useCallback, useState, useEffect, useId, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperInstance } from "swiper";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Navigation, Pagination, A11y } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "swiper/css/a11y";
 
 interface CarouselSliderProps {
   slides: React.ReactNode[];
@@ -21,6 +22,8 @@ interface CarouselSliderProps {
   slidesPerViewTablet?: number;
   slidesPerViewDesktop?: number;
   className?: string;
+  observeDom?: boolean;
+  watchSlidesProgress?: boolean;
 }
 
 export default function CarouselSlider({
@@ -33,6 +36,8 @@ export default function CarouselSlider({
   slidesPerViewTablet = 2,
   slidesPerViewDesktop = 3,
   className = "",
+  observeDom = false,
+  watchSlidesProgress = false,
 }: CarouselSliderProps) {
   /**
    * Instance-ownership pattern:
@@ -81,11 +86,28 @@ export default function CarouselSlider({
     swiperRef.current?.slideNext();
   }, []);
 
-  const modules = [];
   const isAutoplayEnabled = autoplay && !prefersReducedMotion;
-  if (isAutoplayEnabled) modules.push(Autoplay);
-  modules.push(Navigation);
-  if (showPagination) modules.push(Pagination);
+
+  // Memoize modules array to prevent recalculating Swiper context on every re-render
+  const modules = useMemo(() => {
+    const list = [Navigation, A11y];
+    if (isAutoplayEnabled) list.push(Autoplay);
+    if (showPagination) list.push(Pagination);
+    return list;
+  }, [isAutoplayEnabled, showPagination]);
+
+  // Memoize responsive breakpoints config
+  const breakpoints = useMemo(() => ({
+    0: {
+      slidesPerView: slidesPerViewMobile,
+    },
+    640: {
+      slidesPerView: slidesPerViewTablet,
+    },
+    1024: {
+      slidesPerView: slidesPerViewDesktop,
+    },
+  }), [slidesPerViewMobile, slidesPerViewTablet, slidesPerViewDesktop]);
 
   return (
     <div className={`relative w-full group ${className}`}>
@@ -96,14 +118,13 @@ export default function CarouselSlider({
         grabCursor={true}
         loop={true}
         allowTouchMove={true}
-        a11y={false}
-        observer={true}
-        observeParents={true}
+        observer={observeDom}
+        observeParents={observeDom}
         resizeObserver={true}
         watchOverflow={true}
         updateOnWindowResize={true}
         centeredSlides={false}
-        watchSlidesProgress={true}
+        watchSlidesProgress={watchSlidesProgress}
         roundLengths={false}
         cssMode={false}
         autoplay={
@@ -126,17 +147,7 @@ export default function CarouselSlider({
             : false
         }
         spaceBetween={24}
-        breakpoints={{
-          0: {
-            slidesPerView: slidesPerViewMobile,
-          },
-          640: {
-            slidesPerView: slidesPerViewTablet,
-          },
-          1024: {
-            slidesPerView: slidesPerViewDesktop,
-          },
-        }}
+        breakpoints={breakpoints}
         className="w-full pb-8"
       >
         {slides.map((slide, idx) => (

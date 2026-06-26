@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { getHomepageSchema } from "@/lib/schema";
+import { getHomepageSchema, safeJsonLd } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 
 // Component Imports
@@ -27,6 +27,8 @@ export const metadata: Metadata = buildMetadata({
   path: "",
 });
 
+export const revalidate = 86400;
+
 export default function HomePage() {
   const homeSchema = getHomepageSchema();
 
@@ -35,7 +37,7 @@ export default function HomePage() {
       {/* Schema Markup Injection */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(homeSchema) }}
       />
 
       {/* 1. Hero Section Presentation */}

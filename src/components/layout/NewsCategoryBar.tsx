@@ -65,10 +65,10 @@ export default function NewsCategoryBar() {
     >
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         {/* Left fade overlay on mobile */}
-        <div className={`absolute left-4 top-0 bottom-0 w-8 bg-gradient-to-r ${scrolled ? 'from-white via-white/50' : 'from-[#F5F5F7] via-[#F5F5F7]/50'} to-transparent pointer-events-none z-10 sm:hidden`} />
+        <div className={`absolute left-4 top-0 bottom-0 w-8 bg-linear-to-r ${scrolled ? 'from-white via-white/50' : 'from-[#F5F5F7] via-[#F5F5F7]/50'} to-transparent pointer-events-none z-10 sm:hidden`} />
         
         {/* Right fade overlay on mobile */}
-        <div className={`absolute right-4 top-0 bottom-0 w-8 bg-gradient-to-l ${scrolled ? 'from-white via-white/50' : 'from-[#F5F5F7] via-[#F5F5F7]/50'} to-transparent pointer-events-none z-10 sm:hidden`} />
+        <div className={`absolute right-4 top-0 bottom-0 w-8 bg-linear-to-l ${scrolled ? 'from-white via-white/50' : 'from-[#F5F5F7] via-[#F5F5F7]/50'} to-transparent pointer-events-none z-10 sm:hidden`} />
 
         <nav
           ref={scrollContainerRef}

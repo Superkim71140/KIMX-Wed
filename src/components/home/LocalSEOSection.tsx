@@ -77,7 +77,7 @@ export default function LocalSEOSection() {
           <div className="flex flex-col items-center justify-center mb-16 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0F172A] -tracking-[0.02em] leading-tight mb-6 font-inter">
               รับทำเว็บไซต์สมุทรสาคร<br />
-              <span className="kimx-gradient-text text-transparent bg-clip-text bg-gradient-to-r from-[#14B8A6] to-[#0EA5E9]">
+              <span className="kimx-gradient-text text-transparent bg-clip-text bg-linear-to-r from-[#14B8A6] to-[#0EA5E9]">
                 พร้อมวางระบบให้ธุรกิจติด Google ง่ายขึ้น
               </span>
             </h2>
@@ -126,7 +126,7 @@ export default function LocalSEOSection() {
                     r="42"
                     cx="50"
                     cy="50"
-                    className="transition-all duration-[2000ms] ease-out"
+                    className="transition-all duration-2000 ease-out"
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center justify-center">
@@ -146,7 +146,7 @@ export default function LocalSEOSection() {
             <div className="glass-panel lg:col-span-8 rounded-[32px] p-8 sm:p-10 relative overflow-hidden bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-lg hover:border-teal-500/30 hover:shadow-xl transition-all duration-500 flex flex-col group justify-between">
               <h3 className="text-xl font-black text-slate-850 mb-6 font-inter">โครงสร้างเทคนิคัลและมาตรฐาน SEO</h3>
               
-              <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-slate-50/50 border border-slate-100/80">
+              <div className="relative w-full aspect-16/10 rounded-2xl overflow-hidden bg-slate-50/50 border border-slate-100/80">
                 <Image
                   src="/images/portfolio/โครงสร้างเทคนิค.webp"
                   alt="โครงสร้างเทคนิคัลและมาตรฐาน SEO"

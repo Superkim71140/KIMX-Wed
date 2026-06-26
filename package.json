@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seo:audit": "node scripts/seo-audit.js",
+    "seo:sitemap": "node scripts/validate-sitemap.js"
   },
   "dependencies": {
     "aos": "^2.3.4",

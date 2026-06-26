@@ -18,6 +18,8 @@ export const metadata: Metadata = buildMetadata({
   path: "/articles",
 });
 
+export const revalidate = 86400;
+
 export default function ArticlesPage() {
   return (
     <div className="relative pt-32 pb-16 overflow-hidden bg-transparent">

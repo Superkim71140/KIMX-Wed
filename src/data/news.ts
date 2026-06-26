@@ -32,9 +32,9 @@ export interface NewsArticle {
   content: NewsArticleContentBlock[];
 }
 
-const exciseEvFinanceSupport2026 = articles.find(a => a.id === "excise-ev-finance-support-2026")!;
+const exciseEvFinanceSupport2026 = articles.find(a => a.id === "excise-ev-finance-support-2026");
 
-const mappedEvFinanceArticle = {
+const mappedEvFinanceArticle: NewsArticle | null = exciseEvFinanceSupport2026 ? {
   title: exciseEvFinanceSupport2026.title,
   slug: exciseEvFinanceSupport2026.slug,
   excerpt: exciseEvFinanceSupport2026.description,
@@ -52,10 +52,10 @@ const mappedEvFinanceArticle = {
   isPinned: exciseEvFinanceSupport2026.isPinned || false,
   // Since ArticleContentBlock is a subset of NewsArticleContentBlock, we can safely cast or map it.
   content: exciseEvFinanceSupport2026.content as unknown as NewsArticleContentBlock[],
-} as NewsArticle;
+} : null;
 
 export const newsArticles: NewsArticle[] = [
-  mappedEvFinanceArticle,
+  ...(mappedEvFinanceArticle ? [mappedEvFinanceArticle] : []),
   {
     title: "New ZONTES 368E ETC เปิดราคา 163,800 บาท สปอร์ตลักชัวรีสกู๊ตเตอร์ อัดเทคโนโลยีเพื่อสายเดินทาง",
     slug: "new-zontes-368e-etc-2026-launch",

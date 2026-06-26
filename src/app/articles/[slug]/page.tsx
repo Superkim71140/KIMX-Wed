@@ -1,14 +1,18 @@
 import React from "react";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { articles } from "@/data/articles";
-import { siteConfig } from "@/data/site";
+import { buildMetadata, siteUrl } from "@/lib/seo";
+import { getArticleSchema, safeJsonLd } from "@/lib/schema";
 import ArticleHero from "@/components/articles/ArticleHero";
 import ArticleContent from "@/components/articles/ArticleContent";
 import ArticleCTA from "@/components/articles/ArticleCTA";
 import ArticleCard from "@/components/articles/ArticleCard";
 import Container from "@/components/ui/Container";
 import ArticleFooterActions from "@/components/articles/ArticleFooterActions";
+import ContextualInternalLinks from "@/components/articles/ContextualInternalLinks";
+
+export const revalidate = 86400;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -27,44 +31,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const article = articles.find((art) => art.slug === slug);
 
   if (!article) {
-    return {
-      title: "บทความไม่พบ - KIMX Web",
-    };
+    return buildMetadata({
+      title: "บทความไม่พบ",
+      path: `/articles/${slug}`,
+    });
   }
 
-  const imagePath = article.image || "/images/og-fallback-brand.png";
-  const absoluteImageUrl = imagePath.startsWith("http")
-    ? imagePath
-    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  const canonicalPath = article.categorySlug
+    ? `/news/${article.categorySlug}/${article.slug}`
+    : `/articles/${article.slug}`;
 
-  const imageType = absoluteImageUrl.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
-
-  return {
+  return buildMetadata({
     title: article.title,
     description: article.description,
-    openGraph: {
-      type: "article",
-      locale: "th_TH",
-      siteName: "KIMX Web",
-      title: article.title,
-      description: article.description,
-      images: [
-        {
-          url: absoluteImageUrl,
-          width: 1200,
-          height: 630,
-          alt: article.title,
-          type: imageType,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: article.title,
-      description: article.description,
-      images: [absoluteImageUrl],
-    },
-  };
+    path: canonicalPath,
+    image: article.image,
+    type: "article",
+    publishedTime: article.publishedAt,
+    modifiedTime: article.updatedAt,
+    author: article.author || "KIMX Team",
+  });
 }
 
 export default async function ArticleDetailPage({ params }: PageProps) {
@@ -73,6 +59,11 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   if (!article) {
     notFound();
+  }
+
+  // Redirect to news route if this article is mapped as a news category item
+  if (article.categorySlug) {
+    permanentRedirect(`/news/${article.categorySlug}/${article.slug}`);
   }
 
   // Related articles (excluding current article)
@@ -84,7 +75,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const imagePath = article.image || "/images/og-fallback-brand.png";
   const absoluteImageUrl = imagePath.startsWith("http")
     ? imagePath
-    : `${siteConfig.siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+    : `${siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+
+  const schemas = getArticleSchema(article);
 
   return (
     <>
@@ -92,17 +85,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "NewsArticle",
-            "headline": article.title,
-            "image": [absoluteImageUrl],
-            "datePublished": article.publishedAt,
-            "author": {
-              "@type": "Person",
-              "name": "KIMX Tech Editor"
-            }
-          })
+          __html: safeJsonLd(schemas)
         }}
       />
 
@@ -120,9 +103,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <ArticleFooterActions 
             returnUrl="/articles"
             title={article.title}
-            canonicalUrl={`${siteConfig.siteUrl}/articles/${article.slug}`}
+            canonicalUrl={`${siteUrl}/articles/${article.slug}`}
           />
         </Container>
+
+        {/* ===== CONTEXTUAL INTERNAL LINKS ===== */}
+        <ContextualInternalLinks
+          articleSlug={article.slug}
+          categorySlug={article.categorySlug}
+          tags={article.tags}
+        />
 
         {/* Related Articles Section */}
         {relatedArticles.length > 0 && (

@@ -29,7 +29,7 @@ export default function WhyNeedWebsite() {
   ];
 
   return (
-    <section className="relative py-24 sm:py-32 bg-slate-950 overflow-hidden z-0 border-t border-white/[0.05] kimx-dark-section">
+    <section className="relative py-24 sm:py-32 bg-slate-950 overflow-hidden z-0 border-t border-white/5 kimx-dark-section">
 
       {/* Ambient Glows (Layer 2) */}
       <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[60%] bg-teal-500/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none z-0"></div>
@@ -54,7 +54,7 @@ export default function WhyNeedWebsite() {
             {items.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:bg-white/[0.06] hover:border-white/[0.15] hover:shadow-xl group"
+                className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/3 border border-white/8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:bg-white/6 hover:border-white/15 hover:shadow-xl group"
               >
                 {/* Circular image placeholder (Compact & Round) */}
                 <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden border border-white/10 mb-4 shadow-[0_0_20px_rgba(56,189,248,0.15)] group-hover:scale-105 transition-transform duration-500">

@@ -362,7 +362,7 @@ section {
   width: 50%; height: 100%;
   background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   transform: skewX(-25deg);
-  transition: all 0.5s ease;
+  transition: left 0.5s ease;
 }
 
 .shine-hover-btn:hover::before {
@@ -381,7 +381,7 @@ section {
   border: 1px solid #c2e0ff !important;
   color: #0b1b33 !important;
   border-radius: 12px !important;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Style for option elements */
@@ -413,7 +413,7 @@ select.custom-input option {
   width: 0%;
   height: 2px;
   background: var(--blue-glow);
-  transition: all 0.3s ease;
+  transition: width 0.3s ease;
   transform: translateX(-50%);
   box-shadow: 0 0 10px var(--blue-glow);
 }
@@ -424,7 +424,7 @@ select.custom-input option {
 
 /* Smooth opacity and transform transitions */
 .transition-all-500 {
-  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -565,7 +565,7 @@ select.custom-input option {
    * Shadow transitions are safe because AOS never animates box-shadow.
    */
   transition: box-shadow 0.35s ease;
-  will-change: transform, opacity;
+  contain: layout paint;
 }
 .kimx-premium-card:hover {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
@@ -631,7 +631,7 @@ select.custom-input option {
   background: #cbd5e1;
   opacity: 0.6;
   border-radius: 9999px;
-  transition: all 0.3s ease;
+  transition: width 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
   cursor: pointer;
   display: inline-block;
 }
@@ -646,24 +646,29 @@ select.custom-input option {
  * that cause the card container to vibrate or jitter during mouse hover.
  */
 .testimonial-card-gpu {
-  will-change: transform, opacity;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   transition: box-shadow 0.35s ease, border-color 0.35s ease !important;
+  contain: layout paint;
 }
 .testimonial-card-gpu:hover {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
 }
 
 /* --- Testimonial Sibling Focus Dimming (Optimized Descendant Hover) --- */
-.testimonial-carousel-wrapper:hover .testimonial-outer-wrapper:not(:hover) {
-  opacity: 0.4;
-  filter: blur(2px);
+@media (hover: hover) and (pointer: fine) {
+  .testimonial-carousel-wrapper:hover .testimonial-outer-wrapper:not(:hover) {
+    opacity: 0.4;
+    filter: blur(2px);
+  }
+}
+
+.testimonial-carousel-wrapper:hover .testimonial-outer-wrapper {
+  will-change: opacity, filter;
 }
 
 .testimonial-outer-wrapper {
   transition: opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), filter 1000ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, filter;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
 }
@@ -723,10 +728,10 @@ select.custom-input option {
  * from browser repaint cycles to guarantee stable scrolling threads.
  */
 .service-card-gpu {
-  will-change: transform, opacity;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  contain: layout paint;
 }
 
 /*
@@ -778,7 +783,6 @@ select.custom-input option {
 /* --- Editorial Motion System --- */
 .motion-editorial {
   transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1), opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 800ms cubic-bezier(0.16, 1, 0.3, 1) !important;
-  will-change: transform, opacity;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
 }
@@ -793,6 +797,15 @@ select.custom-input option {
   .motion-editorial {
     transition: none !important;
     transform: none !important;
-    will-change: auto;
   }
+}
+
+/* --- GPU Layer Active Motion & Hover System (No Permanent layers) --- */
+.motion-layer-active,
+[data-motion-active="true"],
+.kimx-premium-card:hover,
+.testimonial-card-gpu:hover,
+.service-card-gpu:hover,
+.motion-editorial:hover {
+  will-change: transform, opacity;
 }

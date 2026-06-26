@@ -15,6 +15,8 @@ export const metadata: Metadata = buildMetadata({
   path: "/news",
 });
 
+export const revalidate = 86400;
+
 import { getCategoryColorStyles, renderArticleCover } from "@/lib/news-presentation";
 export { getCategoryColorStyles, renderArticleCover };
 
@@ -104,7 +106,7 @@ export default function NewsHubPage() {
                   บทความแนะนำ
                 </h2>
                 <Link href={`/news/${featuredArticle.categorySlug}/${featuredArticle.slug}`} className="group block">
-                  <GlassCard className="flex flex-col lg:flex-row gap-8 lg:gap-12 p-0! bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
+                  <GlassCard className="flex flex-col lg:flex-row gap-8 lg:gap-12 p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
                     {/* Cover Image Wrapper */}
                     <div className={`relative w-full lg:w-3/5 aspect-16/10 lg:aspect-auto min-h-[260px] lg:min-h-[380px] overflow-hidden transition-all duration-700 ease-in-out ${featuredArticle.coverFit === 'contain' ? 'bg-slate-950 border-r border-sky-100/50' : 'bg-slate-50'}`}>
                       {renderArticleCover(featuredArticle.coverImage, featuredArticle.title, featuredArticle.category, featuredArticle.coverFit)}
@@ -174,7 +176,7 @@ export default function NewsHubPage() {
                     className="group block h-full"
                   >
                     <GlassCard
-                      className="flex flex-col h-full p-0! bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
+                      className="flex flex-col h-full p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
                       hoverScale={false}
                       hoverGlow={false}
                     >
@@ -190,7 +192,7 @@ export default function NewsHubPage() {
                       </div>
 
                       {/* Content */}
-                      <div className="p-5 sm:p-6 flex flex-col flex-grow">
+                      <div className="p-5 sm:p-6 flex flex-col grow">
                         {/* Meta row */}
                         <div className="flex items-center gap-3 text-[10px] sm:text-xs font-medium text-slate-500 font-sans mb-3">
                           <span>

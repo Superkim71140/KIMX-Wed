@@ -29,15 +29,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const item = portfolioItems.find((p) => p.slug === slug);
 
   if (!item) {
-    return {
-      title: "ไม่พบผลงาน - KIMX Web",
-    };
+    return buildMetadata({
+      title: "ไม่พบผลงาน",
+      noIndex: true,
+      path: `/portfolio/${slug}`,
+    });
   }
 
   return buildMetadata({
-    title: `${item.title} | Portfolio Case Study - KIMX Web`,
+    title: `${item.title} | Portfolio Case Study`,
     description: item.description,
     path: `/portfolio/${item.slug}`,
+    image: item.image,
   });
 }
 
