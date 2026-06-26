@@ -65,7 +65,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
   };
 
   return (
-    <div className="sticky top-32 p-6 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hidden lg:block motion-editorial">
+    <div className="sticky top-32 p-6 rounded-2xl backdrop-blur-xl bg-white/40 border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.02)] hidden lg:block motion-editorial">
       <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">
         หัวข้อในบทความ
       </h3>

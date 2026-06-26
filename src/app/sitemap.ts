@@ -67,7 +67,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "phone",
     "game",
     "tech",
-    "seo",
+    "automotive",
     "cyber-security",
     "digital-business",
     "how-to"

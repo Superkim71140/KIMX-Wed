@@ -10,7 +10,7 @@ const categories = [
   { label: "โทรศัพท์", href: "/news/phone" },
   { label: "เกมส์", href: "/news/game" },
   { label: "Tech Update", href: "/news/tech" },
-  { label: "ข่าวรถยนต์", href: "/news/automotive" },
+  { label: "ยานยนต์", href: "/news/automotive" },
   { label: "Cyber Security", href: "/news/cyber-security" },
   { label: "ธุรกิจดิจิทัล", href: "/news/digital-business" },
   { label: "How-to", href: "/news/how-to" }

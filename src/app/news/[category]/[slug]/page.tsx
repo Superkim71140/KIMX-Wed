@@ -21,6 +21,67 @@ import ReadingProgress from "@/components/articles/ReadingProgress";
 import TableOfContents from "@/components/articles/TableOfContents";
 import { getCategoryColorStyles } from "@/lib/news-presentation";
 
+const renderWithHighlights = (text: string) => {
+  if (!text) return null;
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <span key={i} className="relative inline-block z-0 mx-0.5 px-1 font-bold text-slate-900 group-hover:text-teal-900 transition-colors">
+          <span className="absolute -z-10 bottom-1 left-0 w-full h-2/3 bg-[#14B8A6]/20 -rotate-1 rounded-sm"></span>
+          {part.slice(2, -2)}
+        </span>
+      );
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+};
+
+const enhanceHeadingText = (text: string) => {
+  if (!text) return null;
+  // Match common patterns for numbers with Thai/Eng labels, or specific keywords to highlight
+  const regex = /(3 รูปแบบ|ตัวอย่างวงเงิน|\d+(?:\.\d+)?\s?[a-zA-Zก-๙]+|[A-Za-z]+\s\d+(?:\.\d+)?)/g;
+  const parts = text.split(regex);
+  return parts.map((part, i) => {
+    if (part.match(/(3 รูปแบบ|ตัวอย่างวงเงิน|\d+(?:\.\d+)?\s?[a-zA-Zก-๙]+|[A-Za-z]+\s\d+(?:\.\d+)?)/)) {
+      return (
+        <span key={i} className="bg-gradient-to-r from-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent drop-shadow-sm">
+          {part}
+        </span>
+      );
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+};
+
+const getCategoryHeadingAccent = (categorySlug: string) => {
+  switch (categorySlug) {
+    case "ai": return "border-purple-500";
+    case "phone": return "border-sky-500";
+    case "game": return "border-teal-500";
+    case "tech": return "border-blue-500";
+    case "automotive": return "border-emerald-500";
+    case "cyber-security": return "border-rose-500";
+    case "digital-business": return "border-amber-500";
+    case "how-to": return "border-indigo-500";
+    default: return "border-slate-500";
+  }
+};
+
+const getCategoryGradientStyles = (categorySlug: string) => {
+  switch (categorySlug) {
+    case "ai": return "bg-linear-to-br from-purple-50 to-white border-purple-200/80";
+    case "phone": return "bg-linear-to-br from-sky-50 to-white border-sky-200/80";
+    case "game": return "bg-linear-to-br from-teal-50 to-white border-teal-200/80";
+    case "tech": return "bg-linear-to-br from-blue-50 to-white border-blue-200/80";
+    case "automotive": return "bg-linear-to-br from-emerald-50 to-white border-emerald-200/80";
+    case "cyber-security": return "bg-linear-to-br from-rose-50 to-white border-rose-200/80";
+    case "digital-business": return "bg-linear-to-br from-amber-50 to-white border-amber-200/80";
+    case "how-to": return "bg-linear-to-br from-indigo-50 to-white border-indigo-200/80";
+    default: return "bg-linear-to-br from-slate-50 to-white border-slate-200/80";
+  }
+};
+
 interface PageProps {
   params: Promise<{ category: string; slug: string }>;
 }
@@ -55,13 +116,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const imageType = absoluteImageUrl.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
 
+  const canonicalUrl = `${siteConfig.siteUrl}/news/${article.categorySlug}/${article.slug}`;
+
   return {
     title: `${article.title} | KIMX Web`,
     description: article.description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       type: "article",
       locale: "th_TH",
       siteName: "KIMX Web",
+      url: canonicalUrl,
       title: `${article.title} | KIMX Web`,
       description: article.description,
       images: [
@@ -119,9 +186,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const headingBlocks = article.content.filter((block) => block.type === "heading");
 
   // JSON-LD Schemas
+  const canonicalUrl = `${siteUrl}/news/${article.categorySlug}/${article.slug}`;
+  
   const breadcrumbsSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumb`,
     "itemListElement": [
       {
         "@type": "ListItem",
@@ -145,7 +215,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         "@type": "ListItem",
         "position": 4,
         "name": article.title,
-        "item": `${siteUrl}/news/${article.categorySlug}/${article.slug}`
+        "item": canonicalUrl
       }
     ]
   };
@@ -159,25 +229,32 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const newsArticleSchema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
+    "@id": `${canonicalUrl}#article`,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `${siteUrl}/news/${article.categorySlug}/${article.slug}`
+      "@id": canonicalUrl
     },
     "headline": article.title,
     "description": article.description,
+    "url": canonicalUrl,
     "image": [absoluteImageUrl],
     "datePublished": article.publishedAt,
-    "dateModified": article.updatedAt,
+    "dateModified": article.updatedAt || article.publishedAt,
     "author": {
       "@type": "Person",
-      "name": article.author || "KIMX Tech Editor"
+      "name": article.author || "KIMX Tech Editor",
+      "url": `${siteUrl}/about`,
+      "jobTitle": "Tech Editor"
     },
     "publisher": {
       "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "KIMX Web Agency",
       "logo": {
         "@type": "ImageObject",
-        "url": `${siteUrl}/assets/images/logo%20kimxwed.png`
+        "url": `${siteUrl}/assets/images/logo%20kimxwed.png`,
+        "width": 800,
+        "height": 800
       }
     }
   };
@@ -198,20 +275,32 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         {/* Glow - Ultra Minimalist */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-200/5 rounded-full blur-[140px] pointer-events-none -z-10" />
 
+        {/* Large, highly blurred fluid orbs */}
+        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-[#14B8A6]/25 rounded-full blur-[140px] opacity-25 pointer-events-none -z-10" />
+        <div className="absolute top-[60%] right-[-10%] w-[600px] h-[600px] bg-[#0EA5E9]/20 rounded-full blur-[140px] opacity-25 pointer-events-none -z-10" />
+
         <Container className="relative z-10">
           
           {/* ===== BREADCRUMBS ===== */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-5 font-sans">
-            <Link href="/" className="hover:text-sky-600 transition-colors duration-200">
-              หน้าหลัก
-            </Link>
-            <span>&gt;</span>
-            <Link href="/news" className="hover:text-sky-600 transition-colors duration-200">
-              ข่าวสาร
-            </Link>
-            <span>&gt;</span>
-            <span className="text-slate-500 font-medium">{article.category}</span>
-          </div>
+          <nav aria-label="Breadcrumb" className="mb-5">
+            <ol className="flex items-center gap-1.5 text-xs font-medium text-slate-400 font-sans m-0 p-0 list-none">
+              <li>
+                <Link href="/" className="hover:text-sky-600 transition-colors duration-200">
+                  หน้าหลัก
+                </Link>
+              </li>
+              <li aria-hidden="true">&gt;</li>
+              <li>
+                <Link href="/news" className="hover:text-sky-600 transition-colors duration-200">
+                  ข่าวสาร
+                </Link>
+              </li>
+              <li aria-hidden="true">&gt;</li>
+              <li>
+                <span className="text-slate-500 font-medium" aria-current="page">{article.category}</span>
+              </li>
+            </ol>
+          </nav>
 
           {/* ===== CATEGORY BADGE ===== */}
           <div className="mb-4">
@@ -260,7 +349,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <figure className="w-full max-w-3xl mx-auto px-4 md:px-0 mb-12">
           {article.coverImage.startsWith("linear-gradient") || article.coverImage.includes("gradient") ? (
             <div
-              className="w-full aspect-video md:max-h-[420px] bg-slate-50 border border-slate-200/60 rounded-none overflow-hidden relative shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="w-full aspect-video md:max-h-[420px] bg-slate-50 border border-slate-200/60 rounded-none overflow-hidden relative shadow-[0_4px_20px_rgba(0,0,0,0.02)]"
               style={{ background: article.coverImage }}
             />
           ) : (
@@ -299,57 +388,94 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               <main className="w-full text-slate-900 font-normal text-base sm:text-lg leading-relaxed" style={{ wordBreak: 'normal', overflowWrap: 'anywhere' }}>
             {article.content.map((block, idx) => {
               switch (block.type) {
-                case "paragraph":
+                case "paragraph": {
+                  const pTextLines = block.text.split('\n');
+                  const pIsList = pTextLines.length > 0 && pTextLines.every(line => line.trim().startsWith('•'));
+                  const isFirstParagraph = article.content.findIndex(b => b.type === "paragraph") === idx;
+                  const dropCapClasses = isFirstParagraph ? "first-letter:text-5xl first-letter:font-black first-letter:text-[#14B8A6] first-letter:float-left first-letter:mr-3 first-letter:mt-1" : "";
+
+                  if (pIsList) {
+                    return (
+                      <ul key={idx} className={`list-disc list-outside ml-6 font-sans text-base md:text-[1.05rem] font-normal leading-relaxed mb-9 antialiased max-w-3xl mx-auto px-4 md:px-0 space-y-2`}>
+                        {pTextLines.map((line, i) => (
+                          <li key={i}>{renderWithHighlights(line.trim().replace(/^•\s*/, ''))}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
                   return (
                     <p
                       key={idx}
-                      className="font-sans whitespace-pre-line text-base md:text-[1.05rem] font-normal leading-relaxed mb-6 antialiased max-w-3xl mx-auto px-4 md:px-0"
+                      className={`font-sans whitespace-pre-line text-base md:text-[1.05rem] font-normal leading-relaxed mb-9 antialiased max-w-3xl mx-auto px-4 md:px-0 ${dropCapClasses}`}
                     >
-                      {block.text}
+                      {renderWithHighlights(block.text)}
                     </p>
                   );
+                }
                 case "heading":
                   return (
                     <h2
                       key={idx}
                       id={encodeURIComponent(block.text)}
-                      className="text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-10 mb-4 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36"
+                      className={`text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-14 mb-6 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36 relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[4px] before:rounded-full before:bg-gradient-to-b before:from-[#14B8A6] before:to-[#0EA5E9] before:shadow-[0_0_12px_rgba(20,184,166,0.6)]`}
                     >
-                      {block.text}
+                      {enhanceHeadingText(block.text)}
                     </h2>
                   );
-                case "highlight":
+                case "highlight": {
                   if (block === takeawaysBlock) return null;
+                  const hlTextLines = block.text.split('\n');
+                  const hlIsList = hlTextLines.length > 0 && hlTextLines.every(line => line.trim().startsWith('•'));
                   return (
                     <GlassCard
                       key={idx}
-                      className={`my-10 p-6! sm:p-8! rounded-3xl relative overflow-hidden ${getCategoryColorStyles(article.categorySlug)}`}
+                      className="my-12 p-6! sm:p-8! rounded-3xl relative overflow-hidden text-slate-800 backdrop-blur-xl bg-white/40 border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.02)]"
                       hoverScale={false}
                     >
                       {block.title && (
-                        <h4 className="text-sm sm:text-base font-bold mb-3 font-sans">
-                          {block.title}
-                        </h4>
+                        <h3 className="text-sm sm:text-base font-bold mb-4 font-sans">
+                          {enhanceHeadingText(block.title)}
+                        </h3>
                       )}
-                      <p className="text-sm font-medium leading-relaxed font-sans whitespace-pre-line opacity-90">
-                        {block.text}
-                      </p>
+                      {hlIsList ? (
+                        <ul className="flex flex-col gap-3 font-sans">
+                          {hlTextLines.map((line, i) => (
+                            <li key={i} className="flex gap-3 text-sm font-medium leading-relaxed opacity-95">
+                              <span className="w-5 h-5 rounded-md flex items-center justify-center bg-sky-100/60 text-[#14B8A6] shrink-0 mt-0.5 shadow-sm border border-sky-200/50">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                              </span>
+                              <span>{renderWithHighlights(line.trim().replace(/^•\s*/, ''))}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-sm font-medium leading-relaxed font-sans whitespace-pre-line opacity-95">
+                          {renderWithHighlights(block.text)}
+                        </p>
+                      )}
                     </GlassCard>
                   );
+                }
                 case "quote":
                   return (
                     <blockquote
                       key={idx}
-                      className="my-8 pl-5 sm:pl-6 border-l-4 border-sky-500 italic text-slate-800 font-sans"
+                      className="my-10 p-8 sm:p-10 relative overflow-hidden rounded-[2rem] bg-slate-50/70 border border-slate-200/50 italic text-slate-800 font-sans max-w-4xl mx-auto shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
                     >
-                      <p className="text-base sm:text-lg font-light leading-relaxed mb-2">
-                        &ldquo;{block.text}&rdquo;
-                      </p>
-                      {block.author && (
-                        <cite className="text-xs text-slate-600 not-italic block font-normal font-sans">
-                          — {block.author}
-                        </cite>
-                      )}
+                      {/* Oversized Background Quote */}
+                      <div className="absolute -top-6 -left-2 text-[12rem] leading-none font-serif text-slate-200/40 select-none pointer-events-none" aria-hidden="true">
+                        &ldquo;
+                      </div>
+                      <div className="relative z-10">
+                        <p className="text-lg sm:text-xl font-light leading-relaxed mb-4">
+                          {renderWithHighlights(block.text)}
+                        </p>
+                        {block.author && (
+                          <cite className="text-sm text-slate-500 font-semibold not-italic flex items-center gap-2 font-sans before:content-[''] before:w-6 before:h-[2px] before:bg-[#14B8A6]">
+                            {block.author}
+                          </cite>
+                        )}
+                      </div>
                     </blockquote>
                   );
                 case "stats":
@@ -358,12 +484,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                       {block.items.map((item, index) => (
                         <div
                           key={index}
-                          className="p-6 rounded-3xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-transparent flex flex-col justify-center"
+                          className="p-6 rounded-3xl backdrop-blur-xl bg-white/60 border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-center hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(20,184,166,0.15)] transition-all duration-500"
                         >
-                          <span className="text-2xl sm:text-3xl font-extrabold text-sky-600 font-sans">
+                          <span className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent font-sans drop-shadow-sm">
                             {item.value}
                           </span>
-                          <span className="text-xs text-slate-500 font-light font-sans mt-1">
+                          <span className="text-xs text-slate-500 font-medium font-sans mt-2 tracking-wide uppercase">
                             {item.label}
                           </span>
                         </div>
@@ -375,17 +501,17 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                     <div key={idx} className="my-10 overflow-x-auto rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-transparent bg-white font-sans text-xs sm:text-sm">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="bg-sky-50/50 border-b border-sky-100">
+                          <tr className="bg-[#14B8A6] text-white">
                             {block.headers.map((h, i) => (
-                              <th key={i} className="px-4 py-3 font-semibold text-slate-900">{h}</th>
+                              <th key={i} className="px-5 py-4 font-bold uppercase tracking-wider">{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {block.rows.map((row, rIdx) => (
-                            <tr key={rIdx} className="border-b border-sky-50 last:border-0 hover:bg-sky-50/10 transition-colors">
+                            <tr key={rIdx} className="border-b border-slate-100 last:border-0 even:bg-slate-50 hover:bg-slate-100/50 transition-colors">
                               {row.map((cell, cIdx) => (
-                                <td key={cIdx} className="px-4 py-3 font-light text-slate-700">{cell}</td>
+                                <td key={cIdx} className="px-5 py-4 font-medium text-slate-700">{cell}</td>
                               ))}
                             </tr>
                           ))}
@@ -404,7 +530,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                           <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
                             <span className="text-xs font-bold font-sans">✓</span>
                           </div>
-                          <h4 className="text-sm sm:text-base font-bold text-slate-900">{item.title}</h4>
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900">{item.title}</h3>
                           <p className="text-xs sm:text-sm font-light text-slate-600 leading-relaxed">{item.description}</p>
                         </div>
                       ))}
@@ -417,10 +543,10 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                       className="my-8 p-5 sm:p-6 rounded-2xl bg-emerald-50/60 border border-emerald-200/50 shadow-[inner_0_4px_12px_rgba(16,185,129,0.02)] relative overflow-hidden"
                     >
                       <div className="absolute top-0 left-0 bottom-0 w-[3px] bg-emerald-500" />
-                      <h4 className="text-sm sm:text-base font-bold text-emerald-800 mb-3 font-sans flex items-center gap-1.5">
+                      <h3 className="text-sm sm:text-base font-bold text-emerald-800 mb-3 font-sans flex items-center gap-1.5">
                         <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
                         <span>{block.title}</span>
-                      </h4>
+                      </h3>
                       <p className="text-xs sm:text-sm font-light text-emerald-800 leading-relaxed font-sans whitespace-pre-line">
                         {block.text}
                       </p>
@@ -461,9 +587,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                     >
                       <div className="mb-6 flex items-center gap-2">
                         <div className="w-2 h-6 rounded-full bg-slate-900" />
-                        <h4 className="text-lg font-bold text-slate-900 tracking-tight font-sans">
+                        <h3 className="text-lg font-bold text-slate-900 tracking-tight font-sans">
                           Performance Benchmark
-                        </h4>
+                        </h3>
                       </div>
                       <div className="flex flex-col gap-2">
                         {block.items.map((item, bIdx) => (

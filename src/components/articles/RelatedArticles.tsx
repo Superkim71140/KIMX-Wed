@@ -35,7 +35,9 @@ export default function RelatedArticles({ relatedArticles }: RelatedArticlesProp
                 hoverGlow={true}
               >
                 {/* Image container */}
-                <div className="relative w-full aspect-16/10 overflow-hidden bg-slate-50">
+                <div className={`relative w-full aspect-16/10 overflow-hidden transition-all duration-700 ease-in-out ${
+                  relatedArt.coverFit === 'contain' ? 'bg-slate-950 border-b border-sky-100/50' : 'bg-slate-50'
+                }`}>
                   {renderArticleCover(relatedArt.coverImage, relatedArt.title, relatedArt.category, relatedArt.coverFit)}
                   <div className="absolute top-3.5 left-3.5 z-20">
                     <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-md border backdrop-blur-md ${getCategoryColorStyles(relatedArt.categorySlug)}`}>

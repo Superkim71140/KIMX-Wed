@@ -9,6 +9,7 @@ import { buildMetadata, siteUrl } from "@/lib/seo";
 import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
 import { getCategoryColorStyles, renderArticleCover } from "@/lib/news-presentation";
+import CategoryArticleGrid from "@/components/news/CategoryArticleGrid";
 
 // Category Details Mapping
 const categoryMap: Record<string, { label: string; description: string }> = {
@@ -29,8 +30,8 @@ const categoryMap: Record<string, { label: string; description: string }> = {
     description: "อัปเดตกระแสข่าวสารเทคโนโลยี อุปกรณ์ และซอฟต์แวร์ใหม่ ๆ สำหรับชีวิตประจำวันและธุรกิจยุคดิจิทัล"
   },
   "automotive": {
-    label: "ข่าวรถยนต์",
-    description: "อัปเดตข่าวสารในวงการรถยนต์ รีวิวรถยนต์ใหม่ เทคโนโลยียานยนต์ และกระแสอุตสาหกรรมยานยนต์ที่น่าสนใจ"
+    label: "หมวดยานยนต์",
+    description: "อัปเดตข่าวสารในวงการยานยนต์ รีวิวรถยนต์ใหม่ มอเตอร์ไซค์ และกระแสอุตสาหกรรมยานยนต์ที่น่าสนใจ"
   },
   "cyber-security": {
     label: "Cyber Security",
@@ -91,6 +92,7 @@ export default async function CategoryPage({ params }: PageProps) {
   const breadcrumbsSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${siteUrl}/news/${category}#breadcrumb`,
     "itemListElement": [
       {
         "@type": "ListItem",
@@ -154,17 +156,25 @@ export default async function CategoryPage({ params }: PageProps) {
         {/* ===== BREADCRUMBS ===== */}
         <div className="mb-6 relative z-10">
           <Container>
-            <div className="flex items-center gap-1.5 text-sm font-medium text-slate-600 font-sans">
-              <Link href="/" className="hover:text-slate-900 transition-colors duration-200">
-                หน้าหลัก
-              </Link>
-              <ChevronRight size={14} className="text-slate-400" />
-              <Link href="/news" className="hover:text-slate-900 transition-colors duration-200">
-                ข่าวสารและบทความ
-              </Link>
-              <ChevronRight size={14} className="text-slate-400" />
-              <span className="text-slate-800 font-medium">{catInfo.label}</span>
-            </div>
+            <nav aria-label="Breadcrumb">
+              <ol className="flex items-center gap-1.5 text-sm font-medium text-slate-600 font-sans m-0 p-0 list-none">
+                <li>
+                  <Link href="/" className="hover:text-slate-900 transition-colors duration-200">
+                    หน้าหลัก
+                  </Link>
+                </li>
+                <li aria-hidden="true"><ChevronRight size={14} className="text-slate-400" /></li>
+                <li>
+                  <Link href="/news" className="hover:text-slate-900 transition-colors duration-200">
+                    ข่าวสารและบทความ
+                  </Link>
+                </li>
+                <li aria-hidden="true"><ChevronRight size={14} className="text-slate-400" /></li>
+                <li>
+                  <span className="text-slate-800 font-medium" aria-current="page">{catInfo.label}</span>
+                </li>
+              </ol>
+            </nav>
           </Container>
         </div>
 
@@ -191,63 +201,7 @@ export default async function CategoryPage({ params }: PageProps) {
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {filteredArticles.map((article) => (
-                  <Link
-                    key={article.slug}
-                    href={`/news/${article.categorySlug}/${article.slug}`}
-                    className="group block h-full"
-                  >
-                    <GlassCard
-                      className="flex flex-col h-full p-0! bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-2xl border-none transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out"
-                      hoverScale={false}
-                      hoverGlow={false}
-                    >
-                      {/* Cover image */}
-                      <div className="relative w-full aspect-16/10 overflow-hidden bg-slate-50">
-                        {renderArticleCover(article.coverImage, article.title, article.category)}
-                        <div className="absolute top-3.5 left-3.5 z-20">
-                          <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-md border backdrop-blur-md ${getCategoryColorStyles(article.categorySlug)}`}>
-                            {article.category}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="p-5 sm:p-6 flex flex-col flex-grow">
-                        <div className="flex items-center gap-3 text-[10px] sm:text-xs font-light text-slate-500 font-sans mb-3">
-                          <Calendar size={12} className="text-slate-400" />
-                          <span>
-                            {new Date(article.publishedAt).toLocaleDateString("th-TH", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                          <span>•</span>
-                          <Clock size={12} className="text-slate-400" />
-                          <span>{article.readingTime}</span>
-                        </div>
-
-                        <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-snug group-hover:text-sky-600 transition-colors duration-300 line-clamp-2 mb-3 font-sans">
-                          {article.title}
-                        </h3>
-
-                        <p className="text-xs sm:text-sm font-light text-slate-600 leading-relaxed line-clamp-3 mb-6 font-sans">
-                          {article.description}
-                        </p>
-
-                        <div className="mt-auto pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-slate-500 font-sans">
-                          <span>โดย {article.author}</span>
-                          <span className="inline-flex items-center gap-1 font-semibold text-slate-800 group-hover:text-sky-600 transition-colors duration-300">
-                            อ่านต่อ <ChevronRight size={14} />
-                          </span>
-                        </div>
-                      </div>
-                    </GlassCard>
-                  </Link>
-                ))}
-              </div>
+              <CategoryArticleGrid articles={filteredArticles} category={category} />
             )}
           </Container>
         </main>

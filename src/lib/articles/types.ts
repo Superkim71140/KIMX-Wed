@@ -8,6 +8,7 @@ export interface NormalizedArticle {
   content: NewsArticleContentBlock[];
   category: string;
   categorySlug: string;
+  subCategory?: "car" | "motorcycle";
   publishedAt: string; // ISO date timestamp, e.g. 2026-06-22T07:00:00+07:00
   updatedAt: string; // ISO date timestamp
   readingTime: string;

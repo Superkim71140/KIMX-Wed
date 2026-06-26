@@ -13,6 +13,7 @@ export type Article = {
   description: string;
   category: string;
   categorySlug?: string;
+  subCategory?: "car" | "motorcycle";
   readingTime: string;
   author?: string;
   image: string;

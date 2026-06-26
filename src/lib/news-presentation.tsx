@@ -35,7 +35,7 @@ export const renderArticleCover = (
   if (coverImage.startsWith("linear-gradient") || coverImage.includes("gradient")) {
     return (
       <div
-        className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden bg-slate-900"
+        className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden bg-slate-900 transition-all duration-700 ease-in-out"
         style={{ background: coverImage }}
       >
         <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 to-transparent" />
@@ -62,11 +62,13 @@ export const renderArticleCover = (
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         loading="lazy"
         className={`${
-          coverFit === "contain" ? "object-contain p-4" : "object-cover"
-        } transition-transform duration-700 ease-out`}
+          coverFit === "contain"
+            ? "object-contain p-4"
+            : "object-cover"
+        } transition-all duration-700 ease-in-out`}
       />
       {coverFit !== "contain" && (
-        <div className="absolute inset-0 bg-linear-to-t from-slate-900/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-900/40 to-transparent pointer-events-none transition-opacity duration-700 ease-in-out" />
       )}
     </>
   );

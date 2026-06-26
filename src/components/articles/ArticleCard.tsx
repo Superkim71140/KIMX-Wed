@@ -17,7 +17,9 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     <SpotlightCard className="h-full rounded-3xl" spotlightColor="rgba(20, 184, 166, 0.15)">
       <GlassCard className="flex flex-col h-full border-slate-200/60 bg-white/70 backdrop-blur-xl shadow-md group !p-0 overflow-hidden hover:border-teal-500/30 hover:shadow-xl transition-all duration-500">
       {/* Thumbnail Image Wrapper */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className={`relative w-full aspect-[16/10] overflow-hidden transition-all duration-700 ease-in-out ${
+        article.coverFit === "contain" ? "bg-slate-950 border-b border-sky-100/50" : "bg-slate-100"
+      }`}>
         {/* Category Badge overlay (Absolute Glass Overlay) */}
         <div className="absolute top-4 left-4 z-10 backdrop-blur-md bg-slate-950/40 border border-white/10 rounded-full px-3 py-1">
           <span className="block text-[10px] font-bold tracking-[0.2em] uppercase text-white">
@@ -31,7 +33,11 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           loading="lazy"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-hover:rotate-1"
+          className={`${
+            article.coverFit === "contain"
+              ? "object-contain p-4"
+              : "object-cover"
+          } transition-all duration-700 ease-in-out group-hover:scale-105`}
         />
         {/* Soft light vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 to-transparent" />

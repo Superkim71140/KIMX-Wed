@@ -34,6 +34,7 @@ export function normalizeArticle(article: Article | NewsArticle): NormalizedArti
   const coverFit = article.coverFit;
   const isPinned = !!article.isPinned;
   const accentColor = "accentColor" in article ? article.accentColor : undefined;
+  const subCategory = article.subCategory;
 
   return {
     id,
@@ -43,6 +44,7 @@ export function normalizeArticle(article: Article | NewsArticle): NormalizedArti
     content,
     category,
     categorySlug,
+    subCategory,
     publishedAt,
     updatedAt,
     readingTime,
