@@ -18,7 +18,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     <SpotlightCard className="h-full rounded-3xl" spotlightColor="rgba(20, 184, 166, 0.15)">
       <GlassCard className="flex flex-col h-full border-slate-200/60 bg-white/70 backdrop-blur-xl shadow-md group p-0 overflow-hidden hover:border-teal-500/30 hover:shadow-xl transition-[box-shadow,border-color] duration-500">
       {/* Thumbnail Image Wrapper */}
-      <div className={`relative w-full aspect-16/10 overflow-hidden ${
+      <div className={`relative w-full aspect-[16/10] overflow-hidden ${
         article.coverFit === "contain" ? "bg-slate-950 border-b border-sky-100/50" : "bg-slate-100"
       }`}>
         {/* Category Badge overlay (Absolute Glass Overlay) */}
@@ -45,9 +45,9 @@ export default function ArticleCard({ article }: ArticleCardProps) {
       </div>
 
       {/* Card Content */}
-      <div className="p-6 sm:p-8 flex flex-col grow">
+      <div className="p-5 sm:p-6 sm:pt-4 flex flex-col grow">
         {/* Heading */}
-        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-4 mb-3 group-hover:text-teal-600 transition-colors duration-300 line-clamp-2 leading-snug">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors duration-300 line-clamp-2 leading-snug">
           <Link href={canonicalUrl}>
             {article.title}
           </Link>
