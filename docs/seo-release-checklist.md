@@ -27,7 +27,7 @@ npm run seo:audit
 
 ### Metadata Rules
 - **Canonical Suffix Limit:** Ensure there is exactly one `KIMX Web` brand suffix in the title.
-- **Absolute Canonical URLs:** Check that each page declares a canonical absolute URL matching its true path on `https://kimxwed.com` or the production domain.
+- **Absolute Canonical URLs:** Check that each page declares a canonical absolute URL matching its true path on `https://kimx-wed.vercel.app` or the production domain.
 - **Description Limits:** Meta descriptions must be present on every page, range between 50 and 160 characters, and explain the page value clearly with keywords.
 
 ---

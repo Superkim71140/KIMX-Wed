@@ -63,7 +63,7 @@ try {
   console.error('Error reading portfolio:', e);
 }
 
-const siteUrl = 'https://kimxwed.com'; // Target sitemap mock domain
+const siteUrl = 'https://kimx-wed.vercel.app'; // Target sitemap mock domain
 const urls = [];
 
 // Static routes
