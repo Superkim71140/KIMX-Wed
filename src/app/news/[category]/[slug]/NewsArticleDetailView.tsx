@@ -107,15 +107,25 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
     { name: article.title, url: `/news/${article.categorySlug}/${article.slug}` },
   ]);
 
+  const schemas = [breadcrumbSchema, articleSchema];
+
   return (
     <>
       {/* Schema Injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: safeJsonLd([breadcrumbSchema, articleSchema]),
-        }}
-      />
+      {Array.isArray(schemas) ? (
+        schemas.map((schema, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
+          />
+        ))
+      ) : (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(schemas) }}
+        />
+      )}
 
       {/* Adjust paddingTop to 40 (approx 160px) to clear both navbar & sub-navbar */}
       <ReadingProgress />

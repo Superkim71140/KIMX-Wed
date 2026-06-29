@@ -144,13 +144,25 @@ export default async function NewsCategoryView({ params }: ViewProps) {
     }
   };
 
+  const schemas = [breadcrumbsSchema, collectionSchema];
+
   return (
     <>
       {/* Schema Injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd([breadcrumbsSchema, collectionSchema]) }}
-      />
+      {Array.isArray(schemas) ? (
+        schemas.map((schema, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
+          />
+        ))
+      ) : (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(schemas) }}
+        />
+      )}
 
       {/* Adjust paddingTop for Apple-tier spacing to clear navbar cleanly */}
       <div className="relative pt-28 pb-24 overflow-hidden bg-transparent min-h-screen">

@@ -83,12 +83,20 @@ export default async function ArticleDetailView({ params }: ViewProps) {
   return (
     <>
       {/* Schema Injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: safeJsonLd(schemas)
-        }}
-      />
+      {Array.isArray(schemas) ? (
+        schemas.map((schema, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
+          />
+        ))
+      ) : (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(schemas) }}
+        />
+      )}
 
       <article className="bg-transparent">
         {/* Article Hero */}
