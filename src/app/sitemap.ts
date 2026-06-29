@@ -4,8 +4,7 @@ import { newsArticles } from "@/data/news";
 import { portfolioItems } from "@/data/portfolio";
 import { siteUrl } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 86400;
 
 function getLatestCategoryDate(categorySlug: string): Date {
   const categoryArticles = newsArticles.filter((art) => art.categorySlug === categorySlug);
@@ -18,30 +17,31 @@ function getLatestCategoryDate(categorySlug: string): Date {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
   const lastModified = new Date();
 
   // Static routes
   const routes = [
     {
-      url: `${siteUrl}`,
+      url: `${baseUrl}`,
       lastModified,
       changeFrequency: "daily" as const,
       priority: 1.0,
     },
     {
-      url: `${siteUrl}/about`,
+      url: `${baseUrl}/about`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/articles`,
+      url: `${baseUrl}/articles`,
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/portfolio`,
+      url: `${baseUrl}/portfolio`,
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.8,
@@ -52,7 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const articleRoutes = articles
     .filter((article) => article.slug && !article.categorySlug)
     .map((article) => ({
-      url: `${siteUrl}/articles/${article.slug}`,
+      url: `${baseUrl}/articles/${article.slug}`,
       lastModified: new Date(article.updatedAt),
       changeFrequency: "weekly" as const,
       priority: 0.7,
@@ -62,7 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const portfolioRoutes = portfolioItems
     .filter((item) => item.slug)
     .map((item) => ({
-      url: `${siteUrl}/portfolio/${item.slug}`,
+      url: `${baseUrl}/portfolio/${item.slug}`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.7,
@@ -71,7 +71,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // News Hub main route
   const newsRoutes = [
     {
-      url: `${siteUrl}/news`,
+      url: `${baseUrl}/news`,
       lastModified,
       changeFrequency: "daily" as const,
       priority: 0.8,
@@ -92,7 +92,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const newsCategoryRoutes = categories
     .filter((cat) => newsArticles.some((art) => art.categorySlug === cat))
     .map((cat) => ({
-      url: `${siteUrl}/news/${cat}`,
+      url: `${baseUrl}/news/${cat}`,
       lastModified: getLatestCategoryDate(cat),
       changeFrequency: "weekly" as const,
       priority: 0.7,
@@ -102,7 +102,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const newsArticleRoutes = newsArticles
     .filter((art) => art.slug && art.categorySlug)
     .map((art) => ({
-      url: `${siteUrl}/news/${art.categorySlug}/${art.slug}`,
+      url: `${baseUrl}/news/${art.categorySlug}/${art.slug}`,
       lastModified: new Date(art.updatedAt),
       changeFrequency: "weekly" as const,
       priority: 0.7,

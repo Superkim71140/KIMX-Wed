@@ -138,6 +138,35 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+
+        {/* Dynamic SEO HTML Sitemap Category Matrix */}
+        <div className="border-t border-slate-800/40 pt-10 pb-2 mt-8">
+          <div className="flex flex-col gap-4">
+            <h4 className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.15em] mb-1">
+              ข่าวสารและบทความแยกตามหมวดหมู่
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-x-4 gap-y-3 text-xs font-light text-slate-400">
+              {[
+                { slug: "ai", label: "ข่าว AI" },
+                { slug: "phone", label: "โทรศัพท์" },
+                { slug: "game", label: "เกมส์" },
+                { slug: "tech", label: "Tech Update" },
+                { slug: "automotive", label: "ยานยนต์" },
+                { slug: "cyber-security", label: "Cyber Security" },
+                { slug: "digital-business", label: "ธุรกิจดิจิทัล" },
+                { slug: "how-to", label: "How-to" }
+              ].map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/news/${cat.slug}`}
+                  className="hover:text-white transition-colors duration-300 ease-out font-sans"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
       </Container>
 
       {/* Copyright Bottom Bar */}
