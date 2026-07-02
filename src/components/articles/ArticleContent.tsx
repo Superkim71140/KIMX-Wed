@@ -5,6 +5,7 @@ import { Lightbulb, Sun, Moon } from "lucide-react";
 import { Article } from "@/data/articles";
 import Container from "../ui/Container";
 import GlassCard from "../ui/GlassCard";
+import Image from "next/image";
 import { motion, useScroll, useSpring, useInView, useReducedMotion } from "framer-motion";
 import BenchmarkBar from "./BenchmarkBar";
 
@@ -413,6 +414,30 @@ export default function ArticleContent({ article }: ArticleContentProps) {
                             </div>
                           </GlassCard>
                         </motion.div>
+                      );
+
+                    case "image":
+                      return (
+                        <motion.figure variants={itemVariants} key={index} className="my-12 relative max-w-3xl mx-auto px-4 md:px-0">
+                          <div className="relative w-full aspect-16/10 sm:aspect-video overflow-hidden rounded-4xl bg-slate-50 border border-slate-100/50 shadow-[0_16px_48px_-12px_rgba(15,23,42,0.03)] mb-10 group">
+                            <Image
+                              src={block.src}
+                              alt={block.alt}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 768px"
+                              placeholder="blur"
+                              blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDE2IDEwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmMmY2Ii8+PC9zdmc+"
+                              loading="eager"
+                              priority={false}
+                              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                            />
+                          </div>
+                          {block.caption && (
+                            <figcaption className="mt-3 text-center text-[13px] text-slate-500 font-light font-sans px-4">
+                              {block.caption}
+                            </figcaption>
+                          )}
+                        </motion.figure>
                       );
 
                     default:

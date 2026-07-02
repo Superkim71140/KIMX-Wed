@@ -97,7 +97,7 @@ export default function AOSProvider({
       once: true,
       offset: 50,
       disable: false,
-      disableMutationObserver: true, // Controlled manual refresh replaces automatic observation
+      disableMutationObserver: false, // Enable automatic offset recalculation
     });
 
     // Font load handler
@@ -115,13 +115,20 @@ export default function AOSProvider({
       scheduleAOSRefresh("soft");
     };
 
+    // Resize handler
+    const handleResize = () => {
+      scheduleAOSRefresh("soft");
+    };
+
     window.addEventListener("load", handleWindowLoad);
+    window.addEventListener("resize", handleResize);
 
     // Initial soft refresh
     scheduleAOSRefresh("soft");
 
     return () => {
       window.removeEventListener("load", handleWindowLoad);
+      window.removeEventListener("resize", handleResize);
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }

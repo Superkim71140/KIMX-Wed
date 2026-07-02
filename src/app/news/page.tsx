@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Clock, Calendar, ChevronRight } from "lucide-react";
 import { getArticleRegistry } from "@/lib/articles/registry";
 import { getFeaturedArticle, getLatestArticles } from "@/lib/articles/featured";
@@ -108,14 +109,16 @@ export default function NewsHubPage() {
                 <Link href={`/news/${featuredArticle.categorySlug}/${featuredArticle.slug}`} className="group block">
                   <GlassCard className="flex flex-col lg:flex-row gap-8 lg:gap-12 p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
                     {/* Cover Image Wrapper */}
-                    <div className={`relative w-full lg:w-3/5 aspect-16/10 lg:aspect-auto min-h-[260px] lg:min-h-[380px] overflow-hidden transition-all duration-700 ease-in-out ${featuredArticle.coverFit === 'contain' ? 'bg-slate-950 border-r border-sky-100/50' : 'bg-slate-50'}`}>
-                      {renderArticleCover(featuredArticle.coverImage, featuredArticle.title, featuredArticle.category, featuredArticle.coverFit)}
-                      {/* Floating Category Tag */}
-                      <div className="absolute top-4 left-4 z-20">
-                        <span className={`text-[10px] sm:text-xs font-semibold tracking-wider uppercase px-3 py-1 rounded-md border backdrop-blur-md ${getCategoryColorStyles(featuredArticle.categorySlug)}`}>
-                          {featuredArticle.category}
-                        </span>
-                      </div>
+                    <div className="relative w-full lg:w-3/5 aspect-[4/3] lg:aspect-[16/9] overflow-hidden bg-slate-50/80 border-r border-slate-100">
+                      <Image
+                        src={encodeURI(featuredArticle.coverImage || (featuredArticle as { image?: string }).image || "/assets/images/logo%20kimxwed.png")}
+                        alt={featuredArticle.title}
+                        fill
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                        className="object-contain w-full h-full transition-transform duration-700 hover:scale-[1.02]"
+                      />
+
                     </div>
 
                     {/* Content Body */}
@@ -181,14 +184,9 @@ export default function NewsHubPage() {
                       hoverGlow={false}
                     >
                       {/* Image Container */}
-                      <div className={`relative w-full aspect-16/10 overflow-hidden transition-all duration-700 ease-in-out ${article.coverFit === 'contain' ? 'bg-slate-950 border-b border-sky-100/50' : 'bg-slate-50'}`}>
+                      <div className={`relative w-full aspect-[4/3] overflow-hidden transition-all duration-700 ease-in-out ${article.coverFit === 'contain' ? 'bg-slate-950 border-b border-sky-100/50' : 'bg-slate-50'}`}>
                         {renderArticleCover(article.coverImage, article.title, article.category, article.coverFit)}
-                        {/* Floating tag */}
-                        <div className="absolute top-3.5 left-3.5 z-20">
-                          <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-md border backdrop-blur-md ${getCategoryColorStyles(article.categorySlug)}`}>
-                            {article.category}
-                          </span>
-                        </div>
+
                       </div>
 
                       {/* Content */}

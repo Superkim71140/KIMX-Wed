@@ -39,14 +39,14 @@ const mappedEvFinanceArticle: NewsArticle | null = exciseEvFinanceSupport2026 ? 
   slug: exciseEvFinanceSupport2026.slug,
   excerpt: exciseEvFinanceSupport2026.description,
   category: exciseEvFinanceSupport2026.category,
-  categorySlug: exciseEvFinanceSupport2026.categorySlug || "automotive",
+  categorySlug: exciseEvFinanceSupport2026.categorySlug || "tech",
   subCategory: "car",
-  coverImage: exciseEvFinanceSupport2026.coverImage || exciseEvFinanceSupport2026.image,
-  coverFit: exciseEvFinanceSupport2026.coverFit,
+  coverImage: exciseEvFinanceSupport2026.coverImage || exciseEvFinanceSupport2026.image || "",
+  coverFit: exciseEvFinanceSupport2026.coverFit || "cover",
   publishedAt: exciseEvFinanceSupport2026.publishedAt,
   updatedAt: exciseEvFinanceSupport2026.updatedAt,
   author: exciseEvFinanceSupport2026.author || "KIMX Team",
-  readingTime: exciseEvFinanceSupport2026.readingTime,
+  readingTime: exciseEvFinanceSupport2026.readingTime || "3 นาที",
   tags: exciseEvFinanceSupport2026.tags || [],
   featured: exciseEvFinanceSupport2026.featured || false,
   isPinned: exciseEvFinanceSupport2026.isPinned || false,
@@ -54,8 +54,30 @@ const mappedEvFinanceArticle: NewsArticle | null = exciseEvFinanceSupport2026 ? 
   content: exciseEvFinanceSupport2026.content as unknown as NewsArticleContentBlock[],
 } : null;
 
+const hondaCity2026 = articles.find(a => a.id === "new-honda-city-2026-launch-thailand");
+
+const mappedHondaCityArticle: NewsArticle | null = hondaCity2026 ? {
+  title: hondaCity2026.title,
+  slug: hondaCity2026.slug,
+  excerpt: hondaCity2026.description,
+  category: hondaCity2026.category,
+  categorySlug: hondaCity2026.categorySlug || "automotive",
+  subCategory: "car",
+  coverImage: hondaCity2026.coverImage || hondaCity2026.image || "",
+  coverFit: hondaCity2026.coverFit || "cover",
+  publishedAt: hondaCity2026.publishedAt,
+  updatedAt: hondaCity2026.updatedAt,
+  author: hondaCity2026.author || "KIMX Team",
+  readingTime: hondaCity2026.readingTime || "7 นาที",
+  tags: hondaCity2026.tags || [],
+  featured: hondaCity2026.featured || false,
+  isPinned: hondaCity2026.isPinned || false,
+  content: hondaCity2026.content as unknown as NewsArticleContentBlock[],
+} : null;
+
 export const newsArticles: NewsArticle[] = [
   ...(mappedEvFinanceArticle ? [mappedEvFinanceArticle] : []),
+  ...(mappedHondaCityArticle ? [mappedHondaCityArticle] : []),
   {
     title: "New ZONTES 368E ETC เปิดราคา 163,800 บาท สปอร์ตลักชัวรีสกู๊ตเตอร์ อัดเทคโนโลยีเพื่อสายเดินทาง",
     slug: "new-zontes-368e-etc-2026-launch",

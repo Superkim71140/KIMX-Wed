@@ -35,7 +35,7 @@ export default function RelatedArticles({ relatedArticles }: RelatedArticlesProp
                 hoverGlow={true}
               >
                 {/* Image container */}
-                <div className={`relative w-full aspect-16/10 overflow-hidden transition-all duration-700 ease-in-out ${
+                <div className={`relative w-full aspect-[4/3] overflow-hidden transition-all duration-700 ease-in-out ${
                   relatedArt.coverFit === 'contain' ? 'bg-slate-950 border-b border-sky-100/50' : 'bg-slate-50'
                 }`}>
                   {renderArticleCover(relatedArt.coverImage, relatedArt.title, relatedArt.category, relatedArt.coverFit)}

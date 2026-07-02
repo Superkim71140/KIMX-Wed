@@ -421,6 +421,8 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                               sizes="(max-width: 768px) 100vw, 768px"
                               placeholder="blur"
                               blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDE2IDEwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmMmY2Ii8+PC9zdmc+"
+                              loading="eager"
+                              priority={false}
                               className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                             />
                           </div>

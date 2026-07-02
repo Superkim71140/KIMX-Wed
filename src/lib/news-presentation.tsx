@@ -63,8 +63,8 @@ export const renderArticleCover = (
         loading="lazy"
         className={`${
           coverFit === "contain"
-            ? "object-contain p-4"
-            : "object-cover"
+            ? "object-contain w-full h-full bg-slate-50 p-4"
+            : "object-cover w-full h-full"
         } transition-all duration-700 ease-in-out`}
       />
       {coverFit !== "contain" && (
