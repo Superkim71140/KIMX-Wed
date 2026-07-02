@@ -30,7 +30,12 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = buildMetadata();
+export const metadata: Metadata = {
+  ...buildMetadata(),
+  verification: {
+    google: "XBZroDGp_kA28tbvOnFUymh1DsDybkbicMoyPmsQ8JY",
+  },
+};
 
 export default function RootLayout({
   children,
