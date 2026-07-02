@@ -219,7 +219,8 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                   src={article.coverImage}
                   alt={article.title}
                   fill
-                  priority
+                  priority={true}
+                  loading="eager"
                   className="object-contain w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-102"
                   sizes="(max-width: 768px) 100vw, 768px"
                 />
@@ -417,6 +418,9 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                               src={block.src}
                               alt={block.alt}
                               fill
+                              sizes="(max-width: 768px) 100vw, 768px"
+                              placeholder="blur"
+                              blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDE2IDEwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmMmY2Ii8+PC9zdmc+"
                               className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                             />
                           </div>

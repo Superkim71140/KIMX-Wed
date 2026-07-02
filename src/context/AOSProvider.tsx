@@ -92,10 +92,10 @@ export default function AOSProvider({
   // Initialize AOS once
   useEffect(() => {
     AOS.init({
-      duration: 800,
+      duration: 450,
       easing: "ease-out-cubic",
       once: true,
-      offset: 80,
+      offset: 50,
       disable: false,
       disableMutationObserver: true, // Controlled manual refresh replaces automatic observation
     });

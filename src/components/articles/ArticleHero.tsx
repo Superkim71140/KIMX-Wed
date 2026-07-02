@@ -87,7 +87,8 @@ export default function ArticleHero({ article }: ArticleHeroProps) {
               src={article.image}
               alt={article.imageAlt || article.title}
               fill
-              priority
+              priority={true}
+              loading="eager"
               className="object-contain w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-102"
               sizes="(max-width: 768px) 100vw, 768px"
             />
