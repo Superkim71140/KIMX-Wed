@@ -1,85 +1,117 @@
-import React from "react";
+"use client";
+
+import React, { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { NormalizedArticle } from "@/lib/articles/types";
+import { getArticleRegistry } from "@/lib/articles/registry";
 import Container from "@/components/ui/Container";
-import GlassCard from "@/components/ui/GlassCard";
-import { getCategoryColorStyles, renderArticleCover } from "@/lib/news-presentation";
 
 interface RelatedArticlesProps {
-  relatedArticles: NormalizedArticle[];
+  currentArticle: NormalizedArticle;
 }
 
-export default function RelatedArticles({ relatedArticles }: RelatedArticlesProps) {
-  if (!relatedArticles || relatedArticles.length === 0) {
-    return null;
+const getSafeRelatedImageUrl = (art: any): string => {
+  // Check all potential image data keys securely
+  const rawPath = art.coverImage || art.image || "/assets/images/logo%20kimxwed.png";
+  
+  if (!rawPath || typeof rawPath !== "string") {
+    return "/assets/images/logo%20kimxwed.png";
   }
+  
+  const trimmedPath = rawPath.trim();
+  
+  // Safeguard: Ensure local assets have a proper leading slash if they are missing one
+  if (!trimmedPath.startsWith("/") && !trimmedPath.startsWith("http://") && !trimmedPath.startsWith("https://")) {
+    return encodeURI("/" + trimmedPath);
+  }
+  
+  return encodeURI(trimmedPath);
+};
+
+export default function RelatedArticles({ currentArticle }: RelatedArticlesProps) {
+  const allArticles = getArticleRegistry();
+
+  const relatedArticles = useMemo(() => {
+    const filtered = allArticles.filter((art) => art.slug !== currentArticle.slug);
+    
+    const scoredArticles = filtered.map((art) => {
+      let score = 0;
+      
+      // Tier 1 (+5 Points): Subcategory match
+      if (currentArticle.subCategory && art.subCategory === currentArticle.subCategory) {
+        score += 5;
+      }
+      
+      // Tier 2 (+3 Points Each): Overlapping tags
+      if (currentArticle.tags && art.tags) {
+        const matchingTags = art.tags.filter(tag => currentArticle.tags!.includes(tag));
+        score += matchingTags.length * 3;
+      }
+      
+      // Tier 3 (+2 Points): Category match
+      if (currentArticle.categorySlug && art.categorySlug === currentArticle.categorySlug) {
+        score += 2;
+      }
+      
+      return { article: art, score };
+    });
+    
+    // Sort by score (descending), then fallback to publishedAt (newest first)
+    scoredArticles.sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      // Tied scores: append freshest historical articles by publishedAt
+      const dateA = new Date(a.article.publishedAt).getTime();
+      const dateB = new Date(b.article.publishedAt).getTime();
+      return dateB - dateA;
+    });
+    
+    return scoredArticles.slice(0, 3).map((item) => item.article);
+  }, [allArticles, currentArticle]);
 
   return (
-    <section className="py-20 pb-24 border-t border-slate-100 bg-transparent">
+    <motion.section 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ type: "spring", stiffness: 30, damping: 22 }}
+      className="border-t border-slate-100 pt-16 mt-16 font-sans"
+    >
       <Container className="max-w-6xl">
-        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-10 border-b border-slate-200 pb-4 font-sans">
-          บทความอื่น ๆ ที่น่าสนใจ
-        </h3>
+        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-8">
+          บทความที่เกี่ยวข้อง
+        </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {relatedArticles.map((relatedArt) => (
-            <Link
-              key={relatedArt.slug}
-              href={`/news/${relatedArt.categorySlug}/${relatedArt.slug}`}
-              className="group block h-full"
-            >
-              <GlassCard
-                className="flex flex-col h-full p-0 bg-white border border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
-                hoverScale={false}
-                hoverGlow={true}
-              >
-                {/* Image container */}
-                <div className={`relative w-full aspect-[4/3] overflow-hidden transition-all duration-700 ease-in-out ${
-                  relatedArt.coverFit === 'contain' ? 'bg-slate-950 border-b border-sky-100/50' : 'bg-slate-50'
-                }`}>
-                  {renderArticleCover(relatedArt.coverImage, relatedArt.title, relatedArt.category, relatedArt.coverFit)}
-                  <div className="absolute top-3.5 left-3.5 z-20">
-                    <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-md border backdrop-blur-md ${getCategoryColorStyles(relatedArt.categorySlug)}`}>
-                      {relatedArt.category}
-                    </span>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {relatedArticles.map((article) => (
+            <Link className="group block" href={`/news/${article.categorySlug}/${article.slug}`} key={article.slug}>
+              <div className="flex flex-col h-full space-y-4">
+                <div className="relative w-full aspect-[16/10] overflow-hidden rounded-2xl bg-slate-50/50 border border-slate-100">
+                  <Image
+                    alt={article.title}
+                    className="object-contain w-full h-full bg-slate-50/50 transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    src={getSafeRelatedImageUrl(article)}
+                  />
                 </div>
-
-                {/* Content */}
-                <div className="p-5 flex flex-col grow">
-                  <div className="flex items-center gap-3 text-[10px] sm:text-xs font-light text-slate-500 font-sans mb-3">
-                    <span>
-                      {new Date(relatedArt.publishedAt).toLocaleDateString("th-TH", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                    <span>•</span>
-                    <span>{relatedArt.readingTime}</span>
-                  </div>
-
-                  <h4 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-snug group-hover:text-[#14B8A6] transition-colors duration-300 line-clamp-2 mb-2 font-sans">
-                    {relatedArt.title}
-                  </h4>
-
-                  <p className="text-xs font-light text-slate-600 leading-relaxed line-clamp-2 mb-4 font-sans">
-                    {relatedArt.description}
-                  </p>
-
-                  <div className="mt-auto pt-3 border-t border-sky-50 flex items-center justify-between text-xs text-slate-500 font-sans">
-                    <span>โดย {relatedArt.author}</span>
-                    <span className="inline-flex items-center gap-1 font-semibold text-slate-800 group-hover:text-[#14B8A6] transition-colors duration-300">
-                      อ่านต่อ <ChevronRight size={12} />
-                    </span>
-                  </div>
+                <div className="flex flex-col space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-teal-600">
+                    {article.subCategory === "car" ? "ข่าวรถยนต์" : article.subCategory === "motorcycle" ? "ข่าวในวงการรถยนต์" : article.category}
+                  </span>
+                  <h3 className="text-base sm:text-lg font-bold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-teal-600 line-clamp-2">
+                    {article.title}
+                  </h3>
                 </div>
-              </GlassCard>
+              </div>
             </Link>
           ))}
         </div>
       </Container>
-    </section>
+    </motion.section>
   );
 }

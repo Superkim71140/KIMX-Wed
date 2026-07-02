@@ -100,6 +100,14 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
 
   // JSON-LD Schemas from central helpers
   const articleSchema = getArticleSchema(article);
+  
+  // Inject related articles links into semantic schema for crawler indexation booster
+  if (Array.isArray(articleSchema) && articleSchema[0]) {
+    (articleSchema[0] as any).relatedLink = relatedArticles.map(
+      (art) => `${siteUrl}/news/${art.categorySlug}/${art.slug}`
+    );
+  }
+
   const breadcrumbSchema = getBreadcrumbsSchema([
     { name: "หน้าหลัก", url: "/" },
     { name: "ข่าวสาร", url: "/news" },
@@ -423,7 +431,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                               blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDE2IDEwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmMmY2Ii8+PC9zdmc+"
                               loading="eager"
                               priority={false}
-                              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                              className="object-contain w-full h-full rounded-2xl"
                             />
                           </div>
                           {block.caption && (
@@ -551,15 +559,15 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
           </section>
         </Container>
 
+        {/* ===== RELATED ARTICLES SECTION ===== */}
+        <RelatedArticles currentArticle={article} />
+
         {/* ===== CONTEXTUAL INTERNAL LINKS ===== */}
         <ContextualInternalLinks
           articleSlug={article.slug}
           categorySlug={article.categorySlug}
           tags={article.tags}
         />
-
-        {/* ===== RELATED ARTICLES SECTION ===== */}
-        <RelatedArticles relatedArticles={relatedArticles} />
       </article>
     </>
   );

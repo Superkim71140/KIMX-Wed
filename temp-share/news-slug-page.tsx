@@ -563,7 +563,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         </Container>
 
         {/* ===== RELATED ARTICLES SECTION ===== */}
-        <RelatedArticles relatedArticles={relatedArticles} />
+        <RelatedArticles currentArticle={article} />
       </div>
     </>
   );
