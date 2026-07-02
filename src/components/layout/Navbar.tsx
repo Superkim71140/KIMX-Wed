@@ -111,7 +111,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation Full-Screen/Polished Drawer */}
         <div
-          className={`lg:hidden fixed inset-x-0 top-[60px] transition-all duration-300 ease-in-out z-40 overflow-hidden ${
+          className={`lg:hidden fixed inset-x-0 top-[72px] transition-all duration-300 ease-in-out z-40 overflow-hidden ${
             isOpen
               ? "max-h-[85vh] opacity-100 border-b border-border-surface shadow-sm"
               : "max-h-0 opacity-0 pointer-events-none"

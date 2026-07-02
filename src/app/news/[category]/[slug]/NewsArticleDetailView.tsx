@@ -178,7 +178,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
 
           {/* ===== MAIN HEADLINE ===== */}
           <h1
-            className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6 max-w-4xl font-sans"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-snug md:leading-tight mb-4 md:mb-6 max-w-4xl font-sans"
             style={{ wordBreak: "normal", overflowWrap: "anywhere" }}
           >
             {article.title}

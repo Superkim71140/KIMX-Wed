@@ -89,24 +89,24 @@ export default function CookieConsent() {
           : "opacity-0 translate-y-8 scale-95 pointer-events-none"
       }`}
     >
-      <div className="relative rounded-4xl p-6 md:p-8 bg-slate-950/90 text-white backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition-all duration-700 ease-in-out">
+      <div className="relative rounded-2xl md:rounded-3xl p-5 md:p-6 bg-white/95 backdrop-blur-xl border border-slate-200 shadow-[0_10px_40px_rgba(0,0,0,0.08)] transition-all duration-700 ease-in-out">
         {/* Subtle decorative background glow */}
-        <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary-glow/20 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -top-10 -right-10 w-24 h-24 bg-teal-500/5 rounded-full blur-2xl pointer-events-none" />
 
         <div className="flex items-start gap-4 transition-all duration-700">
-          <div className="w-12 h-12 rounded-2xl bg-slate-800/80 border border-white/20 flex items-center justify-center shrink-0 shadow-lg transition-transform duration-700 hover:scale-105">
-            <Cookie className="w-6 h-6 text-teal-400 animate-[pulse_3s_ease-in-out_infinite]" />
+          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 shadow-xs transition-transform duration-700 hover:scale-105">
+            <Cookie className="w-5 h-5 text-teal-500 animate-[pulse_3s_ease-in-out_infinite]" />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 flex-1">
             <div>
-              <h3 className="text-lg md:text-xl font-extrabold text-white leading-snug tracking-tight">
+              <h3 className="text-base md:text-lg font-extrabold text-slate-900 leading-snug tracking-tight">
                 การตั้งค่าความเป็นส่วนตัว
               </h3>
-              <p className="text-xs sm:text-sm font-light text-slate-300 leading-relaxed mt-1.5">
+              <p className="text-[11px] sm:text-xs font-medium text-slate-600 leading-relaxed mt-1">
                 เราใช้คุกกี้เพื่อมอบประสบการณ์การใช้งานที่ราบรื่นยิ่งขึ้นและนำเสนอโฆษณาที่ตรงใจคุณ ท่านสามารถศึกษาเพิ่มเติมได้ที่{" "}
                 <a
                   href="/about"
-                  className="text-primary-glow underline hover:text-white transition-colors font-medium"
+                  className="text-teal-600 underline hover:text-teal-700 transition-colors font-semibold"
                 >
                   นโยบายความเป็นส่วนตัว
                 </a>
@@ -118,7 +118,7 @@ export default function CookieConsent() {
                 variant="outline"
                 size="sm"
                 onClick={() => dismiss("necessary")}
-                className="w-full sm:w-auto !bg-slate-900 border-white/20 !text-slate-300 hover:!bg-slate-800 hover:border-white/40 hover:!text-white transition-all duration-700 ease-in-out"
+                className="w-full sm:w-auto !bg-slate-100 !text-slate-700 hover:!bg-slate-200 border-transparent transition-all duration-700 ease-in-out"
               >
                 คุกกี้ที่จำเป็นเท่านั้น
               </CTAButton>
@@ -126,7 +126,7 @@ export default function CookieConsent() {
                 variant="primary"
                 size="sm"
                 onClick={() => dismiss("all")}
-                className="w-full sm:w-auto !bg-teal-500 hover:!bg-teal-400 !text-slate-950 font-bold border-transparent !shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:!shadow-[0_0_30px_rgba(20,184,166,0.5)] transition-all duration-700 ease-in-out"
+                className="w-full sm:w-auto !bg-teal-500 hover:!bg-teal-400 !text-white font-bold border-transparent transition-all duration-700 ease-in-out"
               >
                 ยอมรับทั้งหมด
               </CTAButton>
