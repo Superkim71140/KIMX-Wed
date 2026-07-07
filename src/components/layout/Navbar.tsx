@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -24,8 +22,12 @@ export default function Navbar() {
     { name: "ติดต่อเรา", href: "/#contact" },
   ];
 
-  const handleLinkClick = () => {
+  const closeMobileMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleLinkClick = () => {
+    closeMobileMenu();
   };
 
   const isActive = (href: string) => {
@@ -35,6 +37,37 @@ export default function Navbar() {
     if (href === "/" && pathname === "/") return true;
     return false;
   };
+
+  // Lock background page scrolling when the drawer is open
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  // Handle Escape key to close the drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeMobileMenu();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   return (
     <>
@@ -96,44 +129,44 @@ export default function Navbar() {
             {/* Mobile Menu Toggler */}
             <div className="flex lg:hidden">
               <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen((prev) => !prev)}
                 type="button"
                 className="inline-flex items-center justify-center p-2 rounded-full text-slate-500 hover:text-[#0b1b33] hover:bg-slate-100 focus:outline-none transition-colors duration-300"
-                aria-controls="mobile-menu"
+                aria-controls="mobile-navigation"
                 aria-expanded={isOpen}
+                aria-label={isOpen ? "ปิดเมนู" : "เปิดเมนูหลัก"}
               >
-                <span className="sr-only">เปิดเมนูหลัก</span>
                 {isOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Navigation Full-Screen/Polished Drawer */}
-        {/* Mobile Navigation Full-Screen/Polished Drawer */}
+      {/* Mobile Navigation Full-Screen/Polished Drawer */}
+      {isOpen && (
         <div
-          className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
-            isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          }`}
-          id="mobile-menu"
-          aria-hidden={!isOpen}
+          className="lg:hidden fixed inset-0 z-[200]"
+          role="presentation"
         >
           {/* Backdrop */}
           <button
             type="button"
             aria-label="ปิดเมนู"
-            onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px] w-full h-full border-none cursor-pointer"
+            onClick={closeMobileMenu}
+            className="absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] cursor-default w-full h-full border-none"
           />
 
           {/* Drawer Panel */}
           <aside
-            className={`absolute top-0 right-0 h-full w-[min(86vw,360px)] max-w-full overflow-x-hidden overflow-y-auto bg-white shadow-2xl p-6 flex flex-col gap-6 transition-transform duration-300 ease-in-out ${
-              isOpen ? "translate-x-0" : "translate-x-full"
-            }`}
+            id="mobile-navigation"
+            role="dialog"
+            aria-modal="true"
+            aria-label="เมนูหลัก"
+            className="absolute inset-y-0 right-0 z-10 flex h-[100dvh] w-[min(88vw,380px)] max-w-full flex-col overflow-x-hidden overflow-y-auto bg-white shadow-2xl pointer-events-auto"
           >
             {/* Header of Drawer: Close button + Logo */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="sticky top-0 z-10 flex min-h-20 items-center justify-between border-b border-slate-100 bg-white/95 px-6 backdrop-blur-xl">
               <span className="text-xl font-extrabold tracking-wider text-slate-950">
                 KIMX
                 <span className="text-[#14B8A6] ml-1 italic">
@@ -141,9 +174,9 @@ export default function Navbar() {
                 </span>
               </span>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={closeMobileMenu}
                 type="button"
-                className="inline-flex items-center justify-center p-2 rounded-full text-slate-500 hover:text-[#0b1b33] hover:bg-slate-100 focus:outline-none transition-colors"
+                className="inline-flex size-11 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
                 aria-label="ปิดเมนู"
               >
                 <X size={20} />
@@ -151,13 +184,16 @@ export default function Navbar() {
             </div>
 
             {/* Links */}
-            <div className="flex-1 flex flex-col gap-1">
+            <nav
+              aria-label="เมนูมือถือ"
+              className="flex-1 flex flex-col gap-2 px-5 py-6 pointer-events-auto"
+            >
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={handleLinkClick}
-                  className={`block px-4 py-3 rounded-xl text-base font-semibold transition-colors duration-300 ${
+                  className={`flex min-h-12 items-center rounded-xl px-4 py-3 text-base font-semibold transition-colors duration-300 ${
                     isActive(link.href)
                       ? "bg-teal-50 text-teal-600 font-bold"
                       : "text-slate-700 hover:bg-slate-50 hover:text-teal-600"
@@ -166,10 +202,10 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
-            </div>
+            </nav>
 
             {/* Mobile Action Conversion Strip (LINE, Call, Quote) */}
-            <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
+            <div className="border-t border-slate-100 p-5 flex flex-col gap-3 bg-white">
               <CTAButton
                 variant="line"
                 size="md"
@@ -198,7 +234,7 @@ export default function Navbar() {
                   variant="primary"
                   size="md"
                   onClick={() => {
-                    setIsOpen(false);
+                    closeMobileMenu();
                     openModal();
                   }}
                   className="w-full flex items-center justify-center gap-2"
@@ -210,7 +246,7 @@ export default function Navbar() {
             </div>
           </aside>
         </div>
-      </header>
+      )}
     </>
   );
 }
