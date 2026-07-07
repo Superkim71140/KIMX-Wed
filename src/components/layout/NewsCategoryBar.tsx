@@ -71,30 +71,37 @@ export default function NewsCategoryBar() {
         <div className={`absolute right-4 top-0 bottom-0 w-8 bg-linear-to-l ${scrolled ? 'from-white via-white/50' : 'from-[#F5F5F7] via-[#F5F5F7]/50'} to-transparent pointer-events-none z-10 sm:hidden`} />
 
         <nav
-          ref={scrollContainerRef}
-          className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2.5 sm:py-3 scrollbar-none scroll-smooth relative"
+          aria-label="หมวดหมู่ข่าว"
+          className="w-full max-w-full overflow-hidden"
         >
-          {categories.map((cat) => {
-            // Check if active: exact match, or if not the root /news page, verify it starts with path prefix
-            const isActive = 
-              pathname === cat.href || 
-              (cat.href !== "/news" && pathname.startsWith(cat.href + "/"));
+          <div
+            ref={scrollContainerRef}
+            className="scrollbar-none -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0 scroll-smooth"
+          >
+            <div className="flex w-max min-w-full items-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 sm:w-full sm:flex-wrap">
+              {categories.map((cat) => {
+                // Check if active: exact match, or if not the root /news page, verify it starts with path prefix
+                const isActive = 
+                  pathname === cat.href || 
+                  (cat.href !== "/news" && pathname.startsWith(cat.href + "/"));
 
-            return (
-              <Link
-                key={cat.href}
-                href={cat.href}
-                aria-current={isActive ? "page" : undefined}
-                className={`whitespace-nowrap ${
-                  isActive
-                    ? "active-news-tab bg-slate-900 text-white shadow-sm font-semibold px-4 py-1.5 rounded-full text-xs sm:text-sm"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 px-4 py-1.5 rounded-full font-medium text-xs sm:text-sm transition-colors duration-300 ease-in-out"
-                }`}
-              >
-                {cat.label}
-              </Link>
-            );
-          })}
+                return (
+                  <Link
+                    key={cat.href}
+                    href={cat.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`shrink-0 whitespace-nowrap transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded-full ${
+                      isActive
+                        ? "active-news-tab bg-slate-900 text-white shadow-sm font-semibold px-4 py-1.5 rounded-full text-xs sm:text-sm"
+                        : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 px-4 py-1.5 rounded-full font-medium text-xs sm:text-sm"
+                    }`}
+                  >
+                    {cat.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         </nav>
       </div>
     </div>

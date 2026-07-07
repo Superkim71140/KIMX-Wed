@@ -57,21 +57,21 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
   return (
     <SpotlightCard
-      className="group flex h-full min-h-[500px] flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-white/70 shadow-md backdrop-blur-xl transition-all duration-500 ease-out hover:-translate-y-1 hover:border-teal-500/30 hover:shadow-xl"
+      className="group flex h-full min-w-0 min-h-[500px] flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-white/70 shadow-md backdrop-blur-xl transition-all duration-500 ease-out hover:-translate-y-1 hover:border-teal-500/30 hover:shadow-xl"
       spotlightColor="rgba(20, 184, 166, 0.15)"
     >
-      <div className="relative h-52 w-full shrink-0 overflow-hidden rounded-t-2xl bg-slate-50 sm:h-56 md:h-[220px] lg:h-[210px]">
+      <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-t-2xl bg-slate-50">
         <Image
           src={article.image}
-          alt={article.imageAlt}
+          alt={article.imageAlt || article.title}
           fill
-          sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
+          sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
           loading="lazy"
-          className="object-contain transition-opacity duration-300 group-hover:opacity-95"
+          className="object-contain object-center transition-opacity duration-300 group-hover:opacity-95"
         />
       </div>
 
-      <div className="flex grow flex-col p-5 pt-4 sm:p-6 sm:pt-4">
+      <div className="flex min-w-0 grow flex-col p-5 pt-4 sm:p-6 sm:pt-4">
         <div className="mb-3">
           <div className="inline-block rounded-full border border-slate-800 bg-slate-900 px-2.5 py-0.5">
             <span className="block text-[10px] font-bold uppercase tracking-[0.15em] text-white">
@@ -80,7 +80,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           </div>
         </div>
 
-        <h3 className="mb-2 min-h-[3.5rem] font-bold leading-snug tracking-tight text-slate-900 transition-colors duration-300 group-hover:text-teal-600 sm:text-lg line-clamp-2">
+        <h3 className="mb-2 min-w-0 min-h-[3.5rem] break-words font-bold leading-snug tracking-tight text-slate-900 transition-colors duration-300 [overflow-wrap:anywhere] group-hover:text-teal-600 sm:text-lg line-clamp-2">
           <Link
             href={canonicalUrl}
             className="focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-4"
@@ -89,12 +89,12 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           </Link>
         </h3>
 
-        <p className="mb-5 min-h-[4.5rem] text-sm font-light leading-relaxed tracking-normal text-slate-600 line-clamp-3">
+        <p className="mb-5 min-w-0 min-h-[4.5rem] break-words text-sm font-light leading-relaxed tracking-normal text-slate-600 [overflow-wrap:anywhere] line-clamp-3">
           {article.description}
         </p>
 
-        <div className="mt-auto flex min-h-[2.5rem] items-center justify-between gap-3 border-t border-slate-100/80 pt-4">
-          <div className="min-w-0 pr-2">
+        <div className="mt-auto flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-slate-100/80 pt-4">
+          <div className="min-w-0 flex-1">
             {article.author && (
               <span
                 className="block truncate text-[11px] font-medium text-slate-500"
@@ -104,7 +104,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               </span>
             )}
 
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-slate-400">
               {displayDate && (
                 <span className="shrink-0">{displayDate}</span>
               )}

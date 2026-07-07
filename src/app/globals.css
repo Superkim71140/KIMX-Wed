@@ -53,6 +53,11 @@
   --font-sans: var(--font-prompt), var(--font-inter), ui-sans-serif, system-ui;
 }
 
+@theme inline {
+  --font-news-heading: var(--font-news-heading), ui-sans-serif, system-ui, sans-serif;
+  --font-news-body: var(--font-news-body), ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Base Body Styles & Typographic Scale */
 html {
   font-size: 16px;
@@ -63,6 +68,26 @@ html, body {
   font-family: var(--font-inter), var(--font-prompt), system-ui, sans-serif;
   line-height: 1.85 !important; /* Enhanced relaxed reading line-height */
   -webkit-font-smoothing: antialiased;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -464,8 +489,10 @@ select.custom-input option {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
   z-index: -1;
   pointer-events: none;
   background-image:
@@ -475,7 +502,6 @@ select.custom-input option {
     radial-gradient(circle at 65% 45%, rgba(20, 184, 166, 0.02) 0%, transparent 70%);
   background-size: auto, 100% 100%;
   background-repeat: repeat, no-repeat;
-  
 }
 
 .kimx-soft-grid {
@@ -808,4 +834,141 @@ select.custom-input option {
 .service-card-gpu:hover,
 .motion-editorial:hover {
   will-change: transform, opacity;
+}
+
+/* ==================================================
+   KIMX Tech Article Reading Typography
+   Scoped only to article detail pages
+================================================== */
+
+.article-reading {
+  color: #334155;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.article-reading .article-title {
+  font-family: var(--font-news-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(2.15rem, 8vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -0.012em;
+  color: #0f172a;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.article-reading .article-summary {
+  font-family: var(--font-news-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.9;
+  color: #475569;
+}
+
+.article-reading .article-richtext {
+  font-family: var(--font-news-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 2;
+  color: #334155;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.article-reading .article-richtext p,
+.article-reading .article-richtext li {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.article-reading .article-richtext p {
+  margin-top: 0;
+  margin-bottom: 1.75rem;
+}
+
+.article-reading .article-richtext h2 {
+  font-family: var(--font-news-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+  margin-top: 3.5rem;
+  margin-bottom: 1.25rem;
+  text-wrap: balance;
+}
+
+.article-reading .article-richtext h3 {
+  font-family: var(--font-news-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: #0f172a;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.article-reading .article-richtext strong {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.article-reading .article-richtext a {
+  color: #0f9f96;
+  font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 180ms ease;
+}
+
+.article-reading .article-richtext a:hover {
+  color: #0b766f;
+}
+
+.article-reading .article-richtext ul,
+.article-reading .article-richtext ol {
+  margin-top: 0;
+  margin-bottom: 1.75rem;
+  padding-left: 1.5rem;
+}
+
+.article-reading .article-richtext li {
+  margin-bottom: 0.75rem;
+  padding-left: 0.25rem;
+}
+
+.article-reading .article-richtext blockquote {
+  margin: 2.25rem 0;
+  border-left: 4px solid #14b8a6;
+  padding: 0.75rem 0 0.75rem 1.25rem;
+  font-family: var(--font-news-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1.55;
+  color: #1e293b;
+}
+
+.article-reading .article-richtext figure {
+  margin: 2.25rem 0;
+}
+
+.article-reading .article-richtext figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: #64748b;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .article-reading .article-richtext {
+    font-size: 1.1875rem;
+    line-height: 2.05;
+  }
+
+  .article-reading .article-richtext p {
+    margin-bottom: 2rem;
+  }
 }

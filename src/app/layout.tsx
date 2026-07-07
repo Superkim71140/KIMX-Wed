@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Prompt, Inter } from "next/font/google";
+import { Prompt, Inter, Kanit, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import "aos/dist/aos.css";
 import { buildMetadata } from "@/lib/seo";
@@ -30,6 +30,20 @@ const inter = Inter({
   display: "swap",
 });
 
+const newsHeadingFont = Kanit({
+  subsets: ["thai", "latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-news-heading",
+  display: "swap",
+});
+
+const newsBodyFont = Noto_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-news-body",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   ...buildMetadata(),
   verification: {
@@ -45,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={`${prompt.variable} ${inter.variable} min-h-screen antialiased`}
+      className={`${prompt.variable} ${inter.variable} ${newsHeadingFont.variable} ${newsBodyFont.variable} min-h-screen antialiased`}
     >
       <body className="flex flex-col min-h-screen kimx-light-bg text-[#1D1D1F] antialiased selection:bg-sky-200 selection:text-sky-900">
         <AOSProvider>

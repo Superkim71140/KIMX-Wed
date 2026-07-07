@@ -1,14 +1,12 @@
 import React from "react";
-import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getArticleRegistry } from "@/lib/articles/registry";
 import { getSemanticRelatedArticles } from "@/lib/articles/semantic-related";
-import { getExecutiveSummary } from "@/lib/articles/ai-summary";
 import ExecutiveSummaryWidget from "@/components/articles/ExecutiveSummaryWidget";
 import RelatedArticles from "@/components/articles/RelatedArticles";
-import { buildMetadata, siteUrl } from "@/lib/seo";
+import { siteUrl } from "@/lib/seo";
 import { siteConfig } from "@/data/site";
 import Container from "@/components/ui/Container";
 import GlassCard from "@/components/ui/GlassCard";
@@ -80,19 +78,10 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
   // Find Takeaways block
   const takeawaysBlock = article.content.find(block => block.type === "highlight" && block.title === "สรุปประเด็นสำคัญ") as { type: "highlight"; title?: string; text: string } | undefined;
 
-  // Extract content text for AI/Mock Summary
-  const contentText = article.content
-    .filter(block => block.type === "paragraph" || block.type === "heading")
-    .map(block => block.text)
-    .join("\n");
-
   // Server-side summary generation with no hydration mismatch
   let initialSummary: string[] = [];
   if (takeawaysBlock) {
     initialSummary = takeawaysBlock.text.split("\n").filter(Boolean).map(line => line.replace(/^•\s*/, ''));
-  } else {
-    const summaryRes = await getExecutiveSummary(article.id, article.title, contentText, 4);
-    initialSummary = summaryRes.summary;
   }
 
   // Generate Table of Contents
@@ -103,7 +92,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
   
   // Inject related articles links into semantic schema for crawler indexation booster
   if (Array.isArray(articleSchema) && articleSchema[0]) {
-    (articleSchema[0] as any).relatedLink = relatedArticles.map(
+    (articleSchema[0] as unknown as { relatedLink: string[] }).relatedLink = relatedArticles.map(
       (art) => `${siteUrl}/news/${art.categorySlug}/${art.slug}`
     );
   }
@@ -137,7 +126,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
 
       {/* Adjust paddingTop to 40 (approx 160px) to clear both navbar & sub-navbar */}
       <ReadingProgress />
-      <article className="relative pt-48 pb-24 bg-transparent font-sans">
+      <article className="article-reading relative pt-48 pb-24 bg-transparent font-sans">
         <header className="relative z-10">
           {/* Glow - Ultra Minimalist */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-200/5 rounded-full blur-[140px] pointer-events-none -z-10" />
@@ -177,12 +166,15 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
           </div>
 
           {/* ===== MAIN HEADLINE ===== */}
-          <h1
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-snug md:leading-tight mb-4 md:mb-6 max-w-4xl font-sans"
-            style={{ wordBreak: "normal", overflowWrap: "anywhere" }}
-          >
+          <h1 className="article-title font-news-heading mt-4 mb-4 md:mb-6 max-w-4xl">
             {article.title}
           </h1>
+
+          {article.description && (
+            <p className="article-summary font-news-body mt-6 mb-8 max-w-4xl">
+              {article.description}
+            </p>
+          )}
 
           {/* ===== TRUST BAR — light theme ===== */}
           <ArticleTrustBar
@@ -246,12 +238,12 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
               <ExecutiveSummaryWidget
                 articleId={article.id}
                 title={article.title}
-                contentText={contentText}
+                slug={article.slug}
                 initialSummary={initialSummary}
               />
 
               {/* ===== MAIN RICH CONTENT ===== */}
-              <section className="w-full text-slate-900 font-normal text-base sm:text-lg leading-relaxed" style={{ wordBreak: 'normal', overflowWrap: 'anywhere' }}>
+              <section className="article-richtext font-news-body w-full">
                 {article.content.map((block, idx) => {
                   switch (block.type) {
                     case "paragraph": {
@@ -262,7 +254,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
 
                       if (pIsList) {
                         return (
-                          <ul key={idx} className={`list-disc list-outside ml-6 font-sans text-base md:text-[1.05rem] font-normal leading-relaxed mb-9 antialiased max-w-3xl mx-auto px-4 md:px-0 space-y-2`}>
+                          <ul key={idx} className={`list-outside max-w-3xl mx-auto px-4 md:px-0`}>
                             {pTextLines.map((line, i) => (
                               <li key={i}>{renderWithHighlights(line.trim().replace(/^•\s*/, ''))}</li>
                             ))}
@@ -272,7 +264,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                       return (
                         <p
                           key={idx}
-                          className={`font-sans whitespace-pre-line text-base md:text-[1.05rem] font-normal leading-relaxed mb-9 antialiased max-w-3xl mx-auto px-4 md:px-0 ${dropCapClasses}`}
+                          className={`whitespace-pre-line max-w-3xl mx-auto px-4 md:px-0 ${dropCapClasses}`}
                         >
                           {renderWithHighlights(block.text)}
                         </p>
@@ -283,7 +275,7 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                         <h2
                           key={idx}
                           id={encodeURIComponent(block.text)}
-                          className={`text-xl md:text-2xl font-black text-slate-950 tracking-tight mt-14 mb-6 max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 font-sans scroll-mt-36 relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[4px] before:rounded-full before:bg-linear-to-b before:from-[#14B8A6] before:to-[#0EA5E9] before:shadow-[0_0_12px_rgba(20,184,166,0.6)]`}
+                          className={`max-w-3xl mx-auto px-4 md:px-0 flex items-center gap-2 scroll-mt-36 relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[4px] before:rounded-full before:bg-linear-to-b before:from-[#14B8A6] before:to-[#0EA5E9] before:shadow-[0_0_12px_rgba(20,184,166,0.6)]`}
                         >
                           {enhanceHeadingText(block.text)}
                         </h2>
@@ -326,18 +318,18 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                       return (
                         <blockquote
                           key={idx}
-                          className="my-10 p-8 sm:p-10 relative overflow-hidden rounded-4xl bg-slate-50/70 border border-slate-200/50 italic text-slate-800 font-sans max-w-4xl mx-auto shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
+                          className="relative overflow-hidden rounded-4xl bg-slate-50/70 border border-slate-200/50 max-w-4xl mx-auto shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
                         >
                           {/* Oversized Background Quote */}
                           <div className="absolute -top-6 -left-2 text-[12rem] leading-none font-serif text-slate-200/40 select-none pointer-events-none" aria-hidden="true">
                             &ldquo;
                           </div>
                           <div className="relative z-10">
-                            <p className="text-lg sm:text-xl font-light leading-relaxed mb-4">
+                            <p className="mb-4">
                               {renderWithHighlights(block.text)}
                             </p>
                             {block.author && (
-                              <cite className="text-sm text-slate-500 font-semibold not-italic flex items-center gap-2 font-sans before:content-[''] before:w-6 before:h-[2px] before:bg-[#14B8A6]">
+                              <cite className="text-sm text-slate-500 font-semibold not-italic flex items-center gap-2 before:content-[''] before:w-6 before:h-[2px] before:bg-[#14B8A6]">
                                 {block.author}
                               </cite>
                             )}

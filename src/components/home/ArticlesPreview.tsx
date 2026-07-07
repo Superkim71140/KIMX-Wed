@@ -38,10 +38,10 @@ export default function ArticlesPreview() {
                 hoverGlow={true}
               >
                 {/* Article Image Container */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-50 border-b border-sky-100">
+                <div className="relative aspect-video w-full overflow-hidden bg-slate-50 border-b border-sky-100 flex items-center justify-center">
                   {article.coverImage.startsWith("linear-gradient") || article.coverImage.includes("gradient") ? (
                     <div 
-                      className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden group-hover:scale-105 transition-transform duration-700 ease-out"
+                      className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden transition-transform duration-700 ease-out"
                       style={{ background: article.coverImage }}
                     >
                       {/* Category Badge overlay (Absolute Glass Overlay) */}
@@ -58,7 +58,7 @@ export default function ArticlesPreview() {
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       loading="lazy"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      className="object-contain transition-transform duration-700 ease-out"
                     />
                   )}
                   

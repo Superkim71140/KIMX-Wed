@@ -17,7 +17,7 @@ export type ExecutiveSummaryProvider = {
  * Predictable mock summary provider that extracts content sentences from article body.
  */
 export const MockSummaryProvider: ExecutiveSummaryProvider = {
-  async summarize({ title, contentText, maxBullets = 4 }) {
+  async summarize({ title, contentText }) {
     // Generate a clean summary based on headings and paragraph texts in the content text
     const sentences = contentText
       .split(/[।|.!?\n]/)
@@ -26,12 +26,17 @@ export const MockSummaryProvider: ExecutiveSummaryProvider = {
 
     const bullets: string[] = [];
     
-    // Add introductory bullet point
-    bullets.push(`ข้อมูลวิเคราะห์และสรุปสาระสำคัญเกี่ยวกับ "${title}" ในเชิงลึกสำหรับธุรกิจและผู้อ่าน`);
+    // Check if title has uncertainty terms and add introductory bullet preserving it
+    const hasUncertainty = /(ลือ|หลุด|คาดว่า|อาจ|ยังไม่ยืนยัน)/.test(title);
+    if (hasUncertainty) {
+      bullets.push(`ข้อมูลวิเคราะห์จากกระแสข่าวลือและรายละเอียดสเปกหลุดเบื้องต้นเกี่ยวกับ "${title.replace(/ลือ|หลุด|คาดว่า|อาจ|ยังไม่ยืนยัน/g, "").trim()}"`);
+    } else {
+      bullets.push(`สรุปประเด็นหลักและข้อมูลสำคัญของ "${title}" เพื่อประกอบการติดตามแนวโน้มเทคโนโลยี`);
+    }
 
     // Add unique sentences as bullets
     for (const sentence of sentences) {
-      if (bullets.length >= maxBullets) {
+      if (bullets.length >= 3) {
         break;
       }
       
@@ -45,13 +50,16 @@ export const MockSummaryProvider: ExecutiveSummaryProvider = {
     }
 
     // Add fallback items if sentences are insufficient
-    if (bullets.length < 3) {
-      bullets.push("ข้อมูลและประเด็นเชิงลึกที่จะช่วยสนับสนุนการตัดสินใจทางธุรกิจและกลยุทธ์การเปลี่ยนผ่าน");
-      bullets.push("เทคนิคการนำเทคโนโลยีปัญญาประดิษฐ์และเครื่องมือดิจิทัลเข้ามาช่วยเพิ่มขีดความสามารถการแข่งขัน");
+    while (bullets.length < 3) {
+      if (bullets.length === 1) {
+        bullets.push("ข้อมูลและประเด็นเชิงลึกที่จะช่วยสนับสนุนการตัดสินใจทางธุรกิจและเทคโนโลยี");
+      } else {
+        bullets.push("เทคนิคและการนำเทคโนโลยีใหม่ๆ เข้ามาประยุกต์ใช้เพื่อการเปลี่ยนผ่านสู่ดิจิทัล");
+      }
     }
 
     return {
-      summary: bullets.slice(0, maxBullets),
+      summary: bullets.slice(0, 3),
       source: "mock",
       generatedAt: new Date().toISOString()
     };
@@ -62,7 +70,7 @@ export const MockSummaryProvider: ExecutiveSummaryProvider = {
  * Server-safe Gemini summary provider using native fetch.
  */
 export const GeminiSummaryProvider: ExecutiveSummaryProvider = {
-  async summarize({ title, contentText, maxBullets }) {
+  async summarize({ title, contentText }) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error("GEMINI_API_KEY is not configured.");
@@ -80,7 +88,12 @@ export const GeminiSummaryProvider: ExecutiveSummaryProvider = {
             {
               parts: [
                 {
-                  text: `สรุปประเด็นหลักของบทความชื่อ "${title}" ออกมาเป็นหัวข้อภาษาไทย 3 ถึง 4 หัวข้อ โดยมีความกระชับ อ่านง่าย และสอดคล้องกับเนื้อหาบทความต่อไปนี้ (ไม่ต้องเขียนสัญลักษณ์หัวข้อ เช่น •, -, * และไม่ต้องอธิบายเยอะ):\n\n${contentText.slice(0, 4000)}`
+                  text: `คุณคือผู้เชี่ยวชาญการเขียนข่าวเทคโนโลยี สรุปประเด็นหลักของบทความข่าวไอทีเรื่อง "${title}" ออกมาเป็นข้อสรุปภาษาไทย 3 ข้อถัดไปนี้ โดยมีเกณฑ์ดังนี้:
+1. สรุปเป็นหัวข้อภาษาไทยจำนวน "ตรงกับ 3 ข้อพอดี" (ไม่ต้องใส่สัญลักษณ์หัวข้อ เช่น •, -, * หรือตัวเลขนำหน้า และไม่ต้องเขียนเกริ่นนำ)
+2. อ้างอิงและใช้เฉพาะข้อมูลที่มีอยู่จริงในเนื้อหาที่ระบุเท่านั้น ห้ามสร้างข้อมูลปลอม ห้ามเพิ่มเติมสเปกสินค้า ราคา วันเปิดตัว ตัวเลขประสิทธิภาพ หรือข้อเท็จจริงใดๆ ที่ไม่ตรงกับเอกสาร
+3. หากข่าวนี้เป็นข่าวลือ หรือข่าวหลุด ต้องคงคำศัพท์ที่ระบุถึงความไม่แน่นอน เช่น "ลือ", "หลุด", "คาดว่า", "อาจ", "ยังไม่ยืนยัน" ไว้อย่างเคร่งครัด ห้ามตัดคำเหล่านี้ออกเพื่อให้ดูเป็นข่าวทางการหรือความจริงที่ยืนยันแล้ว
+
+เนื้อหาบทความ:\n\n${contentText.slice(0, 4000)}`
                 }
               ]
             }
@@ -104,7 +117,7 @@ export const GeminiSummaryProvider: ExecutiveSummaryProvider = {
       .split("\n")
       .map((line: string) => line.replace(/^[-*•\d.\s]+/, "").trim())
       .filter((line: string) => line.length > 0)
-      .slice(0, maxBullets);
+      .slice(0, 3);
 
     return {
       summary,
@@ -118,7 +131,7 @@ export const GeminiSummaryProvider: ExecutiveSummaryProvider = {
  * Server-safe OpenAI summary provider using native fetch.
  */
 export const OpenAISummaryProvider: ExecutiveSummaryProvider = {
-  async summarize({ title, contentText, maxBullets }) {
+  async summarize({ title, contentText }) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY is not configured.");
@@ -135,7 +148,11 @@ export const OpenAISummaryProvider: ExecutiveSummaryProvider = {
         messages: [
           {
             role: "system",
-            content: `You are an expert editorial writer. Summarize the given article into exactly 3 to 4 concise Thai bullet points. Do not prepend any bullet point characters or markdown list symbols.`
+            content: `You are an expert technology editorial writer. Summarize the given IT news article into exactly 3 concise Thai bullet points.
+Rules:
+1. Output exactly 3 lines/bullet points. Do not prepend any bullet point characters or markdown list symbols or numbers.
+2. Rely ONLY on the facts mentioned in the text. Never invent specifications, prices, launch dates, performance metrics, or external facts not in the source text.
+3. If the article describes rumors, leaks, or unconfirmed specs, you MUST strictly preserve uncertainty words like "ลือ", "หลุด", "คาดว่า", "อาจ", "ยังไม่ยืนยัน" in your summary. Do not state them as confirmed facts.`
           },
           {
             role: "user",
@@ -158,7 +175,7 @@ export const OpenAISummaryProvider: ExecutiveSummaryProvider = {
       .split("\n")
       .map((line: string) => line.replace(/^[-*•\d.\s]+/, "").trim())
       .filter((line: string) => line.length > 0)
-      .slice(0, maxBullets);
+      .slice(0, 3);
 
     return {
       summary,
@@ -176,7 +193,7 @@ export async function getExecutiveSummary(
   articleId: string,
   title: string,
   contentText: string,
-  maxBullets: number = 4
+  maxBullets: number = 3
 ): Promise<ExecutiveSummaryResult> {
   const providerType = process.env.AI_SUMMARY_PROVIDER || "mock";
 

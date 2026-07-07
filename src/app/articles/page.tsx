@@ -22,7 +22,7 @@ export const revalidate = 86400;
 
 export default function ArticlesPage() {
   return (
-    <div className="relative pt-32 pb-16 overflow-hidden bg-transparent">
+    <div className="relative overflow-x-clip bg-transparent pt-32 pb-16">
       {/* Background Decorative Grids & Orbs */}
       <div className="absolute inset-0 kimx-soft-grid opacity-80 z-0 pointer-events-none" />
       <div className="noise-overlay" />
@@ -56,9 +56,9 @@ export default function ArticlesPage() {
 
       {/* ===== MAIN CONTENT ===== */}
       <main className="relative py-8 z-10 -mt-16">
-        <Container className="space-y-16">
+        <Container className="min-w-0 space-y-16">
           {/* Featured Article (About us card) */}
-          <div className="relative">
+          <div className="relative min-w-0">
             <FeaturedArticle />
           </div>
 
@@ -67,7 +67,7 @@ export default function ArticlesPage() {
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-4 relative z-10">
               บทความล่าสุด
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
               {articles.map((art) => (
                 <ArticleCard key={art.slug} article={art} />
               ))}

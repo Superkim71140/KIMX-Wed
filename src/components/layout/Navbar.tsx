@@ -110,16 +110,48 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation Full-Screen/Polished Drawer */}
+        {/* Mobile Navigation Full-Screen/Polished Drawer */}
         <div
-          className={`lg:hidden fixed inset-x-0 top-[72px] transition-all duration-300 ease-in-out z-40 overflow-hidden ${
-            isOpen
-              ? "max-h-[85vh] opacity-100 border-b border-border-surface shadow-sm"
-              : "max-h-0 opacity-0 pointer-events-none"
+          className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
+            isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
           id="mobile-menu"
+          aria-hidden={!isOpen}
         >
-          <div className="mx-4 my-2 px-6 py-6 space-y-4 rounded-3xl bg-bg-elevated/95 backdrop-blur-2xl border border-border-surface">
-            <div className="grid grid-cols-1 gap-1">
+          {/* Backdrop */}
+          <button
+            type="button"
+            aria-label="ปิดเมนู"
+            onClick={() => setIsOpen(false)}
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px] w-full h-full border-none cursor-pointer"
+          />
+
+          {/* Drawer Panel */}
+          <aside
+            className={`absolute top-0 right-0 h-full w-[min(86vw,360px)] max-w-full overflow-x-hidden overflow-y-auto bg-white shadow-2xl p-6 flex flex-col gap-6 transition-transform duration-300 ease-in-out ${
+              isOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            {/* Header of Drawer: Close button + Logo */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <span className="text-xl font-extrabold tracking-wider text-slate-950">
+                KIMX
+                <span className="text-[#14B8A6] ml-1 italic">
+                  Web
+                </span>
+              </span>
+              <button
+                onClick={() => setIsOpen(false)}
+                type="button"
+                className="inline-flex items-center justify-center p-2 rounded-full text-slate-500 hover:text-[#0b1b33] hover:bg-slate-100 focus:outline-none transition-colors"
+                aria-label="ปิดเมนู"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Links */}
+            <div className="flex-1 flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -127,8 +159,8 @@ export default function Navbar() {
                   onClick={handleLinkClick}
                   className={`block px-4 py-3 rounded-xl text-base font-semibold transition-colors duration-300 ${
                     isActive(link.href)
-                      ? "bg-primary-glow/10 text-primary-glow"
-                      : "text-text-main hover:bg-bg-soft hover:text-primary-glow"
+                      ? "bg-teal-50 text-teal-600 font-bold"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-teal-600"
                   }`}
                 >
                   {link.name}
@@ -176,7 +208,7 @@ export default function Navbar() {
                 </CTAButton>
               </div>
             </div>
-          </div>
+          </aside>
         </div>
       </header>
     </>

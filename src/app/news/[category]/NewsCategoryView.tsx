@@ -165,7 +165,7 @@ export default async function NewsCategoryView({ params }: ViewProps) {
       )}
 
       {/* Adjust paddingTop for Apple-tier spacing to clear navbar cleanly */}
-      <div className="relative pt-28 pb-24 overflow-hidden bg-transparent min-h-screen">
+      <div className="relative overflow-x-clip bg-transparent min-h-screen pt-28 pb-24">
         {/* ===== BREADCRUMBS ===== */}
         <div className="mb-6 relative z-10">
           <Container>

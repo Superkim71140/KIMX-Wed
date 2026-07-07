@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, ChevronRight } from "lucide-react";
 import { NormalizedArticle } from "@/lib/articles/types";
 import GlassCard from "@/components/ui/GlassCard";
-import { getCategoryColorStyles } from "@/lib/news-presentation";
 
 interface CategoryArticleGridProps {
   articles: NormalizedArticle[];
@@ -55,8 +54,8 @@ function formatThaiDate(dateValue?: string) {
   return `${day} ${THAI_MONTHS[month - 1]} ${year + 543}`;
 }
 
-const getSafeImageUrl = (art: any): string => {
-  const rawPath = art.coverImage || art.image || "/assets/images/logo%20kimxwed.png";
+const getSafeImageUrl = (art: NormalizedArticle | { coverImage?: string; image?: string }): string => {
+  const rawPath = ('coverImage' in art ? art.coverImage : undefined) || ('image' in art ? art.image : undefined) || "/assets/images/logo%20kimxwed.png";
   if (!rawPath || typeof rawPath !== "string") return "/assets/images/logo%20kimxwed.png";
   // Safely intercept gradient strings that would crash next/image
   if (rawPath.includes("gradient")) return "/assets/images/logo%20kimxwed.png";
@@ -184,24 +183,22 @@ export default function CategoryArticleGrid({
                   className="group block h-full rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-4"
                 >
                   <GlassCard
-                    className="flex h-full min-h-[520px] flex-col overflow-hidden rounded-2xl border-none bg-white p-0 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
+                    className="flex h-full min-w-0 min-h-[520px] flex-col overflow-hidden rounded-2xl border-none bg-white p-0 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
                     hoverScale={false}
                     hoverGlow={false}
                   >
-                    <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-t-2xl bg-slate-50">
+                    <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-t-2xl bg-slate-50">
                       <Image
                         src={getSafeImageUrl(article)}
                         alt={article.title}
                         fill
-                        sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
+                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
                         loading="lazy"
-                        className="object-contain w-full h-full bg-slate-50/60 transition-opacity duration-300 group-hover:opacity-95"
+                        className="object-contain object-center w-full h-full bg-slate-50/60 transition-opacity duration-300 group-hover:opacity-95"
                       />
-
-
                     </div>
 
-                    <div className="flex grow flex-col p-5 sm:p-6">
+                    <div className="flex min-w-0 grow flex-col p-5 sm:p-6">
                       <div className="mb-3 flex h-5 items-center gap-3 font-sans text-[10px] font-light text-slate-500 sm:text-xs">
                         <Calendar
                           size={12}
@@ -216,17 +213,17 @@ export default function CategoryArticleGrid({
                         <span className="truncate">{article.readingTime}</span>
                       </div>
 
-                      <h3 className="mb-3 min-h-[3.5rem] font-sans text-base font-bold leading-snug tracking-tight text-slate-900 transition-colors duration-300 group-hover:text-sky-600 sm:text-lg line-clamp-2">
+                      <h3 className="mb-3 min-w-0 min-h-[3.5rem] break-words font-sans text-base font-bold leading-snug tracking-tight text-slate-900 transition-colors duration-300 [overflow-wrap:anywhere] group-hover:text-sky-600 sm:text-lg line-clamp-2">
                         {article.title}
                       </h3>
 
-                      <p className="mb-6 min-h-[4.5rem] font-sans text-xs font-light leading-relaxed text-slate-600 sm:text-sm line-clamp-3">
+                      <p className="mb-6 min-w-0 min-h-[4.5rem] break-words font-sans text-xs font-light leading-relaxed text-slate-600 sm:text-sm line-clamp-3 [overflow-wrap:anywhere]">
                         {article.description}
                       </p>
 
-                      <div className="mt-auto flex min-h-[2.5rem] items-center justify-between gap-3 border-t border-sky-50 pt-4 font-sans text-xs text-slate-500">
+                      <div className="mt-auto flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-sky-50 pt-4 font-sans text-xs text-slate-500">
                         <span
-                          className="min-w-0 truncate"
+                          className="min-w-0 truncate flex-1"
                           title={`โดย ${article.author}`}
                         >
                           โดย {article.author}

@@ -66,7 +66,7 @@ export default function NewsHubPage() {
       />
 
       {/* Adjust paddingTop for Apple-tier spacing to clear navbar cleanly */}
-      <div className="relative pt-24 pb-24 overflow-hidden bg-transparent">
+      <div className="relative overflow-x-clip bg-transparent pt-24 pb-24">
         {/* Decorative tech background lines/glow - Ultra Minimalist (5% opacity) */}
         <div className="absolute top-0 left-1/4 -translate-x-1/2 w-[800px] h-[400px] bg-sky-200/5 rounded-full blur-[120px] pointer-events-none -z-10" />
         <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-slate-200/10 rounded-full blur-[150px] pointer-events-none -z-10" />
