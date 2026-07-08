@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -72,7 +75,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="sticky top-0 w-full z-50 h-[72px] sm:h-[88px] flex items-center transition-all duration-300 bg-slate-950/85 backdrop-blur-xl border-b border-white/10 shadow-lg"
+        className="sticky top-0 w-full z-[100] h-[72px] sm:h-[88px] flex items-center transition-all duration-300 bg-slate-950/85 backdrop-blur-xl border-b border-white/10 shadow-lg"
       >
         <div className="w-full mx-auto max-w-7xl px-4 sm:px-6">
           {/* Inner Navigation Wrapper */}
@@ -144,109 +147,119 @@ export default function Navbar() {
       </header>
 
       {/* Mobile Navigation Full-Screen/Polished Drawer */}
-      {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-[200]"
-          role="presentation"
-        >
-          {/* Backdrop */}
-          <button
-            type="button"
-            aria-label="ปิดเมนู"
-            onClick={closeMobileMenu}
-            className="absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] cursor-default w-full h-full border-none"
-          />
-
-          {/* Drawer Panel */}
-          <aside
-            id="mobile-navigation"
-            role="dialog"
-            aria-modal="true"
-            aria-label="เมนูหลัก"
-            className="absolute inset-y-0 right-0 z-10 flex h-[100dvh] w-[min(88vw,380px)] max-w-full flex-col overflow-x-hidden overflow-y-auto bg-white shadow-2xl pointer-events-auto"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="lg:hidden fixed inset-0 z-[200]"
+            role="presentation"
           >
-            {/* Header of Drawer: Close button + Logo */}
-            <div className="sticky top-0 z-10 flex min-h-20 items-center justify-between border-b border-slate-100 bg-white/95 px-6 backdrop-blur-xl">
-              <span className="text-xl font-extrabold tracking-wider text-slate-950">
-                KIMX
-                <span className="text-[#14B8A6] ml-1 italic">
-                  Web
-                </span>
-              </span>
-              <button
-                onClick={closeMobileMenu}
-                type="button"
-                className="inline-flex size-11 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
-                aria-label="ปิดเมนู"
-              >
-                <X size={20} />
-              </button>
-            </div>
+            {/* Backdrop */}
+            <button
+              type="button"
+              aria-label="ปิดเมนู"
+              onClick={closeMobileMenu}
+              className="absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] cursor-default w-full h-full border-none"
+            />
 
-            {/* Links */}
-            <nav
-              aria-label="เมนูมือถือ"
-              className="flex-1 flex flex-col gap-2 px-5 py-6 pointer-events-auto"
+            {/* Drawer Panel */}
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 85, damping: 20, mass: 1.1 }}
+              id="mobile-navigation"
+              role="dialog"
+              aria-modal="true"
+              aria-label="เมนูหลัก"
+              className="absolute inset-y-0 right-0 z-10 flex h-[100dvh] w-[min(88vw,380px)] max-w-full flex-col overflow-x-hidden overflow-y-auto bg-white shadow-2xl pointer-events-auto"
             >
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={handleLinkClick}
-                  className={`flex min-h-12 items-center rounded-xl px-4 py-3 text-base font-semibold transition-colors duration-300 ${
-                    isActive(link.href)
-                      ? "bg-teal-50 text-teal-600 font-bold"
-                      : "text-slate-700 hover:bg-slate-50 hover:text-teal-600"
-                  }`}
+              {/* Header of Drawer: Close button + Logo */}
+              <div className="sticky top-0 z-10 flex min-h-20 items-center justify-between border-b border-slate-100 bg-white/95 px-6 backdrop-blur-xl">
+                <span className="text-xl font-extrabold tracking-wider text-slate-950">
+                  KIMX
+                  <span className="text-[#14B8A6] ml-1 italic">
+                    Web
+                  </span>
+                </span>
+                <button
+                  onClick={closeMobileMenu}
+                  type="button"
+                  className="inline-flex size-11 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+                  aria-label="ปิดเมนู"
                 >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-
-            {/* Mobile Action Conversion Strip (LINE, Call, Quote) */}
-            <div className="border-t border-slate-100 p-5 flex flex-col gap-3 bg-white">
-              <CTAButton
-                variant="line"
-                size="md"
-                href={siteConfig.lineUrl}
-                external
-                onClick={handleLinkClick}
-                className="w-full flex items-center justify-center gap-3"
-              >
-                <Image src="/line-ar21.svg" alt="LINE" width={36} height={36} className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 drop-shadow-sm" />
-                แชทถามทาง LINE
-              </CTAButton>
-
-              <div className="grid grid-cols-2 gap-3">
-                <CTAButton
-                  variant="outline"
-                  size="md"
-                  href={siteConfig.telephoneRaw}
-                  onClick={handleLinkClick}
-                  className="w-full flex items-center justify-center gap-2 border-blue-100! text-[#0b1b33] hover:bg-slate-50"
-                >
-                  <Phone size={16} className="text-[#147dff]" />
-                  โทรเลย
-                </CTAButton>
-                
-                <CTAButton
-                  variant="primary"
-                  size="md"
-                  onClick={() => {
-                    closeMobileMenu();
-                    openModal();
-                  }}
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <FileText size={16} />
-                  ขอใบเสนอราคา
-                </CTAButton>
+                  <X size={20} />
+                </button>
               </div>
-            </div>
-          </aside>
-        </div>
-      )}
+
+              {/* Links */}
+              <nav
+                aria-label="หมวดหมู่ข่าว"
+                className="flex-1 flex flex-col gap-2 px-5 py-6 pointer-events-auto"
+              >
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={handleLinkClick}
+                    className={`flex min-h-12 items-center rounded-xl px-4 py-3 text-base font-semibold transition-colors duration-300 ${
+                      isActive(link.href)
+                        ? "bg-teal-50 text-teal-600 font-bold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-teal-600"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+
+              {/* Mobile Action Conversion Strip (LINE, Call, Quote) */}
+              <div className="border-t border-slate-100 p-5 flex flex-col gap-3 bg-white">
+                <CTAButton
+                  variant="line"
+                  size="md"
+                  href={siteConfig.lineUrl}
+                  external
+                  onClick={handleLinkClick}
+                  className="w-full flex items-center justify-center gap-3"
+                >
+                  <Image src="/line-ar21.svg" alt="LINE" width={36} height={36} className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 drop-shadow-sm" />
+                  แชทถามทาง LINE
+                </CTAButton>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <CTAButton
+                    variant="outline"
+                    size="md"
+                    href={siteConfig.telephoneRaw}
+                    onClick={handleLinkClick}
+                    className="w-full flex items-center justify-center gap-2 border-blue-100! text-[#0b1b33] hover:bg-slate-50"
+                  >
+                    <Phone size={16} className="text-[#147dff]" />
+                    โทรเลย
+                  </CTAButton>
+                  
+                  <CTAButton
+                    variant="primary"
+                    size="md"
+                    onClick={() => {
+                      closeMobileMenu();
+                      openModal();
+                    }}
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <FileText size={16} />
+                    ขอใบเสนอราคา
+                  </CTAButton>
+                </div>
+              </div>
+            </motion.aside>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

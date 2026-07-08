@@ -9,6 +9,7 @@ import NewsCategoryBar from "@/components/layout/NewsCategoryBar";
 import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/home/CookieConsent";
 import DeferredClientOverlays from "@/components/providers/DeferredClientOverlays";
+import FloatingContactBar from "@/components/home/FloatingContactBar";
 import AOSProvider from "@/context/AOSProvider";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import WebVitalsReporter from "./WebVitalsReporter";
@@ -83,6 +84,9 @@ export default function RootLayout({
 
               {/* Deferred Request quote modal dialog */}
               <DeferredClientOverlays />
+
+              {/* Mobile sticky dock & Desktop scroll top floating pill */}
+              <FloatingContactBar />
             </SmoothScroll>
           </QuoteModalProvider>
         </AOSProvider>

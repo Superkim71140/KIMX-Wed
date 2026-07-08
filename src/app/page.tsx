@@ -18,7 +18,6 @@ import PricingSection from "@/components/home/PricingSection";
 import ArticlesPreview from "@/components/home/ArticlesPreview";
 import FAQSection from "@/components/home/FAQSection";
 import ContactSection from "@/components/home/ContactSection";
-import FloatingContactBar from "@/components/home/FloatingContactBar";
 
 // Specific SEO Metadata for Homepage
 export const metadata: Metadata = buildMetadata({
@@ -81,9 +80,6 @@ export default function HomePage() {
 
       {/* 13. Contact details and form */}
       <ContactSection />
-
-      {/* 14. Mobile sticky dock & Desktop scroll top floating pill */}
-      <FloatingContactBar />
     </>
   );
 }
