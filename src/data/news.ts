@@ -10,16 +10,19 @@ export type NewsArticleContentBlock =
   | { type: "features-grid"; items: Array<{ title: string; description: string }> }
   | { type: "green-box"; title: string; text: string }
   | { type: "image"; src: string; alt: string; caption?: string }
+  | { type: "image-pair"; leftSrc: string; leftAlt: string; rightSrc: string; rightAlt: string; caption?: string }
   | { type: "share-buttons"; shareUrl: string; reviewUrl: string }
   | { type: "benchmark"; items: Array<{ label: string; score: number; maxScore: number; color?: string }> };
 
 export interface NewsArticle {
+  id?: string;
   title: string;
   slug: string;
+  description?: string;
   excerpt: string;
   category: string;
   categorySlug: string;
-  subCategory?: "car" | "motorcycle";
+  subCategory?: "car" | "motorcycle" | "phone";
   coverImage: string; // Dynamic CSS gradient classes or premium image URL
   coverFit?: "cover" | "contain";
   publishedAt: string;
@@ -76,6 +79,94 @@ const mappedHondaCityArticle: NewsArticle | null = hondaCity2026 ? {
 } : null;
 
 export const newsArticles: NewsArticle[] = [
+  {
+    id: "apple-ios-27-public-beta-1-siri-ai-release",
+    title: "Apple ประเดิมปล่อย iOS 27 Public Beta 1 ชูโรงเทคโนโลยี Siri AI โฉมใหม่ ควบคู่ AirDrop สปีดพุ่ง 80%",
+    slug: "apple-ios-27-public-beta-1-siri-ai-release",
+    description: "เปิดฉากให้ผู้ใช้งานทั่วไปทดสอบระบบปฏิบัติการล่าสุดผ่าน Apple Beta Software Program แล้ววันนี้ อัปเกรดขีดความสามารถ Siri AI ขั้นสูง พร้อมเร่งความเร็วการส่งไฟล์ไร้สายด้วย AirDrop ขึ้นอีก 80%",
+    excerpt: "เจาะลึกการเปิดตัว iOS 27 Public Beta รุ่นทดสอบแรก มาพร้อมระบบประมวลผล Siri AI อัจฉริยะ ปรับโฉมดีไซน์ Liquid Glass รีดความเร็วเปิดแอปและ AirDrop ขึ้นสูงสุด 80% พร้อมสรุปรายชื่อ iPhone ที่ได้ไปต่อครบทุกรุ่น",
+    coverImage: "/images/news/phone/AppleA3.jpg",
+    coverFit: "contain",
+    category: "โทรศัพท์",
+    categorySlug: "phone",
+    subCategory: "phone",
+    author: "KIMX Tech Editor",
+    publishedAt: "2026-07-15T09:00:00.000Z",
+    updatedAt: "2026-07-15T09:00:00.000Z",
+    readingTime: "3 นาที",
+    tags: ["Apple", "iOS27", "SiriAI", "AirDrop", "iPhone"],
+    featured: false,
+    content: [
+      {
+        type: "paragraph",
+        text: "เปิดฉากให้แฟน ๆ สมาร์ทโฟนฝั่ง Apple ได้ทดลองใช้งานก่อนใครแล้ววันนี้ สำหรับผู้ที่ต้องการลิ้มลองฟีเจอร์และนวัตกรรมใหม่ล่าสุด สามารถเข้าร่วมลงทะเบียนในโครงการ Apple Beta Software Program เพื่อดาวน์โหลดและทำการติดตั้งระบบปฏิบัติการเวอร์ชัน 27 บนอุปกรณ์ที่รองรับได้ทันที"
+      },
+      {
+        type: "heading",
+        text: "เช็ครายชื่อ iPhone รุ่นที่ได้ไปต่อกับ iOS 27"
+      },
+      {
+        type: "paragraph",
+        text: "นับเป็นข่าวดีครั้งใหญ่สำหรับผู้ใช้งานเครื่องรุ่นเก่า เนื่องจากในรอบการอัปเดตครั้งนี้ Apple ตัดสินใจที่จะยังไม่มีการลอยแพหรือตัดสิทธิ์อุปกรณ์รุ่นเก่าเพิ่มเติมแต่อย่างใด ส่งผลให้สมาร์ทโฟนทุกรุ่นที่เคยรองรับระบบปฏิบัติการ iOS 26 จะยังคงสามารถขยับขึ้นไปอัปเกรดเป็น iOS 27 ได้ทั้งหมด โดยครอบคลุมยาวตั้งแต่อาร์เรย์ตระกูล **iPhone 11 ขึ้นไป** รวมถึง **iPhone SE รุ่นที่ 2 (ปี 2020)** และรุ่นที่เปิดตัวหลังจากนั้นทั้งหมด"
+      },
+      {
+        type: "heading",
+        text: "ถอดรหัสภาษาดีไซน์ Liquid Glass พร้อมความแรงรอบทิศทาง"
+      },
+      {
+        type: "paragraph",
+        text: "ในเวอร์ชันทดสอบสาธารณะนี้ ได้มีการขัดเกลาและขยายโครงสร้างสถาปัตยกรรมงานออกแบบอินเทอร์เฟซดั้งเดิมอย่าง Liquid Glass ให้มีความลื่นไหลสมบูรณ์แบบยิ่งขึ้น ควบคู่ไปกับการมุ่งเน้นปิดช่องโหว่และแก้ไขบั๊กสำคัญจากรุ่นนักพัฒนา โดยระบบปฏิบัติการใหม่นี้สามารถรีดประสิทธิภาพสปีดการทำงานในด้านต่าง ๆ ได้อย่างทรงพลัง ดังนี้:\n• ระยะเวลาในการกดเรียกเปิดใช้งานแอปพลิเคชันฉับไวขึ้น 30%\n• ระบบประมวลผลคลังภาพและวิดีโอในแอป Photos โหลดเสร็จไวขึ้น 70%\n• นวัตกรรมการโยนไฟล์ไร้สายผ่าน AirDrop เร็วแรงขึ้นกว่าเดิม 80%\n• การสลับสับเปลี่ยนระหว่างสัญญาณ Wi-Fi และเครือข่ายสัญญาณโทรศัพท์ 5G ทำได้นุ่มนวลไร้รอยต่อ"
+      },
+      {
+        type: "image-pair",
+        leftSrc: "/images/news/phone/AppleA2.jpg",
+        leftAlt: "สถาปัตยกรรมภาษาการออกแบบ Liquid Glass บน iOS 27",
+        rightSrc: "/images/news/phone/A5.jpg",
+        rightAlt: "ระบบจัดการวิดเจ็ตและไอคอนแบบพรีเมียม",
+        caption: "ภาพตัวอย่างฟีเจอร์ภาษาการออกแบบ Liquid Glass และระบบจัดการไฟล์ความเร็วสูงบน iOS 27"
+      },
+      {
+        type: "heading",
+        text: "Siri AI ปัญญาประดิษฐ์หัวใจหลักผู้ขับเคลื่อนระบบ"
+      },
+      {
+        type: "paragraph",
+        text: "ไฮไลท์สำคัญที่สุดที่มองข้ามไม่ได้คือการก้าวข้ามขีดจำกัดครั้งใหญ่ของ Siri AI ที่ถูกพัฒนาขึ้นมาเป็นเสาหลักประมวลผลอัจฉริยะของระบบปฏิบัติการตัวนี้ ช่วยให้ผู้ใช้สามารถป้อนคำสั่งด้วยภาษาพูดธรรมชาติที่เป็นกันเอง เพื่อตั้งคำถาม มอบหมายให้ระบบจัดการงานที่ซับซ้อน หรือแม้กระทั่งควานหาชุดข้อมูลดิบที่ซ่อนลึกอยู่ในสมาร์ทโฟนได้อย่างแม่นยำฉับไว\n\nยิ่งไปกว่านั้น ทางค่ายยังได้เพิ่มแอปพลิเคชัน Siri แยกออกมาต่างหากเพื่อความสะดวกในการเรียกใช้งาน ทว่ากลุ่มฟังก์ชันปัญญาประดิษฐ์ (AI) ระดับสูงเหล่านี้ จะยังไม่เปิดให้ใช้งานในภูมิภาคสหภาพยุโรป (EU) เนื่องจากปัญหาข้อพิพาทด้านกฎหมายคุ้มครองข้อมูลส่วนบุคคลที่ยังคงค้างคาอยู่กับหน่วยงานกำกับดูแลในพื้นที่ดังกล่าว"
+      },
+      {
+        type: "image-pair",
+        leftSrc: "/images/news/phone/A6.jpg",
+        leftAlt: "อินเทอร์เฟซคำสั่งเสียง Siri AI โฉมใหม่",
+        rightSrc: "/images/news/phone/A7.jpg",
+        rightAlt: "รายการคำสั่งการประมวลผล Siri AI อัจฉริยะ",
+        caption: "โมเดลการโต้ตอบด้วยภาษาธรรมชาติผ่านระบบ Siri AI บนเครื่อง iPhone"
+      },
+      {
+        type: "heading",
+        text: "คำเตือนความเสี่ยงเรื่องบั๊กในรุ่น Public Beta"
+      },
+      {
+        type: "paragraph",
+        text: "ถึงแม้ทางทีมพัฒนาจะเคลียร์ปัญหาจุกจิกไปหลายรายการในช่วงทดสอบ Developer Beta ที่ผ่านมา แต่ขึ้นชื่อว่าเป็นเวอร์ชันเบต้าสาธารณะ (Public Beta) ย่อมยังมีโอกาสสูงที่จะพบอาการแอปพลิเคชันแครช ระบบค้าง หรืออัตราการบริโภคพลังงานแบตเตอรี่ที่ไวผิดปกติ ทางเราจึงแนะนำให้ทำการสำรองข้อมูลสำคัญทั้งหมดไว้ก่อนติดตั้ง หรืออดใจรอเวอร์ชันสมบูรณ์ (Stable) ที่มีกำหนดปล่อยตัวจริงในช่วงไม่กี่เดือนข้างหน้านี้"
+      },
+      {
+        type: "heading",
+        text: "สวนทางฝั่งมือถือ! macOS 27 และ iPadOS 27 เดินหน้าลอยแพรุ่นเก่า"
+      },
+      {
+        type: "paragraph",
+        text: "ตัดสลับไปที่อุปกรณ์หน้าจอใหญ่อื่น ๆ ซึ่งผลลัพธ์ออกมารูปแบบสวนทางกับฝั่ง iPhone อย่างสิ้นเชิง เพราะระบบปฏิบัติการฝั่งคอมพิวเตอร์ Mac ที่ใช้งานขุมพลังสถาปัตยกรรมชิป Intel รุ่นสุดท้ายซึ่งเคยรัน macOS 26 ได้ จะถูกตัดสิทธิ์และหมดสิทธิ์อัปเกรดเป็น macOS 27 ทันที โดยระบบจะจำกัดไว้ให้เฉพาะเครื่อง Mac ที่ใช้งานชิปตระกูล Apple Silicon เท่านั้น\n\nในขณะที่ฝั่งแท็บเล็ตอย่าง iPad ก็มีการคัดอุปกรณ์รุ่นเก่าออกบางส่วน โดยรุ่นที่สามารถขยับไปใช้งาน iPadOS 27 ได้ มีดังต่อไปนี้:\n• iPad mini (โมเดลปี 2021) หรือเวอร์ชันใหม่กว่า\n• iPad รุ่นมาตรฐาน (โมเดลปี 2021) หรือเวอร์ชันใหม่กว่า\n• iPad Air (โมเดลปี 2020) หรือเวอร์ชันใหม่กว่า\n• iPad Pro (โมเดลปี 2020) หรือเวอร์ชันใหม่กว่า\n\n----------------------------------------\n**อ้างอิง:** gsmarena"
+      },
+      {
+        type: "image-pair",
+        leftSrc: "/images/news/phone/A4.jpg",
+        leftAlt: "การทดสอบใช้งานระบบบนอุปกรณ์เคลื่อนที่",
+        rightSrc: "/images/news/phone/A9.jpg",
+        rightAlt: "การสลับการทำงานแอปพลิเคชันระบบส่งเมลบน iOS 27",
+        caption: "การทดสอบสถาปัตยกรรมการทำงานและความเสถียรบนระบบปฏิบัติการเวอร์ชันล่าสุดของ Apple"
+      }
+    ]
+  },
   ...(mappedEvFinanceArticle ? [mappedEvFinanceArticle] : []),
   ...(mappedHondaCityArticle ? [mappedHondaCityArticle] : []),
   {

@@ -433,6 +433,40 @@ export default async function NewsArticleDetailView({ params }: ViewProps) {
                           )}
                         </figure>
                       );
+                    case "image-pair":
+                      return (
+                        <figure key={idx} className="my-10 max-w-3xl mx-auto px-4 md:px-0 font-sans">
+                          <div className="grid grid-cols-2 gap-4 w-full">
+                            {/* Left Image Column Box */}
+                            <div className="relative w-full aspect-[4/5] sm:aspect-[4/5] overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/80 group shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
+                              <Image
+                                src={block.leftSrc}
+                                alt={block.leftAlt}
+                                fill
+                                loading="lazy"
+                                sizes="(max-width: 768px) 50vw, 384px"
+                                className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                              />
+                            </div>
+                            {/* Right Image Column Box */}
+                            <div className="relative w-full aspect-[4/5] sm:aspect-[4/5] overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/80 group shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
+                              <Image
+                                src={block.rightSrc}
+                                alt={block.rightAlt}
+                                fill
+                                loading="lazy"
+                                sizes="(max-width: 768px) 50vw, 384px"
+                                className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                              />
+                            </div>
+                          </div>
+                          {block.caption && (
+                            <figcaption className="mt-3 text-center text-[13px] text-slate-500 font-light px-4">
+                              {block.caption}
+                            </figcaption>
+                          )}
+                        </figure>
+                      );
                     case "share-buttons":
                       return (
                         <ShareButtons

@@ -5,6 +5,7 @@ export type ArticleContentBlock =
   | { type: 'quote'; text: string; author?: string }
   | { type: 'stats'; items: Array<{ value: string; label: string }> }
   | { type: 'image'; src: string; alt: string; caption?: string }
+  | { type: "image-pair"; leftSrc: string; leftAlt: string; rightSrc: string; rightAlt: string; caption?: string }
   | { type: "benchmark"; items: Array<{ label: string; score: number; maxScore: number; color?: string }> };
 
 export type Article = {
@@ -14,7 +15,7 @@ export type Article = {
   description: string;
   category: string;
   categorySlug?: string;
-  subCategory?: "car" | "motorcycle";
+  subCategory?: "car" | "motorcycle" | "phone";
   readingTime: string;
   author?: string;
   image: string;

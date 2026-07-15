@@ -429,11 +429,45 @@ export default function ArticleContent({ article }: ArticleContentProps) {
                               blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDE2IDEwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmMmY2Ii8+PC9zdmc+"
                               loading="eager"
                               priority={false}
-                              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                              className="object-contain w-full h-full rounded-2xl"
                             />
                           </div>
                           {block.caption && (
                             <figcaption className="mt-3 text-center text-[13px] text-slate-500 font-light font-sans px-4">
+                              {block.caption}
+                            </figcaption>
+                          )}
+                        </motion.figure>
+                      );
+                    case "image-pair":
+                      return (
+                        <motion.figure variants={itemVariants} key={index} className="my-10 max-w-3xl mx-auto px-4 md:px-0 font-sans">
+                          <div className="grid grid-cols-2 gap-4 w-full">
+                            {/* Left Image Column Box */}
+                            <div className="relative w-full aspect-[4/5] sm:aspect-[4/5] overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/80 group shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
+                              <Image
+                                src={block.leftSrc}
+                                alt={block.leftAlt}
+                                fill
+                                loading="lazy"
+                                sizes="(max-width: 768px) 50vw, 384px"
+                                className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                              />
+                            </div>
+                            {/* Right Image Column Box */}
+                            <div className="relative w-full aspect-[4/5] sm:aspect-[4/5] overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/80 group shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
+                              <Image
+                                src={block.rightSrc}
+                                alt={block.rightAlt}
+                                fill
+                                loading="lazy"
+                                sizes="(max-width: 768px) 50vw, 384px"
+                                className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                              />
+                            </div>
+                          </div>
+                          {block.caption && (
+                            <figcaption className="mt-3 text-center text-[13px] text-slate-500 font-light px-4">
                               {block.caption}
                             </figcaption>
                           )}

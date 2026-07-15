@@ -49,6 +49,7 @@ export function calculateReadingTime(
         }
         break;
       case "image":
+      case "image-pair":
         if (block.caption) {
           fullText += " " + block.caption;
         }
